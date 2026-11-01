@@ -1,0 +1,41 @@
+{
+  "jurisdiction": "au-vic",
+  "councils": {
+    "melbourne": {
+      "name": "City of Melbourne",
+      "parkingRulesUrl": "https://www.melbourne.vic.gov.au/parking-and-transport/parking/parking-rules/Pages/parking-rules.aspx",
+      "permitsUrl": "https://www.melbourne.vic.gov.au/parking-and-transport/parking/parking-permits/residential-parking-permits/Pages/residential-parking-permits.aspx",
+      "publicHolidayPolicy": {
+        "dayInLieu": "both",
+        "note": "Council states day-of-week signs do not apply on the public holiday AND on any declared day in lieu.",
+        "source": "https://www.melbourne.vic.gov.au/parking-and-transport/parking/parking-rules/Pages/parking-rules.aspx"
+      },
+      "signConventions": {
+        "permitException": "Signs read 'AREA # RESIDENT PERMIT EXCEPTED' or 'PERMIT ZONE AREA #'. Permit areas are codes like 1, 1A, 7, 12.",
+        "paidParking": "Green 'P' signs with 'TICKET' or 'METER'; pay via meter, ticket machine or PayStay app. Fee applies only during the signed hours.",
+        "clearways": "Arterial roads carry CLEARWAY with peak-hour windows; vehicles are towed.",
+        "disabilityPermits": "Accessible Parking Permit holders get double the signed time in green-signed bays."
+      },
+      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+    },
+    "yarra": {
+      "name": "City of Yarra",
+      "parkingRulesUrl": "https://www.yarracity.vic.gov.au/parking-and-transport/parking-fines/where-and-how-to-park-legally",
+      "publicHolidayPolicy": {
+        "dayInLieu": "holiday_only",
+        "note": "Yarra: holiday rules apply on the public holiday only, not a day in lieu.",
+        "source": "https://www.yarracity.vic.gov.au/news/2020/03/06/parking-in-yarra-on-public-holidays"
+      },
+      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+    },
+    "bayside": {
+      "name": "Bayside City Council",
+      "parkingRulesUrl": "https://www.bayside.vic.gov.au/services/parking-and-roads/public-holiday-parking",
+      "publicHolidayPolicy": { "dayInLieu": "both", "source": "https://www.bayside.vic.gov.au/services/parking-and-roads/public-holiday-parking" },
+      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+    }
+  },
+  "default": {
+    "publicHolidayPolicy": { "dayInLieu": "unknown", "note": "Unknown council: engine treats both the holiday and any substitute day as a holiday but lowers confidence." }
+  }
+}

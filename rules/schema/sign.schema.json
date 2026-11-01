@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dougalhanson.com/streetparking/schema/sign.schema.json",
+  "title": "Parking sign (structured)",
+  "description": "A single sign post, broken into panels. Each panel is one restriction block (e.g. '2P 8AM-6PM MON-FRI'). Split signs produce panels with different 'side' values.",
+  "type": "object",
+  "required": ["jurisdiction", "panels"],
+  "additionalProperties": false,
+  "properties": {
+    "jurisdiction": { "type": "string", "description": "Rules pack id, e.g. au-vic" },
+    "council": { "type": ["string", "null"], "description": "Local council id, e.g. melbourne" },
+    "rawText": { "type": ["string", "null"], "description": "Text as read from the sign (OCR or vision output)" },
+    "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "panels": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/panel" }
+    }
+  },
+  "$defs": {
+    "panel": {
+      "type": "object",
+      "required": ["kind", "side"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "time_limited", "unrestricted", "no_stopping", "no_parking", "clearway",
+            "loading_zone", "bus_zone", "taxi_zone", "works_zone", "mail_zone", "truck_zone",
+            "minibus_zone", "permit_zone", "disabled", "motorbike", "car_share", "ev_charging",
+            "bicycle", "unknown"
+          ]
+        },
+        "side": {
+          "type": "string",
+          "enum": ["left", "right", "both"],
+          "description": "Which side of the post the panel's arrow points. 'both' = double-headed arrow or no arrow."
+        },
+        "limitMinutes": { "type": ["integer", "null"], "minimum": 1, "description": "Max stay in minutes for time_limited panels (1P=60, 1/2P=30, 1/4P=15)." },
+        "fee": { "type": "boolean", "default": false, "description": "TICKET / METER / PAY — a fee is payable while the panel is active." },
+        "area": { "type": "boolean", "default": false, "description": "'AREA' sign: applies to the whole area until an END sign." },
+        "towAway": { "type": "boolean", "default": false },
+        "windows": {
+          "type": "array",
+          "description": "When the panel applies. Empty array = at all times.",
+          "items": { "$ref": "#/$defs/window" }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/exception" }
+        },
+        "rawText": { "type": ["string", "null"] }
+      }
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "type": ["array", "null"],
+          "items": { "type": "integer", "minimum": 1, "maximum": 7 },
+          "description": "ISO weekdays, 1=Mon..7=Sun. null = every day (no day shown on sign)."
+        },
+        "start": { "type": ["string", "null"], "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$", "description": "HH:MM local. null = 00:00" },
+        "end": { "type": ["string", "null"], "pattern": "^([01]\\d|2[0-4]):[0-5]\\d$", "description": "HH:MM local. null = 24:00. end <= start means overnight." },
+        "publicHolidays": {
+          "type": "string",
+          "enum": ["unspecified", "include", "exclude"],
+          "default": "unspecified",
+          "description": "Does the sign text mention public holidays? 'include' = sign says it applies on PH; 'exclude' = sign says it does not."
+        }
+      }
+    },
+    "exception": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["permit_holders", "resident_permit", "buses", "taxis", "goods_vehicles", "motorbikes", "disability_permit", "other"]
+        },
+        "area": { "type": ["string", "null"], "description": "Permit area code, e.g. '1A', '7'." },
+        "text": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,1214 @@
+EXTRACT — Road Safety Road Rules 2017 (Vic), S.R. No. 41/2017, Version No. 027
+(incorporating amendments as at 27 October 2026)
+Source: https://www.legislation.vic.gov.au/in-force/statutory-rules/road-safety-road-rules-2017/027
+Document: https://content.legislation.vic.gov.au/sites/default/files/2026-10/17-41sr027.docx
+Extracted: 2026-11-01 by scripts/extract-vic-rules.py (text only; diagrams omitted)
+© State of Victoria. Victorian legislation on legislation.vic.gov.au is published under a Creative Commons Attribution 4.0 licence — see https://www.legislation.vic.gov.au/copyright
+This extract is reference material for cross-checking rules/au-vic/rules.json. It is NOT the authorised version.
+=====================================================================
+
+
+=== PART 12 — RESTRICTIONS ON STOPPING AND PARKING (rules 165–213) ===
+165Stopping in an emergency etc. or to comply with another rule
+It is a defence to the prosecution of a driver for an offence against a provision of this Part if—
+(a)the driver stops at a particular place, or in a particular way, to avoid a collision, and the driver stops for no longer than is necessary to avoid the collision; or
+(b)the driver stops at a particular place, or in a particular way, because the driver's vehicle is disabled, and the driver stops for no longer than is necessary for the vehicle to be moved safely to a place where the driver is permitted to park the vehicle under these Rules; or
+(c)the driver stops at a particular place, or in a particular way, to deal with a medical or other emergency, or to assist a disabled vehicle, and the driver stops for no longer than is necessary in the circumstances; or
+(d)the driver stops at a particular place, or in a particular way, because the condition of the driver, a passenger, or the driver's vehicle makes it necessary for the driver to stop in the interests of safety, and the driver stops for no longer than is necessary in the circumstances; or
+(e)the driver stops at a particular place, or in a particular way, to comply with another provision of these Rules or a provision of another law, and the driver stops for no longer than is necessary to comply with the other provision.
+Example for paragraph (e)
+If a driver stops at an intersection at a stop line, stop sign, or traffic lights, or to give way to a vehicle, in accordance with these Rules, the driver does not contravene rule 170 (stopping in or near an intersection).
+Notes
+1See rule 125 (in Part 11) for the offence of unreasonably obstructing the path of another driver or a pedestrian.
+2Driver's vehicle is defined in the dictionary.
+166Application of Part to bicycles
+This Part does not apply to a bicycle that is parked at a bicycle rail or in a bicycle rack.
+Note
+Bicycle is defined in the dictionary.
+Division 2—No stopping and no parking signs and road markings
+Notes
+1Area, length of road, park and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+167No stopping signs
+A driver must not stop on a length of road or in an area to which a no stopping sign applies.
+3 penalty units.
+No stopping signs
+No stopping sign (for a length of road)
+No stopping sign (for an area)
+Notes for diagrams
+1There is another permitted version of each of these signs—see the diagrams in Schedule 3.
+2A no stopping sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+168No parking signs
+(1)The driver of a vehicle must not stop on a length of road or in an area to which a no parking sign applies, unless the driver—
+(a)is dropping off, or picking up, passengers or goods; and
+(b)does not leave the vehicle unattended; and
+(c)completes the dropping off, or picking up, of the passengers or goods, and drives on, as soon as possible and, in any case, within the required time after stopping.
+3 penalty units.
+(2)For this rule, a driver leaves a vehicle unattended if the driver leaves the vehicle so the driver is over 3 metres from the closest point of the vehicle.
+(3)In this rule—
+required time means—
+(a)if information on or with the sign indicates a time—the indicated time; or
+(b)if there is no indicated time—2 minutes; or
+(c)if there is no indicated time, or the indicated time is less than 5 minutes, and rule 206 applies to the driver—5 minutes.
+Notes
+1With is defined in the dictionary.
+Note 2 to rule 168(3) substituted by S.R. No. 182/2026 rule 5.
+2Rule 206 applies to a driver if the driver's vehicle displays a current accessible parking permit and the driver complies with the conditions of use of the permit—see rule 206(1).
+No parking signs
+No parking sign (for a length of road)
+No parking sign(for an area)
+Note 3 to rule 168(3) inserted by S.R. No. 182/2026 rule 5.
+3Accessible parking permit is defined in the dictionary.
+Notes for diagrams
+1There is another permitted version of each of these signs—see the diagrams in Schedule 3.
+2A no parking sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+169No stopping on a road with a yellow edge line
+A driver must not stop at the side of a road marked with a continuous yellow edge line.
+3 penalty units.
+Note
+Edge line is defined in the dictionary.
+Division 3—Stopping at intersections and crossing
+Notes
+1Area, length of road, park and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+170Stopping in or near an intersection
+(1)A driver must not stop in an intersection unless—
+(a)the driver is permitted to stop at that place under these Rules; or
+(b)the intersection is a T-intersection without traffic lights and the driver stops along the continuous side of the continuing road at the intersection.
+3 penalty units.
+Note
+Continuing road, intersection and T-intersection are defined in the dictionary.
+(2)A driver must not stop on a road within 20 metres from the nearest point of an intersecting road at an intersection with traffic lights, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Parking control sign and traffic lights are defined in the dictionary.
+2A driver stops within a particular distance from an intersection if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(3)A driver must not stop on a road within 10 metres from the nearest point of an intersecting road at an intersection without traffic lights, unless the driver stops—
+(a)at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules; or
+(b)if the intersection is a T-intersection—along the continuous side of the continuing road at the intersection.
+3 penalty units.
+Note
+Continuing road and T-intersection are defined in the dictionary.
+(4)For this rule, distances are measured in the direction in which the driver is driving, and—
+(a)for subrule (2)—as shown in example 1; or
+(b)for subrule (3)—as shown in example 2.
+(5)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13, and shoulder is defined in rule 12.
+Examples
+Example 1
+Measurement of distance—intersection with traffic lights
+Example 2
+Measurement of distance—T-intersection without traffic lights
+171Stopping on or near a children's crossing
+(1)A driver must not stop on a children's crossing, or on the road within 20 metres before the crossing and 10 metres after the crossing unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Children's crossing is defined in rule 80. Parking control sign is defined in the dictionary.
+2A driver stops within a particular distance from a children's crossing if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured—
+(a)in the direction in which the driver is driving; and
+(b)as shown in example 1 or 2.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13. Shoulder is defined in rule 12.
+Examples
+Example 1
+Measurement of distance—children's crossing with red and white posts
+Example 2
+Measurement of distance—children's crossing with 2 parallel continuous or broken lines
+172Stopping on or near a pedestrian crossing (except at an intersection)
+(1)A driver must not stop on a pedestrian crossing that is not at an intersection, or on the road within 20 metres before the crossing and 10 metres after the crossing, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Intersection and parking control sign are defined in the dictionary. Pedestrian crossing is defined in rule 81.
+2A driver stops within a particular distance from a crossing if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured—
+(a)in the direction in which the driver is driving; and
+(b)as shown in the example.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13 and shoulder is defined in rule 12.
+Example
+Measurement of distance—pedestrian crossing
+173Stopping on or near a marked foot crossing (except at an intersection)
+(1)A driver must not stop on a marked foot crossing that is not at an intersection, or on the road within 10 metres before the traffic lights pole nearest to the driver at the crossing and 3 metres after the crossing, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Intersection, marked foot crossing, parking control sign and traffic lights pole are defined in the dictionary.
+2A driver stops within a particular distance from a traffic lights pole or a crossing if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured—
+(a)in the direction in which the driver is driving; and
+(b)as shown in the example.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13 and shoulder is defined in rule 12.
+Example
+Measurement of distance—marked foot crossing
+Rule 174 (Heading) substituted by S.R. No. 121/2020 rule 7(1).
+174Stopping on or near a bicycle crossing (except at an intersection)
+Rule 174(1) revoked by S.R. No. 121/2020 rule 7(2).
+*****
+Rule 174(2) substituted by S.R. No. 121/2020 rule 7(3).
+(2)A driver must not stop on a bicycle crossing or within 10 metres before the traffic lights nearest to the driver at the bicycle crossing, and 3 metres after the traffic lights, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+Penalty:3 penalty units.
+Note
+A driver stops within a particular distance from traffic lights if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(3)For this rule, distances are measured—
+(a)in the direction in which the driver is driving; and
+(b)as shown in the example.
+Rule 174(4) substituted by S.R. No. 121/2020 rule 7(4).
+(4)In this rule—
+bicycle crossing means an area of road—
+(a)with bicycle crossing lights facing bicycle riders crossing the road; and
+(b)with traffic lights facing traffic travelling on the road; and
+(c)that is not at an intersection;
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Intersection, parking control sign and traffic lights are defined in the dictionary, road related area is defined in rule 13 and shoulder is defined in rule 12.
+Example
+Measurement of distance—bicycle crossing lights
+175Stopping on or near a level crossing
+(1)A driver must not stop on a level crossing, or on a road within 20 metres before the nearest rail or track to the driver approaching the crossing and 20 metres after the nearest rail or track to the driver leaving the crossing, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Level crossing is defined in rule 120. Parking control sign is defined in the dictionary.
+2A driver stops within a particular distance from a level crossing if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured as shown in the example.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13 and shoulder is defined in rule 12.
+Example
+Measurement of distance—level crossing
+Division 4—Stopping on clearways and freeways and in emergency stopping lanes
+Notes
+1Length of road and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+176Stopping on a clearway
+Rule 176(1) amended by S.R. No. 96/2019 rule 8.
+(1)A driver must not stop on a length of road to which a clearway sign applies, unless subrule (2) or (3) applies to the driver.
+3 penalty units.
+Note to rule 176(1) revoked by S.R. No. 88/2018 rule 6(1).
+*****
+(1A)In subrule (1)—
+road does not include a road related area.
+Note
+Road related area is defined in rule 13.
+(2)The driver of a public bus or public minibus may stop on the length of road if the driver is dropping off, or picking up, passengers.
+Rule 176(3) amended by S.R. No. 88/2018 rule 6(2).
+(3)The driver of a commercial passenger vehicle while providing a commercial passenger vehicle service may stop on the length of road if the driver is dropping off, or picking up, passengers.
+(4)A clearway sign applies, for the days or times indicated on the sign, to the length of road beginning at the sign and ending at the nearer of the following—
+(a)a clearway sign on the road that indicates different days or times;
+(b)an end clearway sign on the road;
+(c)the end of the road.
+Clearway sign
+End clearway sign
+Note for diagrams
+Anything on these signs may be differently arranged—see rule 316(4).
+Note to rule 176 inserted by S.R. No. 88/2018 rule 6(3).
+Note
+Public bus and public minibus are defined in the dictionary. Commercial passenger vehicle and commercial passenger vehicle service are defined in the Commercial Passenger Vehicle Industry Act 2017.
+177Stopping on a freeway
+(1)A driver must not stop on a freeway unless the driver stops in an emergency stopping lane.
+2 penalty units.
+Notes
+1Emergency stopping lane is defined in rule 95.
+2Rule 178 sets out when a driver can stop in an emergency stopping lane.
+(2)A freeway is a length of road to which a freeway sign applies.
+(3)A freeway sign on a road applies to a length of road beginning at the sign (including any road into which the length of road merges) and ending at the next end freeway sign on the road.
+Freeway signs
+End freeway sign
+Note for diagrams
+There are a number of other permitted versions of each of these signs—see the diagrams in Schedule 3.
+Rule 178 amended by S.R. No. 135/2021 rule 60(1).
+178Stopping in an emergency stopping lane
+A driver (except the rider of a bicycle or an electric scooter) must not stop in an emergency stopping lane unless the condition of the driver, a passenger or the driver's vehicle, or any other factor, makes it necessary or desirable for the driver to stop in the emergency stopping lane in the interests of safety, and the driver stops for no longer than is necessary in the circumstances.
+2 penalty units.
+Note to rule 178 amended by S.R. No. 135/2021 rule 60(2).
+Note
+Bicycle, driver's vehicle and electric scooter are defined in the dictionary. Emergency stopping lane is defined in rule 95.
+Division 5—Stopping in zones for particular vehicles
+Notes
+1Length of road and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+3The signs mentioned in this Division are particular types of parking control sign (defined in the dictionary). The general rules about the application of parking control signs apply to them. See rules 332 to 334.
+179Stopping in a loading zone
+(1)A driver must not stop in a loading zone unless the driver is driving—
+Rule 179(1)(a) substituted by S.R. No. 88/2018 rule 7(1).
+(a)a bus that is dropping off, or picking up, passengers; or
+Rule 179(1)(ab) inserted by S.R. No. 88/2018 rule 7(1).
+(ab)a commercial passenger vehicle while providing a commercial passenger vehicle service and is dropping off, or picking up, passengers; or
+(b)a motor vehicle (together with any trailer, fore-car, sidecar or other vehicle or device attached to it) that—
+(i)has seating positions for 10, 11 or 12 adults (including the driver); and
+(ii)is being used to carry passengers for hire or reward; and
+(iii)is dropping off, or picking up, passengers; or
+(c)a truck that is dropping off, or picking up, goods; or
+(d)a courier vehicle displaying a courier vehicle sign that is dropping off, or picking up, goods; or
+(e)a delivery vehicle displaying a delivery vehicle sign that is dropping off, or picking up, goods; or
+(f)a vehicle (other than a sedan, station wagon or motor bike) that is dropping off, or picking up, goods which is constructed principally for carrying loads, that—
+Rule 179(1)(f)(i) amended by S.R. No. 153/2019 rule 4(Sch. 1 item 4).
+(i)has displayed on it a registration label or other identifying label or mark issued or approved by the Secretary or the Regulator indicating that in the opinion of the Secretary or the Regulator the vehicle is constructed principally for carrying loads; or
+(ii)the register indicates is constructed principally for carrying loads; or
+(g)a taxi that is dropping off, or picking up, passengers or goods.
+2 penalty units.
+Note to rule 179(1) amended by S.R. No. 88/2018 rule 7(2).
+Note
+Commercial passenger vehicle and commercial passenger vehicle service are defined in the Commercial Passenger Vehicle Industry Act 2017. Bus, motor vehicle and the register are defined in the Road Safety Act 1986. Courier vehicle, courier vehicle sign, delivery vehicle, delivery vehicle sign, motor bike, taxi and truck are defined in the dictionary.
+(2)A driver who is permitted to stop in a loading zone must not stay continuously in the zone for longer than—
+(a)30 minutes; or
+(b)if information on or with the loading zone sign applying to the loading zone indicates another time—the indicated time.
+2 penalty units.
+Note
+With is defined in the dictionary.
+(3)A loading zone is a length of a road to which a loading zone sign applies.
+Loading zone sign
+Note for diagram
+A loading zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+180Stopping in a truck zone
+(1)A driver must not stop in a truck zone unless the driver is driving a truck that is dropping off, or picking up, goods.
+2 penalty units.
+Note
+Truck is defined in the dictionary.
+(2)A truck zone is a length of a road to which a truck zone sign applies.
+Truck zone sign
+Note for diagram
+A truck zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+181Stopping in a works zone
+(1)A driver must not stop in a works zone unless the driver is driving a vehicle that is engaged in construction work in or near the zone.
+2 penalty units.
+(2)A works zone is a length of a road to which a works zone sign applies.
+Works zone sign
+Note for diagram
+A works zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+182Stopping in a taxi zone
+(1)A driver must not stop in a taxi zone, unless the driver is driving a taxi.
+2 penalty units.
+Note
+Taxi is defined in the dictionary.
+(2)A taxi zone is a length of a road to which a taxi zone sign applies.
+Taxi zone sign
+Note for diagram
+A taxi zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+183Stopping in a bus zone
+(1)A driver must not stop in a bus zone unless the driver is driving a public bus (except a public bus of a kind that is not permitted to stop in the bus zone by information on or with the bus zone sign applying to the bus zone).
+2 penalty units.
+Note
+Public bus and with are defined in the dictionary.
+(2)A bus zone is a length of a road to which a bus zone sign applies.
+Bus zone sign
+Note for diagram
+A bus zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+184Stopping in a minibus zone
+(1)A driver (except the driver of a public minibus) must not stop in a minibus zone.
+2 penalty units.
+Note
+Public minibus is defined in the dictionary.
+(2)A minibus zone is a length of road to which a minibus zone sign applies.
+Minibus zone sign
+Note for diagram
+A minibus zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+185Stopping in a permit zone
+Rule 185(1) amended by S.R. No. 121/2020 rule 24(1).
+(1)Subject to subrule (3), a driver must not stop in a permit zone unless the driver's vehicle displays a current permit issued by the person or body responsible for the care and management of the permit zone that permits the vehicle to stop in the zone.
+2 penalty units.
+Note
+Driver's vehicle is defined in the dictionary.
+(2)A permit zone is a length of a road to which a permit zone sign applies.
+Permit zone sign
+Note for diagram
+A permit zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+Rule 185(3) inserted by S.R. No. 121/2020 rule 24(2).
+(3)A driver may stop in a permit zone without displaying a current permit in the driver's vehicle if the permit is otherwise held by the driver in a manner determined to be appropriate by the person or body responsible for the care and management of the permit zone that permits the vehicle to stop in the zone.
+Example
+An electronic permit issued to a driver of a vehicle that may be stopped in a permit zone would not have to be displayed in the driver's vehicle.
+186Stopping in a mail zone
+(1)A driver must not stop in a mail zone.
+2 penalty units.
+(2)A mail zone is a length of a road to which a mail zone sign applies.
+Note
+Exemptions for drivers of postal vehicles may be provided under rule 313.
+Mail zone sign
+Note for diagram
+A mail zone sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+Division 6—Other places where stopping is restricted
+Notes
+1Area, length of road, park and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+Rule 187 (Heading) amended by S.R. No. 121/2020 rule 25(1).
+187Stopping in a bus lane, bus only lane, tram lane, tramway, transit lane, truck lane or on tram tracks
+(1)A driver must not stop in a bus lane, transit lane or truck lane unless the driver—
+Rule 187(1)(a) substituted by S.R. No. 88/2018 rule 8(1).
+(a)is driving—
+(i)a commercial passenger vehicle while providing a commercial passenger vehicle service and is dropping off, or picking up, passengers; or
+(ii)a public bus or public minibus and is dropping off, or picking up, passengers; and
+(b)is permitted to drive in the lane under these Rules.
+2 penalty units.
+(2)A driver (except the driver of a tram, a tram recovery vehicle or a public bus) must not stop in a tram lane, a tramway or on tram tracks.
+2 penalty units.
+Rule 187(3) inserted by S.R. No. 121/2020 rule 25(2).
+(3)A driver must not stop in a bus only lane unless the driver is driving a public bus and is dropping off, or picking up, passengers.
+Penalty:2 penalty units.
+Notes
+Note 1 to rule 187 amended by S.R. Nos 88/2018 rule 8(2),121/2020 rule 25(3).
+1Bus lane is defined in rule 154, bus only lane is defined in rule 154A, tram lane is defined in rule 155, tramway is defined in rule 155A, transit lane is defined in rule 156 and truck lane is defined in rule 157. Public bus, public minibus, tram and tram tracks are defined in the dictionary. Commercial passenger vehicle and commercial passenger vehicle service are defined in the Commercial Passenger Vehicle Industry Act 2017.
+2Rule 76 deals with drivers keeping clear of trams travelling in tram lanes or on tram tracks marked on the left side by a yellow line.
+3Part 11, Division 6 deals with driving in bus lanes, tram lanes, transit lanes and truck lanes.
+188Stopping in a shared zone
+A driver must not stop in a shared zone unless—
+(a)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules; or
+(b)the driver stops in a parking bay and the driver is permitted to stop in the parking bay under these Rules; or
+(c)the driver is dropping off, or picking up, passengers or goods; or
+(d)the driver is engaged in the doorto-door delivery or collection of goods, or in the collection of waste or garbage.
+3 penalty units.
+Note
+Parking bay and parking control sign are defined in the dictionary, and shared zone is defined in rule 24.
+189Double parking
+(1)A driver must not stop on a road if to do so would put any part of the vehicle that the driver is driving between a vehicle that is parked on the road and the centre of the road.
+Penalty:3 penalty units.
+Note
+One-way road and two-way road are defined in the dictionary.
+Examples
+Example 1
+Example 2
+Double parked on a two-way road without a dividing line
+Double parked on a two-way road with a dividing line
+Example 3
+Example 4
+Double parked on the right side of a one-way road with no vehicles parked on the left side of the road
+Double parked on the left side of a one-way road with other vehicles lawfully parked on the right side of the road
+In the examples, the vehicle marked with an "X" is stopped in contravention of this rule.
+(2)A driver does not contravene this rule by parking on the side of the road, or in a median strip parking area, in accordance with rule 210.
+Note
+Median strip parking area is defined in the dictionary.
+Example
+Vehicles parked in a parking area—not in contravention of this rule
+In the example, the angle-parked vehicles are not stopped in contravention of this rule.
+190Stopping in or near a safety zone
+(1)A driver must not stop in a safety zone, or on a road within 10 metres before or after a safety zone, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Parking control sign is defined in the dictionary. Safety zone is defined in rule 162.
+2A driver stops within a particular distance before or after something if the driver stops so any part of the vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured—
+(a)in the direction in which the driver is driving; and
+(b)from the end of the structure; and
+(c)as shown in the example.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13, and shoulder is defined in rule 12.
+Safety zone sign
+Example
+Measurement of distance—safety zone
+In the example, the vehicles marked with an "X" are stopped in contravention of this rule.
+191Stopping near an obstruction
+A driver must not stop on a road near an obstruction on the road in a position that obstructs traffic on the road.
+3 penalty units.
+Note
+Obstruction is defined in the dictionary.
+192Stopping on a bridge or in a tunnel etc.
+(1)A driver must not stop on a bridge, causeway, ramp or similar structure unless—
+(a)the road is at least as wide on the structure as it is on each of the approaches; or
+(b)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Note
+Parking control sign is defined in the dictionary.
+(2)A driver must not stop in a tunnel or underpass unless—
+(a)the road is at least as wide in the tunnel or underpass as it is on each of the approaches; or
+(b)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Example
+Stopping on a bridge where the road on the bridge is narrower than on an approach
+In the example, the vehicle is stopped in contravention of subrule (1).
+193Stopping on a crest or curve outside a built-up area
+(1)A driver must not stop on or near a crest or curve on a length of road that is not in a built-up area unless—
+(a)the driver's vehicle is visible for 100 metres to drivers approaching the vehicle and travelling in the direction of travel of traffic on the same side of the road as the vehicle; or
+(b)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Note
+Built-up area, driver's vehicle and parking control sign are defined in the dictionary.
+(2)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13, and shoulder is defined in rule 12.
+194Stopping near a fire hydrant etc.
+(1)A driver must not stop within 1 metre of a fire hydrant, fire hydrant indicator, or fire plug indicator, unless—
+(a)the driver is driving a public bus, and the driver stops at a bus stop or in a bus zone and does not leave the bus unattended; or
+(b)the driver is driving a taxi, and the driver stops in a taxi zone and does not leave the taxi unattended; or
+(c)the driver is driving a public minibus, and the driver stops in a minibus zone and does not leave the minibus unattended.
+3 penalty units.
+Note
+Bus zone is defined in rule 183. Public bus, public minibus and taxi are defined in the dictionary. Minibus zone is defined in rule 184 and taxi zone is defined in rule 182.
+(2)For this rule, a driver leaves a vehicle unattended if the driver leaves the vehicle so the driver is over 3 metres from the closest point of the vehicle.
+(3)In this rule—
+fire hydrant means an upright pipe with a spout, nozzle or other outlet for drawing water from a main or service pipe in case of fire or other emergency.
+Examples
+Fire hydrant indicators
+Fire plug indicator
+195Stopping at or near a bus stop
+(1)A driver (except the driver of a public bus) must not stop at a bus stop, or on the road, within 20 metres before a sign on the road that indicates the bus stop, and within 10 metres after the sign, unless the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Parking control sign and public bus are defined in the dictionary.
+2A driver stops within a particular distance before or after a sign indicating a bus stop if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, distances are measured in the direction in which the driver is driving.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13, and shoulder is defined in rule 12.
+196Stopping at or near a tram stop
+(1)A driver (except the driver of a tram, a tram recovery vehicle or a public bus travelling along tram tracks) must not stop at a tram stop or on the road within 20 metres before a sign on the road that indicates the tram stop, unless—
+(a)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies; and
+(b)the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Notes
+1Parking control sign, public bus, tram, tram recovery vehicle, tram stop and travelling along tram tracks are defined in the dictionary.
+2A driver stops within a particular distance before a sign indicating a tram stop if the driver stops so any part of the driver's vehicle is within that distance—see rule 350(2).
+(2)For this rule, the distance is measured in the direction in which the driver is driving.
+(3)In this rule—
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13, and shoulder is defined in rule 12.
+197Stopping on a path, dividing strip, nature strip, painted island or traffic island
+(1)A driver must not stop on a bicycle path, footpath, shared path or dividing strip, or a nature strip adjacent to a length of road in a built-up area, unless—
+(a)the driver stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules; or
+(b)the driver's vehicle is a motor cycle and the driver stops in a place where the motor cycle does not inconvenience, obstruct, hinder or prevent the free passage of any pedestrian or other vehicle; or
+Rule 197(1)(c) amended by S.R. No. 7/2023 rule 5(1).
+(c)the driver is using a vehicle for the purpose of the operation of a detection device prescribed for the purposes of section 66 of the Road Safety Act 1986; or
+Rule 197(1)(d) inserted by S.R. No. 7/2023 rule 5(2).
+(d)the driver's vehicle is—
+Rule 197 (1)(d)(i) amended by S.R. No. 11/2026 rule 3(1).
+(i)a trailer carrying a relocatable digital RSC or mobile digital RSC; or
+Rule 197 (1)(d)(ii) amended by S.R. No. 11/2026 rule 3(1).
+(ii)towing a trailer carrying a relocatable digital RSC or mobile digital RSC.
+3 penalty units.
+Notes
+1Bicycle path is defined in rule 239. Built-up area, dividing strip, footpath, nature strip and parking control sign are defined in the dictionary. Motor cycle is defined in the Road Safety Act 1986. Shared path is defined in rule 242.
+2A separated footpath is a particular kind of footpath—see rule 239.
+Note 3 to rule 197(1) inserted by S.R. No. 7/2023 rule 5(3), amended by S.R. No. 11/2026 rule 3(2).
+3Relocatable digital RSC and mobile digital RSC are defined in the dictionary.
+(1A)A driver must not stop on a painted island.
+3 penalty units.
+Notes
+1Painted island is defined in the dictionary.
+2Rule 85 deals with the give way rules applying to a driver entering a turning lane from a painted island and rule 138 deals with keeping off painted islands.
+(1B)A driver must not stop on a traffic island.
+Penalty:3 penalty units.
+Note
+Traffic island is defined in the dictionary.
+Rule 197(2) amended by S.R. No. 135/2021 rule 61(1).
+(2)This rule does not apply to the rider of a bicycle, an electric scooter or animal.
+Note to rule 197(2) amended by S.R. No. 135/2021 rule 61(2).
+Note
+Bicycle and electric scooter are defined in the dictionary.
+198Obstructing access to and from a footpath, driveway etc.
+(1)A driver must not stop on a road in a position that obstructs access by vehicles or pedestrians to or from a footpath ramp or a similar way of access to a footpath, or a bicycle path or passageway unless—
+(a)the driver is driving a public bus that is dropping off, or picking up, passengers; or
+(b)the driver stops in a parking bay and the driver is permitted to stop in the parking bay under these Rules.
+3 penalty units.
+Note
+Bicycle path is defined in rule 239. Footpath, parking bay and public bus are defined in the dictionary.
+(2)A driver must not stop on or across a driveway or other way of access for vehicles travelling to or from adjacent land unless—
+(a)the driver—
+(i)is dropping off, or picking up, passengers; and
+(ii)does not leave the vehicle unattended; and
+(iii)completes the dropping off, or picking up, of the passengers, and drives on, as soon as possible and, in any case, within 2 minutes after stopping; or
+(b)the driver stops in a parking bay and the driver is permitted to stop in the parking bay under these Rules.
+3 penalty units.
+Notes
+1Adjacent land is defined in the dictionary.
+2A driver stops on or across a driveway or way of access if any part of the vehicle is on or across the driveway or way of access—see rule 350(3).
+Example
+Blocking a driveway
+In the example, the vehicle marked with an "X" is stopped in contravention of subrule (2).
+(3)For this rule, a driver leaves a vehicle unattended if the driver leaves the vehicle so that the driver is over 3 metres from the closest point of the vehicle.
+199Stopping near a postbox
+(1)A driver must not stop on a road within 3 metres of a public postbox, unless the driver—
+(a)is dropping off, or picking up, passengers or mail; or
+(b)stops at a place on a length of road, or in an area, to which a parking control sign applies and the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Note
+Parking control sign is defined in the dictionary.
+(2)In this rule—
+public postbox means a public postbox controlled by Australia Post.
+200Stopping on roads—heavy and long vehicles
+(1)The driver of a heavy vehicle, or long vehicle, must not stop on a length of road that is not in a built-up area, except on the shoulder of the road, unless the length of road is an emergency stopping lane and the driver is permitted to stop in it under rule 178.
+3 penalty units.
+Note to rule 200(1) substituted by S.R. No. 87/2018 rule 10(1).
+Note
+Built-up area and emergency stopping lane are defined in the dictionary. Shoulder is defined in rule 12(3). Heavy vehicle is defined in the Road Safety Act 1986.
+(2)The driver of a heavy vehicle, or long vehicle, must not stop on a length of road in a built-up area for longer than 1 hour, unless the information on or with a traffic control device specifically permits the driver of a heavy vehicle, or long vehicle, to stop on the length of road for longer than 1 hour, or is permitted to do so under subrule (2A) or by the Council.
+3 penalty units.
+Note
+Council, traffic control device and with are defined in the dictionary.
+(2A)The driver of a heavy vehicle, or long vehicle, other than a bus, is permitted to stop on a length of road in a built-up area for longer than 1 hour if, throughout the period when the vehicle is stopped on the length of road, the driver is engaged in dropping off, or picking up, goods.
+(3)In this rule—
+Rule 200(3) def. of heavy vehicle revoked by S.R. No. 87/2018 rule 10(2).
+*****
+long vehicle means a vehicle that, together with any load or projection, is 75 metres long, or longer;
+road does not include a road related area, but includes any shoulder of the road.
+Notes
+Note 1 to rule 200(3) amended by S.R. No. 87/2018 rule 10(3).
+1Road related area is defined in rule 13 and shoulder is defined in rule 12.
+2Vehicle includes a combination—see rule 15(d).
+Rule 201 amended by S.R. No. 135/2021 rule 62(1).
+201Stopping on a road with a bicycle parking sign
+A driver (except the rider of a bicycle or an electric scooter) must not stop on a length of road to which a bicycle parking sign applies, unless the driver is dropping off, or picking up, passengers.
+2 penalty units.
+Note to rule 201 amended by S.R. No. 135/2021 rule 62(2).
+Note
+Bicycle and electric scooter are defined in the dictionary.
+Bicycle parking sign
+Note for diagram
+Anything on this sign may be differently arranged—see rule 316(4).
+202Stopping on a road with a motor bike parking sign
+A driver (except the rider of a motor bike) must not stop on a length of road to which a motor bike parking sign applies, unless the driver is dropping off, or picking up, passengers.
+2 penalty units.
+Note
+Motor bike is defined in the dictionary.
+Motor bike parking sign
+Note for diagram
+Anything on this sign may be differently arranged—see rule 316(4).
+Rule 203 substituted by S.R. No. 182/2026 rule 6.
+203Stopping in an accessible parking area
+(1)A driver must not stop in an accessible parking area unless—
+(a)the driver's vehicle displays a current accessible parking permit; and
+(b)the driver complies with the conditions of use of the permit.
+Penalty:2 penalty units.
+Note
+Accessible parking permit and driver's vehicle are defined in the dictionary.
+(2)A driver who stops in an accessible parking area or parks in accordance with rule 206 must when requested by a police officer or authorised person—
+(a)state their name and address; and
+(b)produce their driver licence document or learner permit document; and
+(c)produce a current accessible parking permit or satisfy the police officer or authorised person that the driver, or a passenger of the vehicle, holds a current accessible parking permit.
+Penalty:2 penalty units.
+(3)If a driver fails to comply with a request under subrule (2), a police officer or authorised person may direct the driver to move the vehicle from the accessible parking area or the length of road or area where the vehicle is parked (as the case requires).
+(4)A driver who is given a direction by a police officer or authorised person under subrule (3) must obey the direction.
+Penalty:2 penalty units.
+(5)In this rule—
+authorised person includes a person who is referred to in section 77(2)(b) or (e) of the Road Safety Act 1986 and an officer who is referred to in section 77(4) of that Act.
+(6)An accessible parking area is a length or area of a road (including a parking bay)—
+(a)to which a permissive parking sign displaying an accessibility symbol applies; or
+(b)to which an accessible parking sign applies; or
+(c)indicated by a road marking (an accessibility symbol road marking) that consists of, or includes, an accessibility symbol.
+Accessibility symbols
+Permissive parking sign displaying an accessibility symbol(for a length of road)
+Permissive parking sign displaying an accessibility symbol(for an area)
+Accessible parking sign
+Notes
+1Anything on these signs may be differently arranged—see rule 316(4).
+2Parking area is defined in the dictionary.
+203AStopping in a slip lane
+A driver must not stop in a slip lane unless—
+(a)a parking control sign applies to the place where the driver stops; and
+(b)the driver is permitted to stop at that place under these Rules.
+3 penalty units.
+Note
+Parking control sign and slip lane are defined in the dictionary.
+Rule 203B inserted by S.R. No. 121/2020 rule 26.
+203BStopping in a parking area for electric-powered vehicles
+(1)A driver of a vehicle that is not an electric-powered vehicle must not stop in a parking area for electric-powered vehicles.
+Penalty:2 penalty units.
+(2)A parking area for electric-powered vehicles is a length or area of a road—
+(a)to which a permissive parking sign displaying an electric-powered vehicle symbol applies; or
+(b)to which an electric-powered vehicle parking sign applies; or
+(c)indicated by a road marking that consists of, or includes, an electric-powered vehicle symbol.
+Note
+Road marking is defined in the dictionary.
+(3)An electric-powered vehicle means a vehicle that—
+(a)is powered by one or more electric motors or traction motors, regardless of whether the vehicle is also powered by another form of propulsion; and
+(b)can be recharged from an external source of electricity.
+Electric-powered vehicle symbol
+Rule 203C inserted by S.R. No. 121/2020 rule 26.
+203CStopping in a parking area for the charging of electric-powered vehicles
+(1)A driver must not stop in a parking area for the charging of electric-powered vehicles unless—
+(a)the driver's vehicle is an electric-powered vehicle; and
+(b)the electric-powered vehicle is plugged in to an external source of electricity.
+Penalty:2 penalty units. 
+Note
+Electric-powered vehicle is defined in rule 203B.
+(2)A parking area for the charging of an electric-powered vehicle is a length or area of a road—
+(a)to which a permissive parking sign displaying an electric-powered vehicle charging symbol applies; or
+(b)to which an electric-powered vehicle charging parking sign applies; or
+(c)indicated by a road marking that consists of, or includes, an electric-powered vehicle charging symbol.
+Note
+Road marking is defined in the dictionary.
+Electric-powered vehicle charging symbol
+Division 7—Permissive parking signs and parking fees
+Notes
+1Area, length of road, park and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+204Meaning of certain information on or with permissive parking signs
+(1)This rule explains the meaning of certain information on or with a permissive parking sign applying to a length of road or an area.
+Notes
+Note 1
+With is defined in the dictionary.
+Permissive parking sign (for a length of road)
+Permissive parking sign (for an area)
+Permissive parking sign(for a length of road)
+Notes for diagrams
+1There are a number of other permitted versions of each of these signs—see the diagrams in Schedule 3.
+2A permissive parking sign may have an arrow pointing in a different direction and anything on the sign may be differently arranged—see rule 316(4).
+Note 2
+Rule 318(1) and (2) deal with the effect of information on or with a traffic control device (including a permissive parking sign) that limits the application of the device to particular times or days. Under rule 318(3), if the information indicates that the device applies on a particular day, for example Friday, the sign does not have effect on a Friday that is a public holiday unless otherwise stated.
+(2)A whole number, fraction, or whole number and fraction, immediately to the left of the letter "P" indicates that a driver must not park on the length of road, or in the area, continuously for longer than the period of hours, or fraction of an hour, equal to the number, fraction, or number and fraction, shown.
+Examples of permissive parking signs showing permitted parking periods and times of operation
+Example 1
+Permissive parking sign applying to a length of road with a whole number to the left of P
+Example 2
+Permissive parking sign applying to an area with a whole number to the left of P
+In example 1, the sign indicates that a driver must not park continuously for longer than 1 hour on Saturdays between 9 a.m. and 12 noon.
+In example 2, the sign indicates that a driver must not park in the area for longer than 2 hours on Mondays to Fridays between 8.30 a.m. and 5 p.m., and on Saturdays between 8.30 a.m. and 12 noon, unless permitted by information on or with another traffic control device.
+(3)A number, together with the word "minute", immediately to the right of the letter "P" indicate that a driver must not park on the length of road, or in the area, continuously for longer than the number of minutes shown.
+Example
+Example 3
+Permissive parking sign with a number of minutes to the right of P
+In this example, the sign indicates that a driver must not park continuously for longer than 5 minutes on Mondays to Fridays between 9 a.m. and 4 p.m.
+(4)The word "parking", together with words indicating a number of hours or minutes, indicate that a driver must not park on the length of road, or in the area, continuously for longer than the number of hours or minutes shown.
+205Parking for longer than indicated
+(1)A driver must not park continuously on a length of road, or in an area, to which a permissive parking sign applies for longer than the period indicated by information on or with the sign or, if rule 206 applies to the driver, the period allowed under that rule.
+2 penalty units.
+Note
+With is defined in the dictionary.
+(1A)If a permissive parking sign does not indicate a period and does not indicate that it applies at particular times, or at particular times on particular days, a driver may, at any time, park continuously on a length of road, or in an area, to which the sign applies, unless—
+(a)another parking control sign applies to the length of road or area; and
+(b)the driver is prohibited from parking on the length of road, or in the area, under these Rules.
+Note
+Parking control sign is defined in the dictionary.
+(2)For subrule (1), a driver parks continuously on a length of road, or in an area, to which a permissive parking sign applies, from the time when the driver parks on the length of road, or in the area, until the driver, or another driver, moves the vehicle off the length of road, or out of the area, to which the permissive parking sign applies.
+Rule 205(3) inserted by S.R. No. 111/2021 rule 7, substituted by S.R. No. 7/2023 rule 6.
+(3)Subrule (1) does not apply if—
+(a)the driver is using a vehicle for the purpose of the operation of a detection device prescribed for the purposes of section 66 of the Road Safety Act 1986; or
+(b)the driver's vehicle is—
+Rule 205 (3)(b)(i) amended by S.R. No. 11/2026 rule 4(1).
+(i)a trailer carrying a relocatable digital RSC or mobile digital RSC; or
+Rule 205 (3)(b)(ii) amended by S.R. No. 11/2026 rule 4(1).
+(ii)towing a trailer carrying a relocatable digital RSC or mobile digital RSC.
+Note to rule 205(3) amended by S.R. No. 11/2026 rule 4(2).
+Note
+Relocatable digital RSC and mobile digital RSC are defined in the dictionary.
+205AParking outside times indicated
+If a permissive parking sign indicates that it applies at particular times, or at particular times on particular days, a driver may park on the length of road, or in an area, to which the sign applies at a time, or at a time on a day, when the sign does not apply, unless—
+(a)another parking control sign applies to the length of road or area; and
+(b)the driver is prohibited from parking on the length of road, or in the area, at that time, or at that time on that day, under these Rules.
+Notes
+1Parking control sign is defined in the dictionary.
+2Rule 318(1) and (2) deal with the effect of information on or with a traffic control device (including a permissive parking sign) that limits the application of the device to particular times or days. Under rule 318(3), if the information indicates that the device applies on a particular day, for example Friday, the sign does not have effect on a Friday that is a public holiday at the place where the device is located, unless otherwise stated.
+Rule 206 substituted by S.R. No. 182/2026 rule 7.
+206Time extension for people with an accessible parking permit
+(1)This rule applies to a driver if—
+(a)the driver's vehicle displays a current accessible parking permit; and
+(b)the driver complies with the conditions of use of the permit.
+(2)The driver may park continuously on a length of road, or in an area, to which a permissive parking sign applies (except in an accessible parking area) for twice the period indicated on the sign.
+Note
+Accessible parking area, accessible parking permit and driver's vehicle are defined in the dictionary.
+207Parking where fees are payable
+Rule 207(1) amended by S.R. No. 96/2019 rule 9(1).
+(1)This rule applies to a driver who parks on a length of road, or in an area, to which a permissive parking sign applies if information on or with the sign indicates that a fee is payable for parking.
+Note
+With is defined in the dictionary.
+(2)The driver must—
+(a)pay the fee (if any); and
+Rule 207(2)(b) amended by S.R. No. 96/2019 rule 9(2).
+(b)obey any instructions on or with the sign.
+2 penalty units.
+Rule 207(3) inserted by S.R. No. 111/2021 rule 8, substituted by S.R. No. 7/2023 rule 7.
+(3)Subrule (1) does not apply if—
+(a)the driver is using a vehicle for the purpose of the operation of a detection device prescribed for the purposes of section 66 of the Road Safety Act 1986; or
+(b)the driver's vehicle is—
+Rule 207 (3)(b)(i) amended by S.R. No. 11/2026 rule 5(1).
+(i)a trailer carrying a relocatable digital RSC or mobile digital RSC; or
+Rule 207 (3)(b)(ii) amended by S.R. No. 11/2026 rule 5(1).
+(ii)towing a trailer carrying a relocatable digital RSC or mobile digital RSC.
+Note to rule 207(3) amended by S.R. No. 11/2026 rule 5(2).
+Note
+Relocatable digital RSC and mobile digital RSC are defined in the dictionary.
+Division 8—Parallel parking
+Notes
+1Area, length of road and park are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+208Parallel parking on a road (except in a median strip parking area)
+(1)A driver who parks on a road (except in a median strip parking area) must position the driver's vehicle in accordance with subrules (2) to (8).
+3 penalty units.
+Note
+Driver's vehicle and median strip parking area are defined in the dictionary.
+(2)The driver must position the vehicle to face—
+(a)in the direction of travel of vehicles in the marked lane or line of traffic on, or next to, the part of the road where the driver parks; or
+(b)if there is no traffic on, or next to, that part of the road—in the direction in which vehicles could lawfully travel on that part of the road.
+Note
+Marked lane is defined in the dictionary.
+(3)If the road is a two-way road, the driver must position the vehicle parallel, and as near as practicable, to the far left side of the road.
+Note
+Two-way road is defined in the dictionary.
+(4)If the road is a one-way road, the driver must position the vehicle parallel, and as near as practicable, to the far left or far right side of the road, unless otherwise indicated by information on or with a parking control sign.
+Note
+One-way road, parking control sign and with are defined in the dictionary.
+(5)If the driver does not park in a parking bay, the driver must position the vehicle at least 1 metre from the closest point of any vehicle in front of it and any vehicle behind it.
+Note
+Parking bay is defined in the dictionary.
+(6)If the road has a continuous dividing line or a dividing strip, the driver must position the vehicle at least 3 metres from the continuous dividing line or dividing strip, unless otherwise indicated by information on or with a parking control sign.
+Note
+Dividing line and dividing strip are defined in the dictionary.
+(7)If the road does not have a continuous dividing line or a dividing strip, the driver must position the vehicle so there is at least 3 metres of the road alongside the vehicle that is clear for other vehicles to pass, unless otherwise indicated by information on or with a parking control sign.
+(8)The driver must position the vehicle so the vehicle does not unreasonably obstruct the path of other vehicles or pedestrians.
+(9)This rule does not apply to—
+(a)a driver if the driver parks on a length of road, or in an area, to which a parking control sign or road marking applies, and information on or with the sign or road marking includes the words "angle parking" or "angle"; or
+(b)the rider of a motor bike if the rider parks the motor bike on a length of road, or in an area, to which a permissive parking sign applies and the sign indicates that the length of road or area is for parking motor bikes.
+Notes
+1Motor bike and road marking are defined in the dictionary.
+2Division 9 deals with angle parking.
+(10)Subrules (3) and (4) do not apply to the rider of a motor bike if the rider positions the motor bike so at least 1 wheel is as near as practicable to the far left or far right side of the road.
+(11)If a road has one or more service roads, the part of the road used by the main body of moving vehicles, and each service road, is taken to be a separate road for this rule.
+Note
+Part of the road used by the main body of moving vehicles and service road are defined in the dictionary.
+(12)In this rule—
+continuous dividing line means—
+(a)a single continuous dividing line only; or
+(b)a single continuous dividing line to the left or right of a broken dividing line; or
+(c)2 parallel continuous dividing lines;
+road does not include a road related area, but includes any shoulder of the road.
+Note
+Road related area is defined in rule 13 and shoulder is defined in rule 12.
+Example
+Parallel parking—minimum distance from other vehicles and dividing strip
+In the example, the vehicles marked with an "X" are parked in contravention of this rule.
+208AParallel parking in a road related area (except in a median strip parking area)
+(1)A driver who parks in a road related area (except in a median strip parking area) must position the driver's vehicle to face—
+(a)in the direction of travel of vehicles in the marked lane or line of traffic next to the part of the road related area where the driver parks; or
+(b)if there is no traffic next to that part of the road related area—in the direction in which vehicles could lawfully travel in the road related area; or
+(c)if the road related area is an area that divides a road, either—
+(i)in the direction of travel of vehicles in the marked lane or line of traffic to the left of the driver; or
+(ii)if there is no traffic to the left of the driver—in the direction in which vehicles could lawfully travel on that part of the road.
+3 penalty units.
+Note
+Driver's vehicle, line of traffic, marked lane and median strip parking area are defined in the dictionary. Road related area is defined in rule 13.
+(2)Subrule (1) does not apply if—
+(a)the driver is permitted to park in another manner in the road related area under these Rules; or
+(b)signs or road markings indicate that angle parking is required in the road related area.
+209Parallel parking in a median strip parking area
+(1)This rule applies to a driver who parks in a median strip parking area if a parking control sign or road marking applies to the area, and information on or with the sign or road marking indicates that the driver's vehicle must be positioned parallel to the median strip.
+Note
+Driver's vehicle, median strip, median strip parking area, parking control sign, road marking and with are defined in the dictionary.
+(2)The driver must position the driver's vehicle—
+(a)to face—
+(i)in the direction of travel of vehicles in the marked lane or line of traffic to the left of the driver; or
+(ii)if there is no traffic to the left of the driver—in the direction in which vehicles could lawfully travel on that part of the road; and
+(b)parallel, and as near as practicable, to the centre of the median strip; and
+(c)if the driver does not park in a parking bay—at least 1 metre from the closest point of any vehicle in front of it and any vehicle behind it.
+2 penalty units.
+Note
+Marked lane and parking bay are defined in the dictionary.
+(3)This rule does not apply to the rider of a motor bike.
+Note
+Motor bike is defined in the dictionary.
+Division 9—Angle parking
+Notes
+1Park is defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+210Angle parking
+(1)If a driver parks in a parking area on the side of a road, or in a median strip parking area—
+(a)to which a parking control sign with the words "angle parking" or "angle" applies; or
+(b)to which a road marking indicating an angle applies—
+the driver must position the driver's vehicle in accordance with subrules (2) to (4).
+2 penalty units.
+Notes
+1Driver's vehicle, median strip parking area, parking area, parking control sign, road marking and with are defined in the dictionary.
+2Rule 212 deals with whether a driver enters a median strip parking area forwards or in reverse.
+(2)If the parking control sign or road marking indicates that the vehicle must be positioned at a specified angle (other than 90°), the driver must position the vehicle—
+(a)so that the vehicle is at an angle as near as practicable to the specified angle; and
+(b)if the vehicle is parked on the side of the road—with the rear of the vehicle nearest to the centre of the road.
+(2A)If the parking control sign or road marking does not indicate the angle at which the vehicle must be positioned, the driver must position the vehicle—
+(a)so that the vehicle is at an angle as near as practicable to 45°, as shown in example 1 or 2; and
+(b)if the vehicle is parked on the side of the road—with the rear of the vehicle nearest to the centre of the road.
+Examples
+Example 1
+Parking at 45at the side of a two-way road
+Example 2
+Parking at 45at the right side of a one-way road
+(2B)Subrules (2) and (2A) do not apply if the road marking, or information on the parking control sign, includes the words "rear in" or similar words.
+(3)If the parking control sign or road marking indicates that the vehicle must be positioned at an angle of 90, the driver—
+(a)must position the driver's vehicle so the vehicle is at an angle as near as practicable to 90, as shown in example 3 or 4; and
+(b)if the vehicle is parked on the side of the road—
+(i)if the road marking, or information on the parking control sign, includes the words "rear in" or "front in", or similar words—must position the vehicle so that the front of the vehicle is nearest the centre of the road, or the rear of the vehicle is nearest the centre of the road, in accordance with the road marking or sign; or
+(ii)otherwise—may position the vehicle either way around.
+Examples
+Example 3
+Parking at 90at the side of a two-way road
+Example 4
+Parking at 90at the right side of a one-way road
+(4)If the road marking, or information on the parking control sign, includes the words "rear in", or similar words, the driver must position the driver's vehicle—
+(a)so that the vehicle is at an angle as near as practicable to—
+(i)the angle indicated by the road marking or parking control sign; or
+(ii)if the road marking or parking control sign does not indicate an angle—45°; and
+(b)if the vehicle is parked on the side of the road—with the front of the vehicle nearest to the centre of the road.
+(4A)Subrule (4) does not apply if the parking control sign or road marking indicates that the vehicle must be positioned at an angle of 90°.
+Examples for subrule (4)
+Example 5
+Parking "rear in" at 30 at the side of a road
+Example 6
+Parking "rear in" at 30in a median strip parking area
+Example 7
+Parking "rear in" at 45at the side of a road
+Example 8
+Parking "rear in" at 45in a median strip parking area
+Example 9
+Parking "rear in" at 60at the side of a road
+Example 10
+Parking "rear in" at 60in a median strip parking area
+(5)This rule does not apply to the rider of a motor bike.
+Note
+Motor bike is defined in the dictionary.
+Division 10—Other parking related rules
+Notes
+1Area, length of road, park and stop are defined in the dictionary.
+2Rule 165 provides defences to the prosecution of a driver for an offence against a provision of this Division.
+211Parking in parking bays
+(1)This rule applies to a driver who parks on a length of road, or in an area, that has parking bays (whether or not a park in bays only sign applies to the length of road or area).
+Note
+Parking bay is defined in the dictionary.
+Park in bays only sign
+(2)A driver must position the driver's vehicle completely within a single parking bay, unless the vehicle is too wide or long to fit completely within the bay.
+3 penalty units.
+Notes
+1Driver's vehicle is defined in the dictionary.
+2Vehicle includes a combination—see rule 15(d).
+(3)If the vehicle is too wide or long to fit completely within a single parking bay, the driver must park the driver's vehicle within the minimum number of parking bays needed to park the vehicle.
+3 penalty units.
+212Entering and leaving a median strip parking area
+(1)If information on or with a traffic control device indicates that a driver must enter or leave a median strip parking area in a particular direction, the driver must enter or leave the area in that direction.
+5 penalty units.
+Note
+Median strip parking area, traffic control device and with are defined in the dictionary.
+(2)If there is no information on or with a traffic control device that indicates that a driver must enter or leave a median strip parking area in a particular direction, the driver must enter or leave the area by driving forward.
+3 penalty units.
+Example
+Leaving median strip parking area by driving forward
+213Making a motor vehicle secure
+(1)The driver of a motor vehicle who stops and leaves the motor vehicle on a road, must ensure that this rule is complied with except so far as the driver is exempt from this rule under subrule (7) or (8).
+3 penalty units.
+Note
+Motor vehicle is defined in the Road Safety Act 1986.
+(2)Before leaving the vehicle, the driver must apply the parking brake effectively or, if weather conditions (for example, snow) would prevent the effective operation of the parking brake, effectively restrain the motor vehicle's movement in another way.
+(3)If the driver will be over 3 metres from the closest part of the vehicle, the driver must switch off the engine before leaving the vehicle.
+(4)If the driver will be over 3 metres from the closest part of the vehicle, and—
+(a)there is no-one left in the vehicle; or
+(b)there is only a child or children under 16 years old left in the vehicle—
+the driver must remove the ignition key before leaving the vehicle.
+(5)If the driver will be over 3 metres from the closest part of the vehicle and there is no-one left in the vehicle, the driver must—
+(a)if the windows of the vehicle can be secured—secure the windows immediately before leaving the vehicle; and
+(b)if the doors of the vehicle can be locked—lock the doors immediately after leaving the vehicle.
+Note
+Window is defined in the dictionary.
+(6)For the purposes of subrule (5), a window is secure even if it is open by up to 2 centimetres.
+(7)Subrules (3), (4) and (5) do not apply to—
+(a)the driver of a vehicle who is engaged in the collection of waste or garbage, and is required to get in or out of the vehicle, or on or off the vehicle, at frequent intervals; or
+(b)the driver of a cash-in-transit vehicle while on duty; or
+Rule 213(7)(c) amended by S.R. No. 111/2021 rule 9.
+(c)the driver of a refrigerated transport vehicle; or
+Rule 213(7)(d) amended by S.R. No. 153/2019 rule 4(Sch. 1 item 5(a)), substituted by S.R. No. 121/2020 rule 8(1).
+(d)the driver of a breakdown vehicle; or
+Rule 213(7)(e) inserted by S.R. No. 121/2020 rule 8(1).
+(e)the driver of a vehicle acting in accordance with an exemption from the application of those subrules granted by the Secretary under subrule (8).
+Note to rule 213(7) revoked by S.R. No. 121/2020 rule 8(2).
+*****
+Rule 213(8) amended by S.R. No. 153/2019 rule 4(Sch. 1 item 5(b)).
+(8)The Secretary may exempt a driver of a vehicle or class of vehicles from the requirements of subrules (3), (4) or (5) subject to any conditions the Secretary thinks fit.
+Rule 213(9) inserted by S.R. No. 121/2020 rule 8(3).
+(9)In this rule—
+breakdown vehicle means a vehicle driven by a person who attends disabled vehicles as part of the person's employment for the purpose of repairing the disabled vehicle;
+cash-in-transit vehicle means a vehicle collecting, transferring or delivering cash or other valuables which is being driven by a person who is a security guard licensed under the Private Security Act 2004 to perform cashintransit activities.
+Part 13—Lights and warning devices
+Pt 13 Div. 1 (Heading) amended by S.R. No. 135/2021 rule 63.
+Division 1—Lights on vehicles (except bicycles, electric scooters, animals and animaldrawn vehicles)
+Rule 214 (Heading) amended by S.R. No. 135/2021 rule 64(1).
+Rule 214 amended by S.R. No. 135/2021 rule 64(2).
+
+=== RULES 316–318 (traffic control devices: likeness, times/days, public holidays) ===
+316When do traffic control devices comply substantially with these Rules
+(1)A traffic sign complies substantially with these Rules if—
+(a)it is a reasonable likeness of a diagram in Schedule 2 or 3 of that kind of traffic sign; or
+(b)for a traffic sign of a kind for which there is not a diagram in Schedule 2 or 3—it complies substantially with a description of that kind of traffic sign in the Rules and, if the description includes a symbol for which there is a diagram in Schedule 4, the symbol on the sign is a reasonable likeness of the diagram.
+Notes
+1Traffic sign is defined in the dictionary.
+2The diagrams of traffic signs in Schedules 2 and 3 are in alphabetical order.
+(2)A road marking complies substantially with these Rules if it complies substantially with a description of that kind of road marking in the Rules and, if the description includes a symbol for which there is a diagram in Schedule 4, the symbol in the road marking is a reasonable likeness of the diagram.
+Note
+Road marking is defined in the dictionary.
+(3)A traffic control device (except a traffic sign or a road marking) complies substantially with these Rules if the device complies substantially with a description of that kind of traffic control device in the Rules and, if the description includes a symbol for which there is a diagram in Schedule 4, the symbol on the device is a reasonable likeness of the diagram.
+Examples
+A children's crossing may have a red and white post missing temporarily. The missing post does not prevent the crossing from meeting the description of such a crossing that is set out in rule 80(6).
+A freeway may have several freeway signs missing. The missing signs do not prevent the area from still being considered to be a freeway.
+Rule 316(3A) revoked by S.R. No. 121/2019 rule 5.
+*****
+(4)A traffic sign may be a reasonable likeness of a diagram of a kind of traffic sign mentioned in these Rules even though—
+(a)the dimensions of the sign, or of anything on the sign, are different; or
+(b)the sign has additional information on or with it; or
+(c)the number on the sign is different; or
+(d)the sign has a different number of panels; or
+(e)the sign is combined on a single panel with one or more other traffic signs; or
+(f)for a parking control sign—words, figures, symbols, or anything else, on the sign are differently arranged; or
+(g)for a bus lane sign, emergency stopping lane only sign, one-way sign or parking control sign—the sign has an arrow pointing in a different direction; or
+(h)for a separated footpath sign or an end separated footpath sign—the pedestrian and bicycle symbols are reversed; or
+(i)for a road access sign—information on or with the sign indicates (whether by different wording or in another way) that it applies to different or additional vehicles or persons; or
+(j)there is a variation in shade or brightness between a colour on the sign and the equivalent colour in the diagram.
+Example of subrule (4)(a)
+A speed-limit sign may be square. The fact that it is square does not prevent the sign being a reasonable likeness of the diagram of a speed-limit sign in Schedule 2.
+Example of subrule (4)(b)—traffic signs with additional information
+A speed-limit sign near a school may say that the sign has effect at certain times. This additional information does not prevent the sign being a reasonable likeness of the diagram of a speed-limit sign in Schedule 2.
+Speed-limit sign(Standard sign)
+Speed-limit sign(Standard sign)
+Speed-limit sign(Standard sign)
+Speed-limit sign(Standard sign)
+Example of subrule (4)(c)
+The diagram of the area speed-limit sign in Schedule 2 has the number "60". A particular area speed-limit sign may have another number, for example "50". The different number on the sign does not prevent the sign being a reasonable likeness of the diagram.
+Example of subrule (4)(d)
+An end bicycle path sign may have the word "end" on a separate panel or on the same panel as the rest of the sign.
+Example of subrule (4)(e)
+A no parking sign that operates at certain times may be combined on a single panel with a permissive parking sign allowing pay parking at other times.
+Example of subrule (4)(f)
+A permissive parking sign limiting parking to 2 hours may have the time limit above, or below, the word "parking".
+Example of subrule (4)(i)
+The diagram of the road access sign in Schedule 2 says "no pedestrians bicycles animals beyond this point". The replacement of the word "bicycles" by the word "tractors" on a particular sign does not prevent the sign being a reasonable likeness of the diagram.
+Note
+Bicycle symbol, parking control sign, pedestrian symbol and with are defined in the dictionary.
+(5)A variable illuminated message sign may alsobe a reasonable likeness of a diagram of a kind of traffic sign in Schedule 2 or 3 even though the colour of the sign, or of anything else on the sign, is different.
+Note
+Variable illuminated message sign is defined in the dictionary.
+Example of standard sign and variable illuminated message sign
+Speed-limit signs
+Speed-limit sign(Standard sign)
+Speed-limit sign(Variable illuminated message sign)
+(6)A symbol on or in a traffic control device may be a reasonable likeness of a diagram of a kind of symbol mentioned in these Rules even though—
+(a)the dimensions of the symbol, or of anything on the symbol, are different; or
+(b)in the case of a symbol that depicts a human figure, the apparent gender or the appearance of the figure is different.
+(7)In this rule—
+panel includes a board, plate and screen.
+317Information on or with traffic control devices
+(1)A traffic control device may, by the use of words, figures, symbols or anything else, indicate any of the following—
+(a)the times, days or circumstances when it applies or does not apply;
+(b)the lengths of road or areas where it applies or does not apply;
+(c)the persons to whom it applies or does not apply;
+(d)the vehicles to which it applies or does not apply;
+(e)other information.
+Examples of circumstances
+1A speed-limit sign may indicate that it applies when the lights at a children's crossing are flashing.
+2A speed-limit sign may indicate that it applies when children are present.
+(2)In this rule—
+traffic control device includes a board, device, plate, screen, word, figure, symbol, or anything else, with a traffic control device that provides information about the application of the traffic control device.
+Examples of information with a traffic control device
+1A plate erected immediately below a no U-turn sign indicating that the sign applies on Monday to Friday between 8 a.m. and 6 p.m.
+2An illuminated board erected close to, but not next to, a no entry sign indicating that commercial trucks are permitted to pass the sign when the words on the board are illuminated.
+Note
+With includes accompanying or reasonably associated with—see the definition in the dictionary.
+317ATraffic control devices applying on school days
+(1)If information on or with a traffic control device indicates that it applies on school days, it only applies—
+(a)on a declared school day; or
+(b)on any day indicated to be a school day by information on or with the traffic control device.
+Note
+Rule 317 provides that information on or with a traffic control device may indicate the times, days or circumstances when it applies or does not apply.
+Example
+The following sign applies—
+on declared school days, but not on other days unless information on or with the sign indicates that it is a school day at that place; and
+at the times indicated on school days, but not at other times.
+Note that a sign may have a different number on the sign—see rule 316(4) of these Rules.
+(2)For the avoidance of doubt, subrule (1) does not limit or extend the effect of a traffic control device that does not have other information on or with that traffic control device.
+Example
+The following sign is not restricted to certain times or days and applies whenever it is displayed.
+(3)In this rule—
+Rule 317A(3) def. of declared school day amended by S.R. No. 6/2018 rule 8.
+declared school day means any day determined by the Minister administering the Education and Training Reform Act 2006 under regulation 13 of the Education and Training Reform Regulations 2017 to be a day on which a Government school is to be open for attendance by students, and that is not one of the following—
+(a)a Saturday or a Sunday; or
+(b)a day appointed under the Public Holidays Act 1993 as a public holiday in the place in which the traffic control device is located.
+Note
+Different schools have different terms. For this reason, a declared school days period may include days or weeks when many schools are open although some are closed. For the same reason, information on or with a traffic control device may indicate that it is a school day at that particular place even though the day is not in a declared school days period because most other schools are closed at that time or is a Saturday, Sunday or public holiday.
+318Limited effect of certain traffic control devices
+(1)If information on a traffic control device indicates that the device applies during particular times, on particular days, in particular circumstances, to a particular length of road or area, or to particular persons or vehicles, the device has effect only for the indicated times, days, circumstances, length of road, area, persons or vehicles.
+Example
+A shared zone sign on a road into an area indicating that the sign applies on Monday to Friday between 7 a.m. and 6 p.m.
+(2)If information on a traffic control device indicates that the device does not apply during particular times, on particular days, in particular circumstances, to a particular length of road or area, or to particular persons or vehicles, the device does not have effect for the indicated times, days, circumstances, length of road, area, persons or vehicles.
+Examples
+1A plate erected next to a pedestrian crossing sign at a place indicating that the sign does not apply on a particular day.
+2A board erected close to a bus lane sign above a marked lane indicating that the sign does not apply when the words on the board are illuminated.
+(3)If information on a traffic control device that is at a place indicates that it applies on a particular day of the week, the device does not have effect on a day that is a public holiday for the place unless information on the device states otherwise.
+Example
+If a loading zone sign indicates that it applies on Monday to Friday between 9 a.m. and 4 p.m. and information on or with the sign does not indicate that it applies on public holidays, the sign does not have effect on any public holiday falling on a Monday to Friday.
+Note
+Public holiday is defined in the dictionary.
+(4)In this rule—
+traffic control device includes a board, device, plate, screen, word, figure, symbol, or anything else, with a traffic control device that provides information about the application of the traffic control device.
+
+=== SCHEDULE 1 — ABBREVIATIONS ===
+Schedule 1—Abbreviations and symbols
+(rule 347)
+Abbreviation/Symbol
+Meaning
+MON
+Monday
+TUE
+Tuesday
+WED
+Wednesday
+THU
+Thursday
+FRI
+Friday
+SAT
+Saturday
+SUN
+Sunday
+JAN
+January
+FEB
+February
+MAR
+March
+APR
+April
+JUN
+June
+JUL
+July
+AUG
+August
+SEP
+September
+OCT
+October
+NOV
+November
+DEC
+December
+AM
+the time after midnight and ending at noon
+PM
+the time after noon and ending at midnight
+HOLS
+holidays
+MAX
+maximum
+MINS
+minutes
+PUB
+public
+VEH
+vehicle
+t
+tonnes
+m
+metres
+km
+kilometres
+km/h
+kilometres per hour
+°
+degree
+Sch. 2 amended by S.R. Nos 121/2020 rule 27, 182/2026 rule 14.
+
+
+=== DICTIONARY (selected) ===
+accessible parking permit into the dictionary of the Principal Rules
+Accessible Parking Permit Scheme, published in Victoria Government Gazette No. S 737 on 30 December 2024
+The whole
+Reader's Guide amended by S.R. Nos 135/2021 rule 100, 21/2025 rule 18.
+Reader's Guide
+Aim of the Guide
+The aim of this Guide is to help you to understand the Road Safety Road Rules 2017 (the Road Rules) and the way they apply to different kinds of roads, vehicles and road users.  The Guide also gives information on the structure of the Road Rules.
+As a matter of law, the Guide is not part of the Road Rules.
+The Road Rules
+The Road Rules provide rules to be followed by all road users.
+They are part of a national
+---
+parking control sign means any of the following—
+(a)a bicycle parking sign;
+(b)a bus zone sign;
+(c)a clearway sign;
+(d)a loading zone sign;
+(e)a mail zone sign;
+(f)a minibus zone sign;
+(g)a motor bike parking sign;
+(h)a no parking sign;
+(i)a no stopping sign;
+(j)an accessible parking sign;
+(k)a permissive parking sign;
+(l)a permit zone sign;
+(m)a taxi zone sign;
+(n)a truck zone sign;
+(o)a works zone sign;
+Dictionary def. of parking permit for people with disabilities amended by S.R. No. 153/2019 rule 4(Sch. 1 item 26(g)), revoked by S.R. No. 182/2026 rule 16(d).
+*****
+part of the road used by the main body of moving vehicles means the area of the road, except—
+(a)any road related area; and
+(
+---
+permissive parking sign;
+(l)a permit zone sign;
+(m)a taxi zone sign;
+(n)a truck zone sign;
+(o)a works zone sign;
+Dictionary def. of parking permit for people with disabilities amended by S.R. No. 153/2019 rule 4(Sch. 1 item 26(g)), revoked by S.R. No. 182/2026 rule 16(d).
+*****
+part of the road used by the main body of moving vehicles means the area of the road, except—
+(a)any road related area; and
+(b)if the road has one or more service roads—the area of any service road;
+Notes
+1Road related area is defined in rule 13. Service road is defined in this dictionary.
+2A road related area includes any shoulder of the road—see rule 13.
+pedestrian see rule 18;
+pedestrian crossing see rule 81;
+pedes
+---
+public holiday, for a place, means a public holiday appointed under the Public Holidays Act 1993;
+Dictionary def. of public minibus amended by S.R. No. 21/2025 rule 17(j).
+public minibus, for a provision of these Rules, means a motor vehicle—
+(a)operated as a commercial minibus service within the meaning of the Bus Safety Act 2009; and 
+(b)providing a regular passenger service under a service contract within the meaning of the Bus Services Act 1995 or providing a public transport service pursuant to a service contract with the Head, Transport for Victoria;
+Note
+Motor vehicle is defined in the Road Safety Act 1986.
+Dictionary def. of Public Transport Development Authority revoked by S.R. No. 
+---
+truck means a rigid motor vehicle that is principally constructed as a load carrying vehicle. However, a reference in these Rules to a truck does not include a reference to—
+(a)a motor vehicle, other than a prime mover, with a GVM not greater than 45 tonnes; or
+(b)a prime mover with a GCM not greater than 45 tonnes; or
+(c)a bus, tram or tractor;
+Note
+Bus, GCM, GVM, motor vehicle and prime mover are defined in the Road Safety Act 1986. Tram and tractor are defined in this dictionary.
+truck lane see rule 157;
+truck zone see rule 180;
+turn line means a road marking, at an intersection, consisting of a line (whether broken or continuous) that is designed to indicate how a turn is to be made at t
+---
+motor bike means a motor vehicle with 2 wheels, and includes—
+(a)a twowheeled motor vehicle with a sidecar attached to it that is supported by a third wheel; and
+(b)a motor vehicle with 3 wheels that is ridden in the same way as a motor vehicle with 2 wheels;
+Note
+Motor vehicle is defined in the Road Safety Act 1986.
+Dictionary def. of motor cycle licence amended by S.R. No. 121/2019 rule 7(b).
+motor cycle licence see regulation 6(1)(a) of the Road Safety (Drivers) Regulations 2019;
+multi-lane road, for a driver, means a one-way road, or a twoway road, with 2 or more marked lanes (except bicycle lanes) that are—
+(a)on the side of the dividing line or median strip where the driver is driving;
+---
+taxi means a commercial passenger vehicle that is compliant (as defined in regulation 9(4) of the Commercial Passenger Vehicle Industry Regulations 2018) and that is being used to provide a commercial passenger vehicle service in accordance with the Commercial Passenger Vehicle Industry Act 2017 and the regulations made under that Act;
+Dictionary def. of Taxi Services Commission revoked by S.R. No. 88/2018 rule 10(d).
+*****
+taxi zone see rule 182;
+terminating road, for a T-intersection, means—
+(a)if a road (except a road related area) at the intersection is designated by traffic signs or road markings, or in another way, as a road that ends at the intersection—that road; or
+(b)in any other c
+---
+with, for information about the application of a traffic control device, includes accompanying or reasonably associated with the device;
+works zone see rule 181;
+yellow B light means an illuminated yellow B;
+yellow bicycle crossing light means an illuminated yellow bicycle symbol (whether or not flashing) as shown in the diagram in Schedule 4;
+Note
+Bicycle symbol is defined in this dictionary.
+yellow T light means an illuminated yellow T;
+yellow traffic arrow means an illuminated yellow arrow;
+yellow traffic light means an illuminated yellow disc.
+ ═══════════════
+Endnotes
+1General information
+See www.legislation.vic.gov.au for Victorian Bills, Acts and current Versions of legislation and up

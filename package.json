@@ -1,0 +1,21 @@
+{
+  "name": "caniparkhere",
+  "version": "0.1.0",
+  "description": "CanIparkhere — photograph a street parking sign, get told if and how long you can park. Melbourne first.",
+  "type": "module",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "repository": "github:dougal441/streetparking",
+  "homepage": "https://dougalhanson.com/streetparking",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "validate": "node scripts/validate-rules.js",
+    "check-links": "node scripts/check-links.js",
+    "build": "node scripts/build-web.js",
+    "serve": "node scripts/serve.js",
+    "reader": "node server/index.js"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.80.0"
+  }
+}

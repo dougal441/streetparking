@@ -1,0 +1,101 @@
+[
+  {
+    "id": "cbd-2p-ticket-clearway",
+    "description": "Typical CBD post: morning clearway, then 2P ticket, then unrestricted at night. Permit holders excepted.",
+    "council": "melbourne",
+    "text": "CLEARWAY\n7-9AM MON-FRI\nTOW AWAY\n2P TICKET\n9AM-6.30PM MON-FRI\n9AM-12.30PM SAT\nAREA 7 RESIDENT PERMIT EXCEPTED",
+    "expectPanels": [
+      { "kind": "clearway", "side": "both", "towAway": true, "windows": [{ "days": [1,2,3,4,5], "start": "07:00", "end": "09:00" }] },
+      { "kind": "time_limited", "side": "both", "limitMinutes": 120, "fee": true, "windows": [{ "days": [1,2,3,4,5], "start": "09:00", "end": "18:30" }, { "days": [6], "start": "09:00", "end": "12:30" }], "exceptions": [{ "type": "resident_permit", "area": "7" }] }
+    ],
+    "cases": [
+      { "at": "2026-11-04T08:30:00+11:00", "side": "both", "verdict": "no", "note": "Wed 8:30am inside clearway" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": 120, "fee": true, "leaveBy": "2026-11-04T12:00:00+11:00" },
+      { "at": "2026-11-04T17:30:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": 120, "leaveBy": "2026-11-05T07:00:00+11:00", "note": "2P outlasts 6:30pm end; next restriction is clearway 7am Thu" },
+      { "at": "2026-11-04T20:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "leaveBy": "2026-11-05T07:00:00+11:00" },
+      { "at": "2026-11-07T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": 120, "note": "Saturday 10am inside 9-12:30 Sat window" },
+      { "at": "2026-11-08T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "note": "Sunday: nothing applies" },
+      { "at": "2026-11-03T08:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "holiday": true, "note": "Melbourne Cup Day (Tue): MON-FRI clearway does not apply (r 318(3))" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "vehicle": { "type": "car", "permits": ["resident_permit:7"] }, "note": "Area 7 permit holder is excepted from the 2P" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": 240, "vehicle": { "type": "car", "permits": ["accessible_permit"] }, "note": "Accessible permit doubles 2P to 4h (r 206)" }
+    ]
+  },
+  {
+    "id": "split-halfp-loading",
+    "description": "Split sign: 1/2P to the left, loading zone to the right.",
+    "text": "LEFT:\n1/2P\n8AM-6PM MON-SAT\nRIGHT:\nLOADING ZONE\n7AM-6PM MON-FRI",
+    "expectPanels": [
+      { "kind": "time_limited", "side": "left", "limitMinutes": 30 },
+      { "kind": "loading_zone", "side": "right" }
+    ],
+    "cases": [
+      { "at": "2026-11-04T10:00:00+11:00", "side": "left", "verdict": "ok", "maxStayMinutes": 30 },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "right", "verdict": "no" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "right", "verdict": "ok", "maxStayMinutes": 30, "vehicle": { "type": "goods_vehicle" }, "note": "Van in loading zone: 30 min default (r 179(2))" },
+      { "at": "2026-11-04T19:00:00+11:00", "side": "right", "verdict": "ok", "maxStayMinutes": null },
+      { "at": "2026-11-08T10:00:00+11:00", "side": "left", "verdict": "ok", "maxStayMinutes": null, "note": "Sunday" }
+    ]
+  },
+  {
+    "id": "no-parking-overnight",
+    "description": "No parking overnight with arrows; checks overnight window and 2-minute rule.",
+    "text": "NO PARKING ↔\n10PM-6AM",
+    "expectPanels": [{ "kind": "no_parking", "side": "both", "windows": [{ "days": null, "start": "22:00", "end": "06:00" }] }],
+    "cases": [
+      { "at": "2026-11-04T23:00:00+11:00", "side": "both", "verdict": "stop_only", "maxStayMinutes": 2 },
+      { "at": "2026-11-05T05:30:00+11:00", "side": "both", "verdict": "stop_only" },
+      { "at": "2026-11-05T05:30:00+11:00", "side": "both", "verdict": "stop_only", "maxStayMinutes": 5, "vehicle": { "type": "car", "permits": ["accessible_permit"] } },
+      { "at": "2026-11-05T12:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "leaveBy": "2026-11-05T22:00:00+11:00" },
+      { "at": "2026-11-03T23:00:00+11:00", "side": "both", "verdict": "stop_only", "note": "No days on sign: applies on Cup Day too (r 318)" }
+    ]
+  },
+  {
+    "id": "no-stopping-with-ph",
+    "description": "Sign that explicitly includes public holidays keeps applying on a holiday.",
+    "text": "NO STOPPING\n8AM-6PM MON-FRI\nPUBLIC HOLIDAYS",
+    "cases": [
+      { "at": "2026-11-03T10:00:00+11:00", "side": "both", "verdict": "no", "note": "Cup Day, sign says PUBLIC HOLIDAYS → still applies" },
+      { "at": "2026-11-04T19:00:00+11:00", "side": "both", "verdict": "ok" }
+    ]
+  },
+  {
+    "id": "permit-zone-with-time",
+    "text": "PERMIT ZONE\nAREA 1A\n8AM-10PM MON-SUN",
+    "expectPanels": [{ "kind": "permit_zone", "exceptions": [{ "type": "resident_permit", "area": "1A" }] }],
+    "cases": [
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "no" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "vehicle": { "type": "car", "permits": ["resident_permit:1A"] } },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "no", "vehicle": { "type": "car", "permits": ["resident_permit:2"] } },
+      { "at": "2026-11-04T23:00:00+11:00", "side": "both", "verdict": "ok" }
+    ]
+  },
+  {
+    "id": "ocr-noise",
+    "description": "OCR-ish text with l for 1, lowercase, and ASCII arrows.",
+    "text": "lP  8am - 6pm\nMon-Fri ->\nNo Stopping <-\n7 - 9 AM MON - FRI",
+    "expectPanels": [
+      { "kind": "time_limited", "side": "right", "limitMinutes": 60, "windows": [{ "days": [1,2,3,4,5], "start": "08:00", "end": "18:00" }] },
+      { "kind": "no_stopping", "side": "left", "windows": [{ "days": [1,2,3,4,5], "start": "07:00", "end": "09:00" }] }
+    ],
+    "cases": [
+      { "at": "2026-11-04T08:00:00+11:00", "side": "left", "verdict": "no" },
+      { "at": "2026-11-04T08:00:00+11:00", "side": "right", "verdict": "ok", "maxStayMinutes": 60 }
+    ]
+  },
+  {
+    "id": "disabled-bay-limited",
+    "text": "DISABLED\n2P 8AM-6PM MON-FRI",
+    "cases": [
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "no" },
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": 120, "vehicle": { "type": "car", "permits": ["accessible_permit"] }, "note": "Inside an accessible bay the signed time applies as-is" }
+    ]
+  },
+  {
+    "id": "bare-p-ticket",
+    "text": "P TICKET\n7.30AM-6.30PM MON-FRI",
+    "expectPanels": [{ "kind": "unrestricted", "fee": true, "windows": [{ "days": [1,2,3,4,5], "start": "07:30", "end": "18:30" }] }],
+    "cases": [
+      { "at": "2026-11-04T10:00:00+11:00", "side": "both", "verdict": "ok", "maxStayMinutes": null, "fee": true }
+    ]
+  }
+]
