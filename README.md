@@ -48,7 +48,9 @@ export ANTHROPIC_API_KEY=sk-ant-...     # or `ant auth login`
 npm run reader           # same URL, plus POST /api/read-sign
 ```
 
-Then set `readerUrl: '/api/read-sign'` in `web/index.html`. See [docs/DEPLOY.md](docs/DEPLOY.md) for putting it on a website.
+Then set `readerUrl: '/api/read-sign'` in `web/index.html`. For a hosted reader, `worker/` deploys the same code to Cloudflare in four commands — see [docs/DEPLOY.md](docs/DEPLOY.md).
+
+**Why the vision reader matters:** Melbourne's NO STOPPING / NO PARKING panels are red Ⓢ / Ⓟ *symbols*, and sides are *arrows*. Text OCR cannot read symbols or arrows; it only recovers the printed times and words. On-device OCR is the free fallback (with crop/threshold preprocessing), not the product.
 
 Use it from code:
 
@@ -88,7 +90,8 @@ How the library is built, phase by phase, and how to add a council or another st
 - [x] Engine: per-side verdicts, leave-by, timeline, public holidays (r 318), permits (r 185, 206), zones
 - [x] Web applet with on-device OCR and optional Claude vision reader
 - [x] City of Melbourne / Yarra / Bayside public-holiday policies
-- [ ] Sign photo corpus with ground truth (please contribute — see `.github/ISSUE_TEMPLATE/sign-report.yml`)
+- [x] Photo corpus format (`test/fixtures/photos/<id>.json` + image) — 1 sign so far, please contribute via the Sign report issue template
+- [x] Cloudflare Worker for the vision reader (`worker/`)
 - [ ] More councils' permit-area conventions and local laws
 - [ ] Other states (NSW, QLD, SA… all derive from the Australian Road Rules, so the engine mostly carries over)
 

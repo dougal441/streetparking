@@ -1,0 +1,27 @@
+{
+  "id": "melb-nostopping-worksz-split",
+  "photo": "melb-nostopping-worksz-split.webp",
+  "location": "Melbourne CBD laneway (loading dock entrance), contributed 2026-11-02",
+  "notes": "Split sign. Left half: red Ⓢ symbol (NO STOPPING) with left arrow, no times → applies at all times. Right half: WORKS ZONE 7AM-4PM MON-FRI, 9AM-1PM SAT with right arrow. Tesseract on the raw frame returned noise ('EE 1 / 1 NE SONS ...') — the Ⓢ is a symbol, not text.",
+  "text": "LEFT:\nNO STOPPING\nRIGHT:\nWORKS ZONE\n7AM-4PM MON-FRI\n9AM-1PM SAT",
+  "sign": {
+    "jurisdiction": "au-vic",
+    "council": "melbourne",
+    "panels": [
+      { "id": "p1", "kind": "no_stopping", "side": "left", "windows": [] },
+      { "id": "p2", "kind": "works_zone", "side": "right", "windows": [
+        { "days": [1, 2, 3, 4, 5], "start": "07:00", "end": "16:00", "publicHolidays": "unspecified" },
+        { "days": [6], "start": "09:00", "end": "13:00", "publicHolidays": "unspecified" }
+      ] }
+    ]
+  },
+  "cases": [
+    { "at": "2026-11-02T10:00:00+11:00", "side": "left", "verdict": "no" },
+    { "at": "2026-11-02T10:00:00+11:00", "side": "right", "verdict": "no" },
+    { "at": "2026-11-02T17:00:00+11:00", "side": "right", "verdict": "ok", "maxStayMinutes": null, "leaveBy": "2026-11-04T07:00:00+11:00", "note": "next works-zone window is Wed 7am (Tue is Cup Day)" },
+    { "at": "2026-11-07T10:00:00+11:00", "side": "right", "verdict": "no", "note": "Saturday inside 9-1" },
+    { "at": "2026-11-07T14:00:00+11:00", "side": "right", "verdict": "ok" },
+    { "at": "2026-11-03T10:00:00+11:00", "side": "right", "verdict": "ok", "holiday": true, "note": "Cup Day: MON-FRI works zone off" },
+    { "at": "2026-11-03T10:00:00+11:00", "side": "left", "verdict": "no", "note": "No days on the no-stopping half: still applies on holidays" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "caniparkhere-reader",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "secret": "wrangler secret put ANTHROPIC_API_KEY"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -29,7 +29,7 @@ Source of truth: *Road Safety Road Rules 2017* (Vic), Part 12, rules 316–318, 
 
 The parser and vision reader are tested on typed text. Real photos are the gap.
 
-- `test/fixtures/photos/<id>.jpg` + `<id>.json` (ground-truth structured sign + expected advice at 2–3 times).
+- `test/fixtures/photos/<id>.webp|jpg` + `<id>.json` (ground-truth structured sign, typed-text equivalent, expected advice at 2–3 times). Format in place; `test/photos.test.js` checks every entry. First entry: a CBD split sign (Ⓢ left / WORKS ZONE right).
 - Target: 100 Melbourne signs covering every kind in the vocabulary, split signs, faded/angled/backlit photos.
 - Sources: contributors via the Sign report issue template; a walk through the CBD, Carlton, Fitzroy, St Kilda, Richmond.
 - Metric: per-panel kind/side/window accuracy for each reader; the dashboard is a script, not a service.
