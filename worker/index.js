@@ -7,6 +7,7 @@ import { readSign, buildChatRequest, chatReplyText, extractJson, normaliseSign }
 
 const MAX_BODY = 8 * 1024 * 1024;
 const DEFAULT_MODELS = {
+  'local': 'local',
   'unified': 'anthropic/claude-opus-5.5',
   'workers-ai': '@cf/meta/llama-4-scout-17b-16e-instruct',
   'gateway-sdk': 'claude-opus-5-5',
@@ -49,6 +50,19 @@ async function runReader(env, args) {
   const backend = (env.READER_BACKEND || 'unified').trim();
   const model = (env.READER_MODEL || '').trim() || DEFAULT_MODELS[backend];
   if (!model) throw new Error(`unknown READER_BACKEND "${backend}"`);
+
+  if (backend === 'local') {
+    // Forward to the reader running on Dougal's Mac (local-reader/server.py) through a Cloudflare tunnel.
+    if (!env.LOCAL_READER_URL) throw new Error('local backend needs LOCAL_READER_URL (the tunnel address)');
+    const target = new URL('/api/read-sign', env.LOCAL_READER_URL);
+    const headers = { 'content-type': 'application/json' };
+    if (env.LOCAL_READER_TOKEN) headers['x-reader-token'] = env.LOCAL_READER_TOKEN;
+    const r = await fetch(target, { method: 'POST', headers, body: JSON.stringify({ image: args.imageBase64, mediaType: args.mediaType, jurisdiction: args.jurisdiction, council: args.council }) });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(body.error || `local reader error (${r.status})`), { status: r.status, local: true });
+    if (!body.sign) return { sign: null, error: body.error || 'local reader returned no sign', backend: 'local' };
+    return { sign: normaliseSign(body.sign, args).sign, backend: 'local', model: body.model, ocrText: body.ocrText, seconds: body.seconds };
+  }
 
   if (backend === 'unified' || backend === 'workers-ai') {
     if (!env.AI) throw new Error('AI binding missing: add [ai] binding = "AI" to wrangler.toml');
@@ -106,7 +120,7 @@ export default {
       console.error('read-sign:', e && e.stack ? e.stack : e);
       const msg = String(e?.message ?? 'reader failed');
       // Surface configuration problems plainly; hide upstream internals.
-      const cfg = /backend|binding|secret|CF_|gateway|credits|2044|unknown READER/i.test(msg);
+      const cfg = e?.local || /backend|binding|secret|CF_|gateway|credits|2044|unknown READER|LOCAL_READER/i.test(msg);
       return json({ error: cfg ? msg : (e?.status ? `reader upstream error (${e.status})` : 'reader failed') }, cfg ? 503 : 502, cors);
     }
   },

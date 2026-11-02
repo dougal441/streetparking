@@ -44,3 +44,12 @@ test('chatReplyText handles binding shapes', () => {
   assert.equal(chatReplyText({ choices: [{ message: { content: 'hi' } }] }), 'hi');
   assert.equal(chatReplyText({ content: [{ type: 'text', text: 'ok' }] }), 'ok');
 });
+
+test('local-reader/server.py carries the same SYSTEM prompt as server/read-sign.js', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { SYSTEM } = await import('../server/read-sign.js');
+  const py = await readFile('local-reader/server.py', 'utf8');
+  const m = /SYSTEM = """([\s\S]*?)"""/.exec(py);
+  assert.ok(m, 'SYSTEM string not found in server.py');
+  assert.equal(m[1], SYSTEM);
+});

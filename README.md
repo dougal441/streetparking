@@ -28,7 +28,7 @@ photo ──► reader ──► sign text ──► parser ──► structured
 | Rules library | `rules/au-vic/` | Every rule the engine relies on, with plain-English effect, verbatim quote, source links and a verification status. 37 rules, all checked against the authorised *Road Safety Road Rules 2017* (Vic) text. |
 | Sign grammar | `src/sign/parse.js`, `docs/SIGN_GRAMMAR.md` | Turns sign text (`2P TICKET 9AM-6.30PM MON-FRI ->`) into panels with kind, side, limit, fee, time windows, exceptions. |
 | Engine | `src/engine/` | Pure functions. Given a sign, a moment and a vehicle profile, returns a verdict for each side of the post, a leave-by time and a timeline of what changes next. Handles rule 318 public-holiday logic, overnight windows, permit exceptions, accessible-permit double time. |
-| Readers | `src/reader/` | `tesseract.js` (free, on-device, rough) or Claude vision through `server/` (accurate on split signs and arrows; needs an API key server-side). |
+| Readers | `src/reader/`, `server/`, `worker/`, `local-reader/` | `tesseract.js` (free, on-device, rough); Claude vision via the Cloudflare Worker (Unified Billing, no keys); or a local Qwen2.5-VL model on a Mac (`local-reader/`, same stack as the `life` project) reached through a Cloudflare tunnel. All speak one contract. |
 | Applet | `web/` | Single page, no build step, no framework. Embeds anywhere. |
 | Tests | `test/` | Fixture signs with expected panels and expected verdicts at specific times. `npm test`. |
 
