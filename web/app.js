@@ -3,6 +3,13 @@ import { readWithTesseract, readWithClaude, pickReader } from '../src/reader/ind
 import { downscaleImage } from '../src/reader/claude.js';
 
 const cfg = Object.assign({ readerUrl: null, council: 'melbourne', jurisdiction: 'au-vic' }, globalThis.CANIPARKHERE ?? {});
+// Reader URL can be set without redeploying: ?reader=https://... (persisted) or ?reader=off (clear).
+try {
+  const q = new URLSearchParams(location.search).get('reader');
+  if (q === 'off') localStorage.removeItem('caniparkhere.readerUrl');
+  else if (q) localStorage.setItem('caniparkhere.readerUrl', q);
+  cfg.readerUrl = localStorage.getItem('caniparkhere.readerUrl') || cfg.readerUrl;
+} catch { /* storage unavailable */ }
 const TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
 
@@ -127,10 +134,16 @@ async function readPhoto() {
       renderPanels(currentSign); renderResult(res);
     } else {
       btn.textContent = 'Reading (OCR)…';
-      const { text } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
+      const { text, confidence } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
       $('sign-text').value = text.trim();
       currentSign = null; sideOverrides = {};
       runInterpret();
+      const parsed = parseSignText(text);
+      const weak = !parsed.panels.length || parsed.confidence < 0.5 || confidence < 0.5;
+      if (weak) {
+        $('results').hidden = false;
+        $('results').insertAdjacentHTML('afterbegin', `<div class="banner">🔍 On-device OCR only read <em>${esc(text.trim().slice(0, 60) || 'nothing')}</em>. It reads printed words, not the red Ⓢ / Ⓟ symbols or arrows. Fix the text box above (e.g. <code>NO STOPPING &lt;-</code>) and tap <strong>Can I park here?</strong> — or enable the vision reader (see docs/DEPLOY.md).</div>`);
+      }
     }
   } catch (e) {
     $('results').hidden = false; $('results').innerHTML = `<div class="card err">Could not read the photo: ${esc(e.message)}. Type the sign text instead.</div>`;

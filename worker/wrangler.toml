@@ -1,0 +1,12 @@
+# CanIparkhere vision reader — a tiny Cloudflare Worker that holds the Anthropic key.
+# Deploy:  cd worker && npm install && npx wrangler login && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy
+name = "caniparkhere-reader"
+main = "index.js"
+compatibility_date = "2025-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Comma-separated browser origins allowed to call this reader. "*" during testing.
+ALLOWED_ORIGINS = "https://dougal441.github.io,https://dougalhanson.com,http://localhost:8787"
+# Requests per minute per IP before 429.
+RATE_LIMIT_PER_MIN = "10"

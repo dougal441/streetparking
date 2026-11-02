@@ -1,6 +1,7 @@
 // Vision reader: photo → structured sign via Claude. Runs server-side so the API key stays private.
-// Usage: const { readSign } = await import('./read-sign.js'); await readSign({ imageBase64, mediaType, council });
-import Anthropic from '@anthropic-ai/sdk';
+// Usage: const { readSign } = await import('./read-sign.js');
+//        await readSign({ imageBase64, mediaType, council, client: new Anthropic() });
+// The caller constructs the Anthropic client so this file bundles anywhere (Node server, Cloudflare Worker).
 
 const MODEL = process.env.CANIPARKHERE_MODEL ?? 'claude-opus-5-5';
 
@@ -58,7 +59,8 @@ export const SIGN_OUTPUT_SCHEMA = {
 
 const SYSTEM = `You transcribe Australian (Victorian) street parking signs into structured data for a rules engine. Signs follow AS 1742.11: red-on-white panels prohibit (NO STOPPING, NO PARKING, CLEARWAY), green-on-white "P" panels permit with limits (2P = 2 hours, 1/2P = 30 minutes, "P 10 MINUTE" = 10 minutes, plain P = no limit), zone panels reserve the space (LOADING ZONE, PERMIT ZONE, BUS ZONE, TAXI ZONE, WORKS ZONE, MAIL ZONE, TRUCK ZONE, wheelchair symbol = disabled, MOTOR BIKES ONLY). TICKET/METER/PAY means a fee. Times like "7-9AM" share the suffix (07:00-09:00); "4-6.30PM" is 16:00-18:30. Days: MON-FRI = [1,2,3,4,5]; no days shown = null. Arrows: a panel's arrow says which side of the post it governs as you face the sign; a split sign (left half and right half with different content) gives different panels different sides. A horizontal line or a change of colour separates panels. "AREA 7 RESIDENT PERMIT EXCEPTED" is an exception on the panel above it, not a new panel. Transcribe exactly what is printed; do not infer restrictions that are not on the sign. If text is unreadable, use kind "unknown" and say so in rawText.`;
 
-export async function readSign({ imageBase64, mediaType = 'image/jpeg', jurisdiction = 'au-vic', council = null, client = new Anthropic() }) {
+export async function readSign({ imageBase64, mediaType = 'image/jpeg', jurisdiction = 'au-vic', council = null, client }) {
+  if (!client) throw new Error('readSign: an Anthropic client is required');
   const response = await client.beta.messages.create({
     model: MODEL,
     max_tokens: 4096,

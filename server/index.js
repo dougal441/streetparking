@@ -10,10 +10,13 @@ const PORT = Number(process.env.PORT ?? 8787);
 const MAX_BODY = 12 * 1024 * 1024;
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.md': 'text/markdown; charset=utf-8' };
 
-let readSign = null;
+let readSign = null, client = null;
 if (!process.env.CANIPARKHERE_NO_READER) {
-  try { ({ readSign } = await import('./read-sign.js')); }
-  catch (e) { console.warn('Vision reader disabled (install @anthropic-ai/sdk to enable):', e.message); }
+  try {
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
+    ({ readSign } = await import('./read-sign.js'));
+    client = new Anthropic();
+  } catch (e) { console.warn('Vision reader disabled (npm install @anthropic-ai/sdk to enable):', e.message); readSign = null; }
 }
 
 function cors(res, origin) {
@@ -32,7 +35,7 @@ async function handleRead(req, res) {
   try {
     const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
     if (!body.image) throw new Error('image (base64) required');
-    const out = await readSign({ imageBase64: body.image, mediaType: body.mediaType, jurisdiction: body.jurisdiction, council: body.council });
+    const out = await readSign({ imageBase64: body.image, mediaType: body.mediaType, jurisdiction: body.jurisdiction, council: body.council, client });
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(out));
   } catch (e) {
