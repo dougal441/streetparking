@@ -1,0 +1,37 @@
+name: Sign report
+description: A sign the app read or interpreted wrongly (or a sign it can't handle yet)
+title: "Sign misread: "
+labels: ["sign-report"]
+body:
+  - type: textarea
+    id: sign-text
+    attributes:
+      label: What the sign says
+      description: One panel per line, top to bottom. Use <- -> for arrows, LEFT:/RIGHT: for split signs.
+      placeholder: |
+        CLEARWAY 7-9AM MON-FRI
+        2P TICKET 9AM-6.30PM MON-FRI ->
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Where (street + suburb, or coordinates)
+  - type: input
+    id: when
+    attributes:
+      label: Date and time you checked
+      placeholder: 2026-11-04 10:00
+  - type: textarea
+    id: app-said
+    attributes:
+      label: What the app said
+  - type: textarea
+    id: should-say
+    attributes:
+      label: What you think is right (and why — a council page, a fine, a ranger…)
+  - type: textarea
+    id: photo
+    attributes:
+      label: Photo
+      description: Drag a photo of the sign here. Crop out number plates and faces.

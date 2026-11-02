@@ -1,0 +1,65 @@
+{
+  "jurisdiction": "au-vic",
+  "description": "Tokens that appear on Victorian parking signs and what they map to. Used by the text parser and as documentation for contributors. Sign design follows AS 1742.11 (Parking controls) as adopted by VicRoads Traffic Engineering Manual Vol 2 Part 2.11.",
+  "standard": {
+    "title": "AS 1742.11 Manual of uniform traffic control devices Part 11: Parking controls",
+    "vicAdoption": "https://www.vicroads.vic.gov.au/-/media/files/technical-documents-new/traffic-engineering-manual-v2/tem-vol-2-part-211--as174211-parking-controls.ashx"
+  },
+  "kinds": {
+    "NO STOPPING": { "kind": "no_stopping", "rule": "no-stopping", "colour": "red" },
+    "NO STANDING": { "kind": "no_stopping", "rule": "no-stopping", "note": "Legacy wording, same meaning as NO STOPPING" },
+    "NO PARKING": { "kind": "no_parking", "rule": "no-parking", "colour": "red" },
+    "CLEARWAY": { "kind": "clearway", "rule": "clearway", "colour": "red" },
+    "LOADING ZONE": { "kind": "loading_zone", "rule": "loading-zone" },
+    "TRUCK ZONE": { "kind": "truck_zone", "rule": "truck-zone" },
+    "WORKS ZONE": { "kind": "works_zone", "rule": "works-zone" },
+    "TAXI ZONE": { "kind": "taxi_zone", "rule": "taxi-zone" },
+    "BUS ZONE": { "kind": "bus_zone", "rule": "bus-zone" },
+    "MINIBUS ZONE": { "kind": "minibus_zone", "rule": "minibus-zone" },
+    "PERMIT ZONE": { "kind": "permit_zone", "rule": "permit-zone" },
+    "MAIL ZONE": { "kind": "mail_zone", "rule": "mail-zone" },
+    "DISABLED / wheelchair symbol": { "kind": "disabled", "rule": "disabled-parking", "note": "r 203; double time in ordinary bays under r 206" },
+    "MOTOR BIKES ONLY / MOTORCYCLES": { "kind": "motorbike", "rule": "motorbike-parking", "note": "r 202" },
+    "CAR SHARE": { "kind": "car_share", "note": "council permit zone in practice (r 185)" },
+    "ELECTRIC VEHICLE / EV CHARGING": { "kind": "ev_charging", "rule": "ev-parking" },
+    "nP (1P, 2P, 4P ...)": { "kind": "time_limited", "rule": "time-limited", "limit": "n hours" },
+    "1/2P": { "kind": "time_limited", "limit": "30 minutes" },
+    "1/4P": { "kind": "time_limited", "limit": "15 minutes" },
+    "n MIN / n MINUTE": { "kind": "time_limited", "limit": "n minutes" },
+    "P (no number)": { "kind": "unrestricted", "note": "Parking permitted, no limit from this sign; fee may still apply if TICKET/METER shown" }
+  },
+  "modifiers": {
+    "TICKET / METER / PAY / PAY BY PHONE": "fee = true (rule 207)",
+    "AREA": "area = true: restriction covers the whole signed area until an END sign",
+    "TOW AWAY / TOW AWAY AREA": "towAway = true",
+    "AREA n RESIDENT PERMIT EXCEPTED / PERMIT HOLDERS EXCEPTED / EXCEPT PERMIT HOLDERS": "exception: resident_permit (area n)",
+    "EXCEPT BUSES / BUSES EXCEPTED": "exception: buses",
+    "EXCEPT TAXIS": "exception: taxis",
+    "PUBLIC HOLIDAYS / INCL PUBLIC HOLIDAYS": "window.publicHolidays = include",
+    "EXCEPT PUBLIC HOLIDAYS": "window.publicHolidays = exclude"
+  },
+  "days": {
+    "MON-FRI": [1, 2, 3, 4, 5],
+    "MON-SAT": [1, 2, 3, 4, 5, 6],
+    "MON-SUN": [1, 2, 3, 4, 5, 6, 7],
+    "SAT": [6],
+    "SUN": [7],
+    "SAT-SUN / SAT SUN": [6, 7],
+    "(none)": "every day, including public holidays (rule 318)"
+  },
+  "times": {
+    "8AM-6PM": "08:00-18:00",
+    "8.30AM-12.30PM": "08:30-12:30",
+    "7-9AM": "07:00-09:00 (shared AM suffix)",
+    "4-6.30PM": "16:00-18:30 (shared PM suffix)",
+    "6PM-MIDNIGHT": "18:00-24:00",
+    "MIDNIGHT-6AM": "00:00-06:00",
+    "(none)": "all day"
+  },
+  "arrows": {
+    "←": "side = left (restriction applies on the left of the post, as you face the sign)",
+    "→": "side = right",
+    "↔ or no arrow": "side = both",
+    "split sign (left half ← , right half →)": "two panels with different sides"
+  }
+}
