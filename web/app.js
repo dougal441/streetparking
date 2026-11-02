@@ -10,6 +10,16 @@ try {
   else if (q) localStorage.setItem('caniparkhere.readerUrl', q);
   cfg.readerUrl = localStorage.getItem('caniparkhere.readerUrl') || cfg.readerUrl;
 } catch { /* storage unavailable */ }
+
+/** When served by the Cloudflare Worker, ../api/read-sign exists next to the app. Probe it once. */
+async function detectReader() {
+  if (cfg.readerUrl) return;
+  try {
+    const url = new URL('../api/read-sign', location.href);
+    const r = await fetch(url, { method: 'GET', cache: 'no-store' });
+    if (r.ok) { const j = await r.json(); if (j.service === 'caniparkhere-reader') { cfg.readerUrl = url.toString(); cfg.readerBackend = j.backend; } }
+  } catch { /* no reader here (e.g. GitHub Pages) */ }
+}
 const TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
 
@@ -153,7 +163,7 @@ async function readPhoto() {
 function init() {
   $('when').value = nowLocalInput();
   $('now-note').textContent = `Times are Australia/Melbourne. Now: ${fmtT(new Date())}.`;
-  $('reader-mode').textContent = pickReader(cfg) === 'claude' ? 'vision reader on' : 'on-device OCR (edit the text if it misreads)';
+  $('reader-mode').textContent = pickReader(cfg) === 'claude' ? `vision reader on${cfg.readerBackend ? ' (' + cfg.readerBackend + ')' : ''}` : 'on-device OCR (edit the text if it misreads)';
   $('council').value = cfg.council ?? '';
   $('photo').addEventListener('change', (e) => {
     currentFile = e.target.files?.[0] ?? null;
@@ -166,4 +176,4 @@ function init() {
   $('sign-text').addEventListener('input', () => { currentSign = null; });
 }
 
-loadData().then(init).catch(e => { document.body.insertAdjacentHTML('afterbegin', `<p class="err">Failed to load rules: ${esc(e.message)}</p>`); });
+Promise.all([loadData(), detectReader()]).then(init).catch(e => { document.body.insertAdjacentHTML('afterbegin', `<p class="err">Failed to load rules: ${esc(e.message)}</p>`); });

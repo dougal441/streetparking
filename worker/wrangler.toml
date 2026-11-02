@@ -1,12 +1,44 @@
-# CanIparkhere vision reader — a tiny Cloudflare Worker that holds the Anthropic key.
-# Deploy:  cd worker && npm install && npx wrangler login && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy
-name = "caniparkhere-reader"
+# CanIparkhere on Cloudflare — one Worker serves the app (static assets) and the vision reader.
+#
+#   cd worker && npm install && npx wrangler login && npm run build && npx wrangler deploy
+#
+# Reader backends (set READER_BACKEND):
+#   unified   (default) Claude Opus 5.5 through AI Gateway Unified Billing. No API keys. Pay with Cloudflare
+#             credits: dash → AI → AI Gateway → create gateway "caniparkhere" → Credits → top up.
+#   workers-ai Llama 4 Scout on Workers AI. No keys, free 10k neurons/day. Less accurate (test it!).
+#   gateway-sdk Claude via the AI Gateway provider endpoint with the Anthropic SDK. Needs secret CF_AIG_TOKEN
+#             (gateway Settings → Create authentication token) and CF_ACCOUNT_ID. Uses Anthropic structured outputs.
+#   anthropic Claude with your own Anthropic key: `npx wrangler secret put ANTHROPIC_API_KEY`.
+name = "caniparkhere"
 main = "index.js"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Static app. `npm run build` (in worker/) fills ./public/streetparking from ../web, ../src, ../rules.
+[assets]
+directory = "./public"
+not_found_handling = "none"
+
+# AI binding: pre-authenticated access to Workers AI and (via a gateway) Unified-Billing third-party models.
+[ai]
+binding = "AI"
+
 [vars]
-# Comma-separated browser origins allowed to call this reader. "*" during testing.
-ALLOWED_ORIGINS = "https://dougal441.github.io,https://dougalhanson.com,http://localhost:8787"
-# Requests per minute per IP before 429.
+READER_BACKEND = "unified"
+AIG_GATEWAY_ID = "caniparkhere"
+# Model ids: unified → "anthropic/claude-opus-5.5"; workers-ai → "@cf/meta/llama-4-scout-17b-16e-instruct";
+# gateway-sdk / anthropic → "claude-opus-5-5".
+READER_MODEL = ""
+# CF_ACCOUNT_ID = ""        # only for gateway-sdk (run `npx wrangler whoami`)
+# Browser origins allowed to call the reader. Same-origin always works; list others (GitHub Pages) here.
+ALLOWED_ORIGINS = "https://dougal441.github.io,https://dougalhanson.com,https://www.dougalhanson.com,http://localhost:8787"
 RATE_LIMIT_PER_MIN = "10"
+
+# Serve at https://dougalhanson.com/streetparking/* alongside the main site Worker (path routes beat the
+# custom-domain catch-all). Uncomment after the first deploy works on workers.dev.
+# [[routes]]
+# pattern = "dougalhanson.com/streetparking/*"
+# zone_name = "dougalhanson.com"
+# [[routes]]
+# pattern = "www.dougalhanson.com/streetparking/*"
+# zone_name = "dougalhanson.com"

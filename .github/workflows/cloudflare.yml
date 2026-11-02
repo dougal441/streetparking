@@ -1,0 +1,27 @@
+name: Deploy Worker to Cloudflare
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Check Cloudflare secrets
+        id: cf
+        run: echo "ok=${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}" >> "$GITHUB_OUTPUT"
+      - name: Deploy
+        if: steps.cf.outputs.ok == 'true'
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm ci && npm run deploy
+      - name: Skipped
+        if: steps.cf.outputs.ok != 'true'
+        run: echo "CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set — skipping Worker deploy (see docs/DEPLOY.md §5)"
