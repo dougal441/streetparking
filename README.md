@@ -48,7 +48,7 @@ export ANTHROPIC_API_KEY=sk-ant-...     # or `ant auth login`
 npm run reader           # same URL, plus POST /api/read-sign
 ```
 
-Then set `readerUrl: '/api/read-sign'` in `web/index.html`. For a hosted reader, `worker/` deploys the same code to Cloudflare in four commands — see [docs/DEPLOY.md](docs/DEPLOY.md).
+**All-Cloudflare deploy (app + reader, billed on your Cloudflare account, no API keys):** `cd worker && npm install && npx wrangler login && npm run deploy` — see [docs/DEPLOY.md](docs/DEPLOY.md). The reader backend is switchable: Claude Opus 5.5 via AI Gateway Unified Billing (default), Workers AI Llama 4 Scout (free tier), or your own Anthropic key.
 
 **Why the vision reader matters:** Melbourne's NO STOPPING / NO PARKING panels are red Ⓢ / Ⓟ *symbols*, and sides are *arrows*. Text OCR cannot read symbols or arrows; it only recovers the printed times and words. On-device OCR is the free fallback (with crop/threshold preprocessing), not the product.
 
@@ -91,7 +91,7 @@ How the library is built, phase by phase, and how to add a council or another st
 - [x] Web applet with on-device OCR and optional Claude vision reader
 - [x] City of Melbourne / Yarra / Bayside public-holiday policies
 - [x] Photo corpus format (`test/fixtures/photos/<id>.json` + image) — 1 sign so far, please contribute via the Sign report issue template
-- [x] Cloudflare Worker for the vision reader (`worker/`)
+- [x] Single Cloudflare Worker serving the app + vision reader, backends: Unified-Billing Claude / Workers AI / own key (`worker/`)
 - [ ] More councils' permit-area conventions and local laws
 - [ ] Other states (NSW, QLD, SA… all derive from the Australian Road Rules, so the engine mostly carries over)
 

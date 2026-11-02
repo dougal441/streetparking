@@ -35,7 +35,7 @@ async function handleRead(req, res) {
   try {
     const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
     if (!body.image) throw new Error('image (base64) required');
-    const out = await readSign({ imageBase64: body.image, mediaType: body.mediaType, jurisdiction: body.jurisdiction, council: body.council, client });
+    const out = await readSign({ imageBase64: body.image, mediaType: body.mediaType, jurisdiction: body.jurisdiction, council: body.council, client, model: process.env.CANIPARKHERE_MODEL });
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(out));
   } catch (e) {
