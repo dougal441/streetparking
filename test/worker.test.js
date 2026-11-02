@@ -53,3 +53,24 @@ test('disallowed origin gets a non-matching CORS header', async () => {
   const r = await post('/api/read-sign', { image: 'AAAA' }, 'https://evil.example');
   assert.notEqual(r.headers.get('access-control-allow-origin'), 'https://evil.example');
 });
+
+test('local backend forwards to the Mac reader with the token and normalises its answer', async () => {
+  const seen = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => { seen.push({ url: String(url), init }); return new Response(JSON.stringify({ sign: { panels: [{ kind: 'no_stopping', side: 'left', windows: [] }] }, model: 'qwen', ocrText: 'NO STOPPING', seconds: 3.2 }), { status: 200 }); };
+  try {
+    const env3 = { ...env, READER_BACKEND: 'local', LOCAL_READER_URL: 'https://abc.trycloudflare.com', LOCAL_READER_TOKEN: 's3cret' };
+    const r = await worker.fetch(new Request('https://x/streetparking/api/read-sign', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: 'AAAA', council: 'melbourne' }) }), env3);
+    const j = await r.json();
+    assert.equal(r.status, 200, JSON.stringify(j));
+    assert.equal(j.backend, 'local'); assert.equal(j.sign.panels[0].id, 'p1'); assert.equal(j.sign.council, 'melbourne'); assert.equal(j.ocrText, 'NO STOPPING');
+    assert.equal(seen[0].url, 'https://abc.trycloudflare.com/api/read-sign');
+    assert.equal(seen[0].init.headers['x-reader-token'], 's3cret');
+    assert.equal(JSON.parse(seen[0].init.body).image, 'AAAA');
+    globalThis.fetch = async () => { throw new Error('fetch failed'); };
+    const r2 = await worker.fetch(new Request('https://x/api/read-sign', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: 'A' }) }), env3);
+    assert.equal(r2.status, 502);
+    const r3 = await worker.fetch(new Request('https://x/api/read-sign', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: 'A' }) }), { ...env, READER_BACKEND: 'local' });
+    assert.equal(r3.status, 503); assert.match((await r3.json()).error, /LOCAL_READER_URL/);
+  } finally { globalThis.fetch = realFetch; }
+});

@@ -9,6 +9,8 @@
 #   gateway-sdk Claude via the AI Gateway provider endpoint with the Anthropic SDK. Needs secret CF_AIG_TOKEN
 #             (gateway Settings → Create authentication token) and CF_ACCOUNT_ID. Uses Anthropic structured outputs.
 #   anthropic Claude with your own Anthropic key: `npx wrangler secret put ANTHROPIC_API_KEY`.
+#   local     The reader running on Dougal's Mac (local-reader/) through a Cloudflare tunnel. Needs
+#             LOCAL_READER_URL (and secret LOCAL_READER_TOKEN if the server was started with a token).
 name = "caniparkhere"
 main = "index.js"
 compatibility_date = "2025-05-01"
@@ -30,6 +32,7 @@ AIG_GATEWAY_ID = "caniparkhere"
 # gateway-sdk / anthropic → "claude-opus-5-5".
 READER_MODEL = ""
 # CF_ACCOUNT_ID = ""        # only for gateway-sdk (run `npx wrangler whoami`)
+# LOCAL_READER_URL = "https://xxxx.trycloudflare.com"   # only for READER_BACKEND = "local"
 # Browser origins allowed to call the reader. Same-origin always works; list others (GitHub Pages) here.
 ALLOWED_ORIGINS = "https://dougal441.github.io,https://dougalhanson.com,https://www.dougalhanson.com,http://localhost:8787"
 RATE_LIMIT_PER_MIN = "10"

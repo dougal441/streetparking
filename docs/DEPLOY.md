@@ -46,6 +46,12 @@ Uncomment the `[[routes]]` block at the bottom of `worker/wrangler.toml`, then `
 If Cloudflare refuses the route because of the custom domain, fallback is a 10-line proxy in the main site Worker
 (`src/index.js`): `if (pathname.startsWith('/streetparking')) return fetch('https://caniparkhere.<you>.workers.dev' + pathname, request)`.
 
+## 3a. Use the vision model on your own Mac instead
+
+`local-reader/` runs the same model your `life` project uses (mlx-vlm, Qwen2.5-VL-7B) plus Apple's text
+recognition, and a Cloudflare tunnel lets the phone reach it. `cd local-reader && ./run.sh` prints the phone link.
+Details and the Worker setting (`READER_BACKEND = "local"`) in [`local-reader/README.md`](../local-reader/README.md).
+
 ## 4. Choosing the reader backend
 
 `READER_BACKEND` in `worker/wrangler.toml`:
@@ -56,6 +62,7 @@ If Cloudflare refuses the route because of the custom domain, fallback is a 10-l
 | `workers-ai` | Llama 4 Scout (`@cf/meta/llama-4-scout-17b-16e-instruct`) | nothing (10k free neurons/day) | cheapest; accuracy on dense signs unproven — score it against `test/fixtures/photos` |
 | `gateway-sdk` | Claude via gateway provider endpoint + Anthropic SDK | `CF_ACCOUNT_ID` var, `CF_AIG_TOKEN` secret | uses Anthropic's native structured outputs; use if `unified` misbehaves with JSON |
 | `anthropic` | Claude with your own key | `ANTHROPIC_API_KEY` secret | bypasses Cloudflare billing |
+| `local` | Qwen2.5-VL on your Mac via `local-reader/` + Cloudflare tunnel | `LOCAL_READER_URL` var (+ `LOCAL_READER_TOKEN` secret) | free, private; only while the Mac is awake |
 
 `READER_MODEL` overrides the model id for any backend. `GET /streetparking/api/read-sign` shows the active backend.
 
