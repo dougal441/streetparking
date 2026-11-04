@@ -7,6 +7,7 @@
 
 import { localParts, dateAtMinutes, addDays, hhmmToMinutes, minutesToLabel, durationLabel, DEFAULT_TZ } from './time.js';
 import { holidayStatus } from './holidays.js';
+import { fineFor, offenceKeyFor } from './fines.js';
 
 export const VERDICT = Object.freeze({
   OK: 'ok',              // you can park (maybe with a time limit / fee)
@@ -277,7 +278,11 @@ export function interpret(sign, opts = {}) {
       leaveBy = new Date(at.getTime() + (now.maxStayMinutes ?? 2) * 60000); leaveByReason = 'drop-off only';
     }
 
-    sides[side] = { ...now, leaveBy, leaveByReason, timeline: segs.map(s => ({ from: s.from, to: s.to, verdict: s.verdict, headline: s.headline, maxStayMinutes: s.maxStayMinutes, fee: s.fee })) };
+    // What a ticket costs: the offence you'd commit by parking here (NO / STOP_ONLY), or by overstaying / not paying (OK).
+    const offence = offenceKeyFor(now);
+    const fine = offence ? fineFor(opts.penalties, offence, at, councilId) : null;
+    const feeFine = now.verdict === VERDICT.OK && now.fee && offence !== 'fee' ? fineFor(opts.penalties, 'fee', at, councilId) : null;
+    sides[side] = { ...now, leaveBy, leaveByReason, fine, feeFine, timeline: segs.map(s => ({ from: s.from, to: s.to, verdict: s.verdict, headline: s.headline, maxStayMinutes: s.maxStayMinutes, fee: s.fee })) };
   }
 
   const general = (opts.rulesPack?.rules ?? []).filter(r => (r.appliesTo ?? []).includes('general') && r.id !== 'sign-times-days');
@@ -288,6 +293,7 @@ export function interpret(sign, opts = {}) {
     at: at.toISOString(), tz, local: nowParts, holiday: nowCtx.holiday, council: councilId,
     vehicle, sides, split: sideKeys.length === 2,
     rules: ruleRefs(usedRuleIds),
+    penaltiesSource: opts.penalties?.sources?.[0]?.url ?? null,
     generalRules: ruleRefs(general.map(r => r.id)),
     instrument: opts.rulesPack?.instrument ?? null,
   };

@@ -40,6 +40,36 @@ Stop with Ctrl-C. The tunnel address changes each run, so open the printed link 
 | `./run.sh --idle-minutes 30` | keep the model loaded longer |
 | `python3 server.py --help` | everything else |
 
+## Make it permanent: fixed address, starts with the Mac, works when you're out
+
+```bash
+./install-service.sh
+```
+
+What it does, once:
+- installs a launchd service `com.dougal.caniparkhere-reader` (always running; the model loads on the first photo and is dropped after 10 idle minutes, so it does not sit in memory beside `life`'s jobs);
+- publishes it through **Tailscale Funnel** on this Mac's fixed name under the path `/streetparking` — the same
+  mechanism `life` uses for its `/mail-capture` endpoint, and the two coexist;
+- makes a secret token (`state/token`) that the phone link carries, so nobody else can use your reader;
+- prints the phone link and saves it to `state/phone-link.txt`.
+
+**Bookmark that link on your phone** (Safari → Share → Add to Home Screen). Open it any time: the app loads
+from GitHub Pages and talks to your Mac. If the Mac is asleep, the header says the reader is not answering and
+the app falls back to on-device OCR.
+
+Tailnet-only instead of public (phone must have the Tailscale app signed in): `TS_MODE=serve ./install-service.sh`.
+
+Keep the Mac awake when you're out: System Settings → Battery → Options → *Prevent automatic sleeping on power
+adapter when the display is off* on, and leave it plugged in. A closed lid on battery = asleep = no reader.
+
+Remove it all: `./uninstall-service.sh`. Logs: `logs/reader.stderr.log`.
+
+### Why not the `life` capture Shortcut?
+
+That path is one-way: the phone sends a photo, the Mac files a note minutes later. Parking needs an answer back
+within seconds, on the same screen. So this is a request-and-reply web address instead — but it reuses the
+same Tailscale Funnel and the same model, so nothing new has to be kept alive.
+
 ## Through the Cloudflare Worker instead of the `?reader=` link
 
 Set in `worker/wrangler.toml`: `READER_BACKEND = "local"`, `LOCAL_READER_URL = "https://xxxx.trycloudflare.com"`,

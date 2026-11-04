@@ -56,3 +56,26 @@ progress { width: 100%; }
 .ftr { color: var(--muted); font-size: 0.85rem; margin: 20px 0; }
 a { color: var(--accent); }
 .err { color: var(--red); font-weight: 600; }
+
+/* ---- v2 layout: photo → sign-shaped results → working ---- */
+.btn.big { display: block; width: 100%; text-align: center; font-size: 1.25rem; padding: 18px 16px; border-radius: 14px; }
+#step-photo { text-align: center; }
+#preview { margin: 10px auto 0; max-height: 220px; }
+.signboard { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 10px 0; }
+.signboard.split { grid-template-columns: 1fr 1fr; }
+.signboard .verdict { position: relative; padding-top: 30px; border-width: 3px; }
+.signboard .verdict .arrow { position: absolute; top: 6px; font-size: 1.4rem; font-weight: 900; }
+.signboard .verdict.left .arrow { left: 10px; } .signboard .verdict.right .arrow { right: 10px; } .signboard .verdict.both .arrow { left: 50%; transform: translateX(-50%); }
+.signboard .verdict .big { font-size: 1.25rem; }
+.fine { margin-top: 10px; border-radius: 10px; padding: 10px; text-align: center; background: #fff; border: 3px solid var(--red); }
+.fine .amt { display: block; color: var(--red); font-size: 2.2rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+.fine .lbl { display: block; color: var(--red); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.fine .why { display: block; color: var(--muted); font-size: 0.75rem; margin-top: 4px; }
+.fine.soft { border-width: 2px; }
+.fine.soft .amt { font-size: 1.5rem; }
+@media (prefers-color-scheme: dark) { .fine { background: #2a1512; } }
+.meta { color: var(--muted); font-size: 0.85rem; margin: 6px 0 0; }
+#working h3 { font-size: 0.95rem; margin: 16px 0 6px; }
+#working summary { cursor: pointer; font-weight: 700; }
+.verdict.unknown .big { color: var(--muted); }
+@media (max-width: 400px) { .signboard.split { gap: 6px; } .signboard .verdict { padding: 26px 8px 10px; } .fine .amt { font-size: 1.8rem; } }

@@ -30,6 +30,7 @@ photo ──► reader ──► sign text ──► parser ──► structured
 | Engine | `src/engine/` | Pure functions. Given a sign, a moment and a vehicle profile, returns a verdict for each side of the post, a leave-by time and a timeline of what changes next. Handles rule 318 public-holiday logic, overnight windows, permit exceptions, accessible-permit double time. |
 | Readers | `src/reader/`, `server/`, `worker/`, `local-reader/` | `tesseract.js` (free, on-device, rough); Claude vision via the Cloudflare Worker (Unified Billing, no keys); or a local Qwen2.5-VL model on a Mac (`local-reader/`, same stack as the `life` project) reached through a Cloudflare tunnel. All speak one contract. |
 | Applet | `web/` | Single page, no build step, no framework. Embeds anywhere. |
+| Fines | `rules/au-vic/penalties.json`, `src/engine/fines.js` | Schedule 6 infringement penalties (verified against the authorised PDF), penalty-unit values per financial year, council uplift under s 87(4). |
 | Tests | `test/` | Fixture signs with expected panels and expected verdicts at specific times. `npm test`. |
 
 ## Try it
@@ -91,7 +92,9 @@ How the library is built, phase by phase, and how to add a council or another st
 - [x] Web applet with on-device OCR and optional Claude vision reader
 - [x] City of Melbourne / Yarra / Bayside public-holiday policies
 - [x] Photo corpus format (`test/fixtures/photos/<id>.json` + image) — 1 sign so far, please contribute via the Sign report issue template
-- [x] Single Cloudflare Worker serving the app + vision reader, backends: Unified-Billing Claude / Workers AI / own key (`worker/`)
+- [x] Single Cloudflare Worker serving the app + vision reader, backends: Unified-Billing Claude / Workers AI / own key / your own Mac (`worker/`, `local-reader/`)
+- [x] Fine amounts from Schedule 6 of the Road Safety (General) Regulations 2019 (+ council uplift), shown in red on every verdict
+- [x] Council picked from the phone's location (OpenStreetMap reverse geocoding)
 - [ ] More councils' permit-area conventions and local laws
 - [ ] Other states (NSW, QLD, SA… all derive from the Australian Road Rules, so the engine mostly carries over)
 

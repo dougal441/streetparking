@@ -9,7 +9,8 @@ The engine never contains a legal fact; it reads them from `rules/<jurisdiction>
 | `rules.json` | Rule records (schema: `rules/schema/rule.schema.json`) |
 | `sign-vocabulary.json` | Sign tokens → meaning (documentation + parser reference) |
 | `public-holidays.json` | Dates per year, with `substituteFor` and `tbc` flags |
-| `councils.json` | Per-council policies and conventions, each with a source |
+| `councils.json` | Per-council policies and conventions, each with a source; `names` for geolocation matching |
+| `penalties.json` | Infringement penalties (Schedule 6, Road Safety (General) Regulations 2019), penalty-unit values by financial year, council minimums |
 | `sources/` | Text extracts of the primary instrument used for verification |
 
 ## From sign to rule: the loop
