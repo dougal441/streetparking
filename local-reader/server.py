@@ -13,6 +13,10 @@ Vision OCR beside it. Borrowed from `life` on purpose:
 Speaks the same contract as the Cloudflare Worker, so the app needs no changes:
   GET  /api/read-sign                      -> {"service":"caniparkhere-reader","backend":"local-mlx",...}
   POST /api/read-sign {image,mediaType,...} -> {"sign":{...},"raw":"...","ocrText":"..."}
+  POST /api/read-sign {..., "async": true} -> 202 {"jobId":...}; then poll
+  GET  /api/read-sign/jobs/<jobId>         -> {"status":"queued|running|done|error","stage":"...","result":{...}}
+A first photo can take a minute on a MacBook Air (model load + reading); phones and proxies give up at
+~60 s, so the app always uses the async form and shows the stage while it waits.
 
 Usage:  python3 server.py [--port 8765] [--token SECRET] [--idle-minutes 10] [--fake]
         --fake answers with a canned sign and never loads the model (to test the tunnel and the app).
@@ -31,6 +35,7 @@ import sys
 import tempfile
 import threading
 import time
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -219,15 +224,26 @@ class Reader:
                 self.unload()
 
     # work ------------------------------------------------------------------
-    def read(self, image_bytes: bytes, jurisdiction: str, council: str | None) -> dict:
+    def read(self, image_bytes: bytes, jurisdiction: str, council: str | None, progress=lambda stage: None) -> dict:
         if self.fake:
+            progress("reading (fake)")
+            time.sleep(0.2)
             return {**normalise_sign(FAKE_SIGN, jurisdiction, council), "raw": json.dumps(FAKE_SIGN), "ocrText": "", "backend": "local-fake", "model": "fake"}
+        progress("waiting for the model" if self.lock.locked() else "starting")
         with self.lock:
             self.last_used = time.time()
             with tempfile.TemporaryDirectory() as d:
                 path = Path(d) / "sign.jpg"
                 self._normalise(image_bytes, path)
-                ocr_text = self._ocr(path) if self.ocr_available else ""
+                if self.ocr_available:
+                    progress("reading printed text (Apple Vision)")
+                    ocr_text = self._ocr(path)
+                else:
+                    ocr_text = ""
+                if self._loaded is None:
+                    progress("loading the model (20-40 s)")
+                    self._ensure_loaded()
+                progress("reading the sign with the vision model")
                 raw = self._generate(path, ocr_text, jurisdiction, council)
             self.last_used = time.time()
         if ends_in_runaway_repeat(raw):
@@ -267,7 +283,60 @@ class Reader:
 
 # ---------------------------------------------------------------- HTTP
 
-def make_handler(reader: Reader, token: str | None):
+class Jobs:
+    """Background reads the phone polls for. One worker thread; results kept 10 minutes."""
+
+    def __init__(self, reader: Reader):
+        self.reader, self.lock, self.jobs = reader, threading.Lock(), {}
+        self.queue: list[str] = []
+        threading.Thread(target=self._loop, daemon=True).start()
+
+    def submit(self, image: bytes, jurisdiction: str, council: str | None) -> str:
+        job_id = uuid.uuid4().hex[:12]
+        with self.lock:
+            self.jobs[job_id] = {"status": "queued", "stage": "queued", "created": time.time(), "started": None, "result": None, "error": None,
+                                 "_args": (image, jurisdiction, council)}
+            self.queue.append(job_id)
+            for k, v in list(self.jobs.items()):
+                if v["status"] in ("done", "error") and time.time() - v["created"] > 600:
+                    del self.jobs[k]
+        return job_id
+
+    def get(self, job_id: str):
+        with self.lock:
+            j = self.jobs.get(job_id)
+            if not j:
+                return None
+            out = {k: v for k, v in j.items() if not k.startswith("_")}
+            out["elapsed"] = round(time.time() - (j["started"] or j["created"]), 1)
+            out["queued_ahead"] = self.queue.index(job_id) if job_id in self.queue else 0
+            return out
+
+    def _loop(self):
+        while True:
+            with self.lock:
+                job_id = self.queue.pop(0) if self.queue else None
+            if not job_id:
+                time.sleep(0.2)
+                continue
+            j = self.jobs[job_id]
+            j["status"], j["started"] = "running", time.time()
+            image, jurisdiction, council = j.pop("_args")
+
+            def progress(stage, j=j):
+                j["stage"] = stage
+
+            try:
+                t = time.time()
+                res = self.reader.read(image, jurisdiction, council, progress)
+                res["seconds"] = round(time.time() - t, 1)
+                j["result"], j["status"], j["stage"] = res, "done", "done"
+            except Exception as e:
+                print("read-sign job failed:", repr(e), file=sys.stderr)
+                j["error"], j["status"], j["stage"] = str(e), "error", "error"
+
+
+def make_handler(reader: Reader, token: str | None, jobs: Jobs):
     class Handler(BaseHTTPRequestHandler):
         server_version = "caniparkhere-local-reader/1"
 
@@ -279,13 +348,16 @@ def make_handler(reader: Reader, token: str | None):
 
         def _json(self, data, status=200):
             body = json.dumps(data).encode()
-            self.send_response(status)
-            self._cors()
-            self.send_header("content-type", "application/json")
-            self.send_header("cache-control", "no-store")
-            self.send_header("content-length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            try:
+                self.send_response(status)
+                self._cors()
+                self.send_header("content-type", "application/json")
+                self.send_header("cache-control", "no-store")
+                self.send_header("content-length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError):
+                print("client went away before the reply", file=sys.stderr)
 
         def _authorised(self) -> bool:
             if not token:
@@ -293,17 +365,30 @@ def make_handler(reader: Reader, token: str | None):
             q = re.search(r"[?&]token=([^&]+)", self.path)
             return self.headers.get("x-reader-token") == token or (q is not None and q.group(1) == token)
 
+        def _path(self) -> str:
+            return re.sub(r"^/streetparking", "", self.path.split("?")[0])
+
         def _route(self) -> bool:
-            return re.sub(r"^/streetparking", "", self.path.split("?")[0]) == "/api/read-sign"
+            return self._path() == "/api/read-sign"
+
+        def _job_id(self):
+            m = re.fullmatch(r"/api/read-sign/jobs/([0-9a-f]{12})", self._path())
+            return m.group(1) if m else None
 
         def do_OPTIONS(self):
             self.send_response(204); self._cors(); self.end_headers()
 
         def do_GET(self):
+            job_id = self._job_id()
+            if job_id:
+                if not self._authorised():
+                    return self._json({"error": "unauthorised: send x-reader-token"}, 401)
+                j = jobs.get(job_id)
+                return self._json(j, 200) if j else self._json({"error": "no such job (it may have expired)"}, 404)
             if not self._route():
                 return self._json({"error": "not found"}, 404)
             self._json({"service": "caniparkhere-reader", "backend": "local-fake" if reader.fake else "local-mlx", "model": reader.model_id,
-                        "modelLoaded": reader._loaded is not None, "ocr": reader.ocr_available, "auth": bool(token)})
+                        "modelLoaded": reader._loaded is not None, "ocr": reader.ocr_available, "auth": bool(token), "async": True})
 
         def do_POST(self):
             if not self._route():
@@ -321,8 +406,12 @@ def make_handler(reader: Reader, token: str | None):
                 return self._json({"error": "image (base64) required"}, 400)
             try:
                 image = base64.b64decode(body["image"].split(",")[-1])
+                jurisdiction, council = body.get("jurisdiction") or "au-vic", body.get("council")
+                if body.get("async"):
+                    job_id = jobs.submit(image, jurisdiction, council)
+                    return self._json({"jobId": job_id, "status": "queued", "poll": f"/api/read-sign/jobs/{job_id}"}, 202)
                 t = time.time()
-                out = reader.read(image, body.get("jurisdiction") or "au-vic", body.get("council"))
+                out = reader.read(image, jurisdiction, council)
                 out["seconds"] = round(time.time() - t, 1)
                 self._json(out)
             except Exception as e:  # report plainly; this is a single-user tool
@@ -348,7 +437,7 @@ def main():
     reader = Reader(a.model, a.idle_minutes, a.fake)
     if a.preload and not a.fake:
         reader._ensure_loaded()
-    srv = ThreadingHTTPServer((a.host, a.port), make_handler(reader, a.token))
+    srv = ThreadingHTTPServer((a.host, a.port), make_handler(reader, a.token, Jobs(reader)))
     print(f"CanIparkhere local reader on http://{a.host}:{a.port}/api/read-sign  model={a.model if not a.fake else 'FAKE'}  auth={'on' if a.token else 'off'}", file=sys.stderr)
     try:
         srv.serve_forever()

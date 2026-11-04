@@ -55,3 +55,29 @@ class LifeLock(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AsyncJobs(unittest.TestCase):
+    def test_submit_poll_done(self):
+        import http.client, threading, base64
+        from http.server import ThreadingHTTPServer
+        reader = server.Reader("fake", 10, fake=True)
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), server.make_handler(reader, "tok", server.Jobs(reader)))
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        port = srv.server_address[1]
+        try:
+            c = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+            c.request("POST", "/streetparking/api/read-sign?token=tok", body=json.dumps({"image": base64.b64encode(b"x").decode(), "async": True, "council": "melbourne"}), headers={"content-type": "application/json"})
+            r = c.getresponse(); body = json.loads(r.read())
+            self.assertEqual(r.status, 202); self.assertIn("jobId", body)
+            c.request("GET", f"/api/read-sign/jobs/{body['jobId']}")  # no token → 401
+            self.assertEqual(c.getresponse().status, 401)
+            for _ in range(50):
+                c.request("GET", f"/api/read-sign/jobs/{body['jobId']}?token=tok"); r = c.getresponse(); j = json.loads(r.read())
+                if j["status"] == "done": break
+                import time as _t; _t.sleep(0.1)
+            self.assertEqual(j["status"], "done"); self.assertEqual(j["result"]["sign"]["council"], "melbourne"); self.assertEqual(j["stage"], "done")
+            c.request("GET", "/api/read-sign/jobs/000000000000?token=tok"); self.assertEqual(c.getresponse().status, 404)
+            c.request("GET", "/streetparking/api/read-sign"); j = json.loads(c.getresponse().read()); self.assertTrue(j["async"])
+        finally:
+            srv.shutdown()
