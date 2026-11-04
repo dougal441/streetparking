@@ -10,7 +10,8 @@ const KINDS = ['time_limited', 'unrestricted', 'no_stopping', 'no_parking', 'cle
 
 const packs = (await readdir('rules', { withFileTypes: true })).filter(d => d.isDirectory() && d.name !== 'schema').map(d => d.name);
 for (const id of packs) {
-  const pack = JSON.parse(await readFile(path.join('rules', id, 'rules.json'), 'utf8'));
+  let pack;
+  try { pack = JSON.parse(await readFile(path.join('rules', id, 'rules.json'), 'utf8')); } catch (e) { if (e.code === 'ENOENT') continue; throw e; }
   if (pack.id !== id) err(`${id}: pack id mismatch`);
   if (!isUrl(pack.instrument?.url)) err(`${id}: instrument url`);
   const ids = new Set();
@@ -40,6 +41,17 @@ for (const id of packs) {
   } catch (e) { if (e.code !== 'ENOENT') err(`${id} holidays: ${e.message}`); }
   console.log(`${id}: ${pack.rules.length} rules, ${pack.rules.filter(r => r.verification.status === 'verified_primary').length} verified_primary, ${pack.rules.filter(r => r.verification.status === 'needs_primary_check').length} need primary check`);
 }
+
+// National council list + jurisdiction index
+const lgas = JSON.parse(await readFile('rules/au/lgas.json', 'utf8'));
+const jur = JSON.parse(await readFile('rules/au/jurisdictions.json', 'utf8'));
+const ids = new Set();
+for (const l of lgas.lgas) {
+  if (ids.has(l.id)) err(`lgas: duplicate id ${l.id}`); ids.add(l.id);
+  if (!jur.jurisdictions[l.jurisdiction]) err(`lgas: ${l.name} → unknown jurisdiction ${l.jurisdiction}`);
+}
+for (const [id, j] of Object.entries(jur.jurisdictions)) { if (!packs.includes(id)) err(`jurisdictions: ${id} has no rules/${id}/`); if (!j.timezone) err(`jurisdictions: ${id} timezone`); }
+console.log(`${lgas.lgas.length} councils across ${Object.keys(jur.jurisdictions).length} jurisdictions`);
 
 const fixtures = JSON.parse(await readFile('test/fixtures/signs.json', 'utf8'));
 for (const f of fixtures) {

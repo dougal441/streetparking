@@ -1,0 +1,54 @@
+{
+  "description": "Which rules pack applies to each state/territory. The app picks one from the phone location (OpenStreetMap \"state\"), default au-vic.",
+  "default": "au-vic",
+  "jurisdictions": {
+    "au-vic": {
+      "name": "Victoria",
+      "state": "Victoria",
+      "timezone": "Australia/Melbourne",
+      "status": "verified_primary"
+    },
+    "au-nsw": {
+      "name": "New South Wales",
+      "state": "New South Wales",
+      "timezone": "Australia/Sydney",
+      "status": "needs_primary_check"
+    },
+    "au-qld": {
+      "name": "Queensland",
+      "state": "Queensland",
+      "timezone": "Australia/Brisbane",
+      "status": "needs_primary_check"
+    },
+    "au-sa": {
+      "name": "South Australia",
+      "state": "South Australia",
+      "timezone": "Australia/Adelaide",
+      "status": "needs_primary_check"
+    },
+    "au-wa": {
+      "name": "Western Australia",
+      "state": "Western Australia",
+      "timezone": "Australia/Perth",
+      "status": "needs_primary_check"
+    },
+    "au-tas": {
+      "name": "Tasmania",
+      "state": "Tasmania",
+      "timezone": "Australia/Hobart",
+      "status": "needs_primary_check"
+    },
+    "au-nt": {
+      "name": "Northern Territory",
+      "state": "Northern Territory",
+      "timezone": "Australia/Darwin",
+      "status": "needs_primary_check"
+    },
+    "au-act": {
+      "name": "Australian Capital Territory",
+      "state": "Australian Capital Territory",
+      "timezone": "Australia/Canberra",
+      "status": "needs_primary_check"
+    }
+  }
+}

@@ -81,3 +81,33 @@ class AsyncJobs(unittest.TestCase):
             c.request("GET", "/streetparking/api/read-sign"); j = json.loads(c.getresponse().read()); self.assertTrue(j["async"])
         finally:
             srv.shutdown()
+
+
+class ColumnFixes(unittest.TestCase):
+    LINES = [
+        {"text": "WORKS", "conf": 0.9, "x0": 0.58, "x1": 0.72, "xc": 0.65, "y": 0.8},
+        {"text": "ZONE", "conf": 0.9, "x0": 0.59, "x1": 0.70, "xc": 0.645, "y": 0.75},
+        {"text": "7 AM - 4 PM", "conf": 0.8, "x0": 0.56, "x1": 0.74, "xc": 0.65, "y": 0.6},
+        {"text": "MON - FRI", "conf": 0.8, "x0": 0.57, "x1": 0.73, "xc": 0.65, "y": 0.55},
+        {"text": "SAT", "conf": 0.8, "x0": 0.62, "x1": 0.68, "xc": 0.65, "y": 0.45},
+        {"text": "S", "conf": 0.4, "x0": 0.33, "x1": 0.38, "xc": 0.355, "y": 0.8},
+    ]
+
+    def test_two_columns_detected_and_sides_fixed(self):
+        cols = server.split_columns(self.LINES)
+        self.assertTrue(cols["split"])
+        panels = [{"kind": "no_stopping", "side": "both", "rawText": "NO STOPPING"},
+                  {"kind": "works_zone", "side": "both", "rawText": "WORKS ZONE 7AM-4PM MON-FRI 9AM-1PM SAT"}]
+        changes = server.fix_sides_from_columns(panels, self.LINES, cols)
+        self.assertEqual([p["side"] for p in panels], ["left", "right"])
+        self.assertEqual(len(changes), 2)
+        hint = server.ocr_hint(self.LINES, cols)
+        self.assertIn("[right column] WORKS", hint)
+
+    def test_single_column_leaves_sides_alone(self):
+        lines = [dict(l, x0=0.4, x1=0.6, xc=0.5) for l in self.LINES]
+        cols = server.split_columns(lines)
+        self.assertFalse(cols["split"])
+        panels = [{"kind": "no_stopping", "side": "both", "rawText": "NO STOPPING"}]
+        self.assertEqual(server.fix_sides_from_columns(panels, lines, cols), [])
+        self.assertEqual(panels[0]["side"], "both")

@@ -96,7 +96,9 @@ How the library is built, phase by phase, and how to add a council or another st
 - [x] Fine amounts from Schedule 6 of the Road Safety (General) Regulations 2019 (+ council uplift), shown in red on every verdict
 - [x] Council picked from the phone's location (OpenStreetMap reverse geocoding)
 - [ ] More councils' permit-area conventions and local laws
-- [ ] Other states (NSW, QLD, SA… all derive from the Australian Road Rules, so the engine mostly carries over)
+- [x] All 540 Australian councils + state packs for NSW/QLD/SA/WA/TAS/NT/ACT (generated from the national rules; **not yet verified** against each state's legislation — the app says so)
+- [ ] Verify each state pack and add its fine schedule (docs/ROADMAP.md Phase 5)
+- [ ] Reminders before the leave-by time (Phase 6)
 
 ## Not legal advice
 
