@@ -191,7 +191,9 @@ async function readPhoto() {
     if (mode === 'claude') {
       $('status-line').textContent = 'Reading the sign…';
       const small = await downscaleImage(currentFile);
-      const { sign } = await readWithClaude(small, { ...cfg, council: $('council').value || null });
+      const t0 = Date.now();
+      const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
+      if (meta?.seconds) $('reader-mode').textContent = `vision reader on (${meta.backend ?? ''}) · last read ${meta.seconds}s`;
       sideOverrides = {};
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
       runInterpret({ ...sign, rawText: $('sign-text').value });

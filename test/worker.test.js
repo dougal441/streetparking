@@ -74,3 +74,20 @@ test('local backend forwards to the Mac reader with the token and normalises its
     assert.equal(r3.status, 503); assert.match((await r3.json()).error, /LOCAL_READER_URL/);
   } finally { globalThis.fetch = realFetch; }
 });
+
+test('local backend polls a slow Mac reader until the job is done', async () => {
+  const realFetch = globalThis.fetch; let n = 0;
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u.endsWith('/api/read-sign')) return new Response(JSON.stringify({ jobId: 'abcdefabcdef', status: 'queued' }), { status: 202 });
+    n++;
+    if (n < 3) return new Response(JSON.stringify({ status: 'running', stage: 'loading the model' }), { status: 200 });
+    return new Response(JSON.stringify({ status: 'done', result: { sign: { panels: [{ kind: 'clearway', side: 'both', windows: [] }] }, model: 'qwen' } }), { status: 200 });
+  };
+  try {
+    const env3 = { ...env, READER_BACKEND: 'local', LOCAL_READER_URL: 'https://mac.ts.net' };
+    const r = await worker.fetch(new Request('https://x/api/read-sign', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ image: 'A' }) }), env3);
+    const j = await r.json();
+    assert.equal(r.status, 200, JSON.stringify(j)); assert.equal(j.sign.panels[0].kind, 'clearway'); assert.ok(n >= 3);
+  } finally { globalThis.fetch = realFetch; }
+});

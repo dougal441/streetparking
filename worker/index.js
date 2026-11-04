@@ -57,9 +57,23 @@ async function runReader(env, args) {
     const target = new URL('/api/read-sign', env.LOCAL_READER_URL);
     const headers = { 'content-type': 'application/json' };
     if (env.LOCAL_READER_TOKEN) headers['x-reader-token'] = env.LOCAL_READER_TOKEN;
-    const r = await fetch(target, { method: 'POST', headers, body: JSON.stringify({ image: args.imageBase64, mediaType: args.mediaType, jurisdiction: args.jurisdiction, council: args.council }) });
-    const body = await r.json().catch(() => ({}));
+    const r = await fetch(target, { method: 'POST', headers, body: JSON.stringify({ image: args.imageBase64, mediaType: args.mediaType, jurisdiction: args.jurisdiction, council: args.council, async: true }) });
+    let body = await r.json().catch(() => ({}));
     if (!r.ok) throw Object.assign(new Error(body.error || `local reader error (${r.status})`), { status: r.status, local: true });
+    if (r.status === 202 && body.jobId) {
+      const poll = new URL(`/api/read-sign/jobs/${body.jobId}`, env.LOCAL_READER_URL);
+      const deadline = Date.now() + 4 * 60 * 1000;
+      body = null;
+      while (Date.now() < deadline) {
+        await new Promise(res => setTimeout(res, 1500));
+        const p = await fetch(poll, { headers });
+        const j = await p.json().catch(() => ({}));
+        if (!p.ok) throw Object.assign(new Error(j.error || `local reader lost the job (${p.status})`), { local: true });
+        if (j.status === 'done') { body = j.result; break; }
+        if (j.status === 'error') throw Object.assign(new Error(j.error || 'local reader failed'), { local: true });
+      }
+      if (!body) throw Object.assign(new Error('local reader took too long'), { local: true });
+    }
     if (!body.sign) return { sign: null, error: body.error || 'local reader returned no sign', backend: 'local' };
     return { sign: normaliseSign(body.sign, args).sign, backend: 'local', model: body.model, ocrText: body.ocrText, seconds: body.seconds };
   }

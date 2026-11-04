@@ -37,8 +37,13 @@ cat > "$PLIST" <<PL
   <key>StandardErrorPath</key><string>$HERE/logs/reader.stderr.log</string>
 </dict></plist>
 PL
-launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
-launchctl bootstrap "gui/$(id -u)" "$PLIST"
+# Re-runs: stop the old service and wait until launchd has really let go of it before loading again
+# (loading too soon gives "Bootstrap failed: 5: Input/output error").
+if launchctl print "gui/$(id -u)/$LABEL" >/dev/null 2>&1; then
+  launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+  for _ in $(seq 1 30); do launchctl print "gui/$(id -u)/$LABEL" >/dev/null 2>&1 || break; sleep 0.5; done
+fi
+launchctl bootstrap "gui/$(id -u)" "$PLIST" || { sleep 2; launchctl bootstrap "gui/$(id -u)" "$PLIST"; }
 sleep 2
 curl -sf "http://127.0.0.1:$PORT/api/read-sign" >/dev/null && echo "reader running on port $PORT" || { echo "reader did not start; see logs/reader.stderr.log" >&2; exit 1; }
 
