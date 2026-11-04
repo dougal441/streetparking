@@ -4,48 +4,53 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CanIparkhere — read Melbourne parking signs</title>
-  <meta name="description" content="Snap a photo of a Melbourne street parking sign and find out if, and for how long, you can park there right now.">
+  <meta name="description" content="Snap a photo of a Melbourne street parking sign and find out if, and for how long, you can park there right now — and what the fine is if you get it wrong.">
   <link rel="stylesheet" href="./style.css">
   <script>
-    // Optional: point at a deployed vision reader (see docs/DEPLOY.md). Leave null for on-device OCR only.
-    window.CANIPARKHERE = { readerUrl: null, council: 'melbourne', jurisdiction: 'au-vic' };
+    // Optional: point at a deployed vision reader (see docs/DEPLOY.md). null = auto-detect ../api/read-sign, else on-device OCR.
+    window.CANIPARKHERE = { readerUrl: null, council: 'melbourne', jurisdiction: 'au-vic', geolocate: true };
   </script>
 </head>
 <body>
   <main class="app">
     <header class="hdr">
       <h1>Can<span>I</span>park<span>here</span>?</h1>
-      <p class="tag">Melbourne street parking signs, decoded. Photograph the sign, get a straight answer.</p>
+      <p class="tag" id="status-line">Photograph the sign. Get a straight answer.</p>
     </header>
 
     <section class="card" id="step-photo">
-      <h2>1. The sign</h2>
-      <div class="row">
-        <label class="btn primary file">
-          📷 Take / choose photo
-          <input type="file" id="photo" accept="image/*" capture="environment" hidden>
-        </label>
-        <button class="btn" id="btn-read" disabled>Read sign</button>
-        <span class="muted" id="reader-mode"></span>
-      </div>
-      <img id="preview" alt="" hidden>
+      <label class="btn primary big file" id="photo-btn">
+        📷 Take photo &amp; read sign
+        <input type="file" id="photo" accept="image/*" capture="environment" hidden>
+      </label>
       <progress id="ocr-progress" max="1" value="0" hidden></progress>
-      <p class="muted small">Or type what the sign says, one panel per line. Use <code>&lt;-</code> / <code>-&gt;</code> for arrows, or <code>LEFT:</code> / <code>RIGHT:</code> lines for split signs.</p>
-      <textarea id="sign-text" rows="6" spellcheck="false" placeholder="CLEARWAY 7-9AM MON-FRI
+      <p class="muted small" id="reader-mode"></p>
+      <img id="preview" alt="" hidden>
+    </section>
+
+    <section id="results" hidden></section>
+
+    <details class="card" id="working">
+      <summary>Show my working</summary>
+      <h3>Sign text</h3>
+      <p class="muted small">One panel per line. <code>&lt;-</code> / <code>-&gt;</code> for arrows, or <code>LEFT:</code> / <code>RIGHT:</code> lines for split signs. Edit and re-run if the reader got it wrong.</p>
+      <textarea id="sign-text" rows="5" spellcheck="false" placeholder="CLEARWAY 7-9AM MON-FRI
 2P TICKET 9AM-6.30PM MON-FRI ->
 AREA 7 RESIDENT PERMIT EXCEPTED"></textarea>
       <div class="row">
         <button class="btn primary" id="btn-interpret">Can I park here?</button>
         <button class="btn" id="btn-example">Load example</button>
       </div>
-    </section>
 
-    <section class="card" id="step-options">
-      <h2>2. You and the time</h2>
+      <h3>What I read</h3>
+      <p class="muted small">Tap ← ↔ → to fix which side of the post a panel points to.</p>
+      <div id="panel-list"><p class="muted small">Nothing yet.</p></div>
+
+      <h3>You and the time</h3>
       <div class="grid">
         <label>When <input type="datetime-local" id="when"></label>
         <label>Council
-          <select id="council"><option value="melbourne">City of Melbourne</option><option value="yarra">Yarra</option><option value="bayside">Bayside</option><option value="">Other / unsure</option></select>
+          <select id="council"></select>
         </label>
         <label>Vehicle
           <select id="vehicle">
@@ -57,25 +62,17 @@ AREA 7 RESIDENT PERMIT EXCEPTED"></textarea>
         <label>Resident permit area <input type="text" id="permit-area" placeholder="e.g. 7 or 1A" size="6"></label>
       </div>
       <p class="muted small" id="now-note"></p>
-    </section>
+      <div class="row"><button class="btn" id="btn-locate">📍 Use my location for council</button><span class="muted small" id="locate-note"></span></div>
 
-    <section id="panels" class="card" hidden>
-      <h2>What I read</h2>
-      <p class="muted small">Check each panel. Fix the side if an arrow was missed.</p>
-      <div id="panel-list"></div>
-    </section>
+      <h3>Rules applied</h3>
+      <div id="rules-applied" class="rules"></div>
 
-    <section id="results" hidden></section>
-
-    <section class="card" id="also">
-      <details>
-        <summary>Rules that always apply (no sign needed)</summary>
-        <ul id="general-rules"></ul>
-      </details>
-    </section>
+      <h3>Rules that always apply (no sign needed)</h3>
+      <ul id="general-rules" class="rules"></ul>
+    </details>
 
     <footer class="ftr">
-      <p><strong>Not legal advice.</strong> This tool reads signs and applies the <a id="instrument-link" href="https://www.legislation.vic.gov.au/in-force/statutory-rules/road-safety-road-rules-2017" target="_blank" rel="noopener">Road Safety Road Rules 2017 (Vic)</a>. Signs, councils and OCR all make mistakes. If the sign and this page disagree, the sign wins.</p>
+      <p><strong>Not legal advice.</strong> This tool reads signs and applies the <a id="instrument-link" href="https://www.legislation.vic.gov.au/in-force/statutory-rules/road-safety-road-rules-2017" target="_blank" rel="noopener">Road Safety Road Rules 2017 (Vic)</a>; fine amounts from Schedule 6 of the <a href="https://www.legislation.vic.gov.au/in-force/statutory-rules/road-safety-general-regulations-2019" target="_blank" rel="noopener">Road Safety (General) Regulations 2019</a>. Signs, councils and readers all make mistakes. If the sign and this page disagree, the sign wins.</p>
       <p><a id="report-link" href="https://github.com/dougal441/streetparking/issues/new?template=sign-report.yml" target="_blank" rel="noopener">Report a sign it got wrong</a> · <a href="https://github.com/dougal441/streetparking" target="_blank" rel="noopener">Source (PolyForm Noncommercial)</a></p>
     </footer>
   </main>

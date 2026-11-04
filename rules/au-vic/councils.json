@@ -16,7 +16,12 @@
         "clearways": "Arterial roads carry CLEARWAY with peak-hour windows; vehicles are towed.",
         "disabilityPermits": "Accessible Parking Permit holders get double the signed time in green-signed bays."
       },
-      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+      "verification": {
+        "status": "verified_secondary",
+        "checkedOn": "2025-11-01"
+      },
+      "fineMinimumUnits": 0.5,
+      "finesUrl": "https://www.melbourne.vic.gov.au/parking-fines"
     },
     "yarra": {
       "name": "City of Yarra",
@@ -26,16 +31,67 @@
         "note": "Yarra: holiday rules apply on the public holiday only, not a day in lieu.",
         "source": "https://www.yarracity.vic.gov.au/news/2020/03/06/parking-in-yarra-on-public-holidays"
       },
-      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+      "verification": {
+        "status": "verified_secondary",
+        "checkedOn": "2025-11-01"
+      }
     },
     "bayside": {
       "name": "Bayside City Council",
       "parkingRulesUrl": "https://www.bayside.vic.gov.au/services/parking-and-roads/public-holiday-parking",
-      "publicHolidayPolicy": { "dayInLieu": "both", "source": "https://www.bayside.vic.gov.au/services/parking-and-roads/public-holiday-parking" },
-      "verification": { "status": "verified_secondary", "checkedOn": "2025-11-01" }
+      "publicHolidayPolicy": {
+        "dayInLieu": "both",
+        "source": "https://www.bayside.vic.gov.au/services/parking-and-roads/public-holiday-parking"
+      },
+      "verification": {
+        "status": "verified_secondary",
+        "checkedOn": "2025-11-01"
+      }
     }
   },
   "default": {
-    "publicHolidayPolicy": { "dayInLieu": "unknown", "note": "Unknown council: engine treats both the holiday and any substitute day as a holiday but lowers confidence." }
+    "publicHolidayPolicy": {
+      "dayInLieu": "unknown",
+      "note": "Unknown council: engine treats both the holiday and any substitute day as a holiday but lowers confidence."
+    }
+  },
+  "names": {
+    "melbourne": "City of Melbourne",
+    "yarra": "City of Yarra",
+    "port-phillip": "City of Port Phillip",
+    "stonnington": "City of Stonnington",
+    "merri-bek": "Merri-bek City Council",
+    "darebin": "City of Darebin",
+    "boroondara": "City of Boroondara",
+    "maribyrnong": "City of Maribyrnong",
+    "moonee-valley": "City of Moonee Valley",
+    "hobsons-bay": "Hobsons Bay City Council",
+    "glen-eira": "Glen Eira City Council",
+    "monash": "City of Monash",
+    "kingston": "City of Kingston",
+    "bayside": "Bayside City Council",
+    "whitehorse": "City of Whitehorse",
+    "banyule": "Banyule City Council",
+    "manningham": "Manningham City Council",
+    "knox": "Knox City Council",
+    "brimbank": "Brimbank City Council",
+    "wyndham": "Wyndham City Council",
+    "melton": "City of Melton",
+    "hume": "Hume City Council",
+    "whittlesea": "City of Whittlesea",
+    "frankston": "Frankston City Council",
+    "casey": "City of Casey",
+    "greater-dandenong": "City of Greater Dandenong",
+    "mornington-peninsula": "Mornington Peninsula Shire",
+    "nillumbik": "Nillumbik Shire",
+    "yarra-ranges": "Yarra Ranges Council",
+    "maroondah": "Maroondah City Council",
+    "cardinia": "Cardinia Shire",
+    "greater-geelong": "City of Greater Geelong",
+    "ballarat": "City of Ballarat",
+    "greater-bendigo": "City of Greater Bendigo"
+  },
+  "geolocation": {
+    "note": "web/app.js reverse-geocodes the phone position with OpenStreetMap Nominatim and matches the returned municipality against these names (case-insensitive, ignoring \"City of\"/\"Shire\"/\"Council\"). Unknown council → \"Other / unsure\"."
   }
 }

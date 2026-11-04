@@ -1,0 +1,49 @@
+{
+  "jurisdiction": "au-vic",
+  "description": "Infringement (on-the-spot fine) amounts for parking offences. Amount = penaltyUnits × the Victorian penalty unit value for the financial year. Schedule 6 of the Road Safety (General) Regulations 2019 sets the base; councils may fix a higher amount for the cheaper items (reg 66 note; Road Safety Act 1986 s 87(4)) — City of Melbourne charges 0.5 units for the 0.2-unit items.",
+  "sources": [
+    { "url": "https://www.legislation.vic.gov.au/in-force/statutory-rules/road-safety-general-regulations-2019/026", "kind": "legislation", "note": "Road Safety (General) Regulations 2019, S.R. No. 88/2019, Version 026 as at 1 Nov 2026, reg 66 + Schedule 6 (Sch. 6 last amended by S.R. No. 181/2026)" },
+    { "url": "https://www.justice.vic.gov.au/justice-system/fines-and-penalties/penalties-and-values", "kind": "government", "note": "Penalty unit values" },
+    { "url": "https://www.gazette.vic.gov.au/gazette/Gazettes2026/GG2026S234.pdf", "kind": "government", "note": "Gazette S 234, 5 May 2026: penalty unit $209.10 from 1 July 2026" },
+    { "url": "https://www.melbourne.vic.gov.au/parking-fines", "kind": "council", "note": "'Parking fines range from $104 to $209 for the 2026-27 financial year'" }
+  ],
+  "verification": { "status": "verified_primary", "checkedOn": "2026-11-04", "checkedBy": "authorised PDF v026 (Schedule 6 rows) + Gazette/Justice for unit values", "notes": "Court maximums in the Road Rules themselves (e.g. 3 penalty units for no stopping) are not what a ticket costs; Schedule 6 is." },
+  "penaltyUnit": [
+    { "from": "2025-07-01", "to": "2026-06-30", "value": 203.51 },
+    { "from": "2026-07-01", "to": "2027-06-30", "value": 209.10 }
+  ],
+  "councilMinimumUnits": {
+    "description": "Councils that have fixed 0.5 units for the 0.2-unit items under s 87(4). Unknown councils fall back to the schedule amount and the app says so.",
+    "melbourne": 0.5
+  },
+  "offences": {
+    "overstay":        { "code": "0701", "provision": "RR 205(1)", "penaltyUnits": 0.2, "summary": "Parking for longer than indicated" },
+    "fee":             { "code": "0702", "provision": "RR 207(2)", "penaltyUnits": 0.2, "summary": "Parked—fail to pay fee and obey instructions on sign, meter, ticket or ticket-vending machine" },
+    "no_parking":      { "code": "0621", "provision": "RR 168(1)", "penaltyUnits": 0.2, "summary": "Stopped contrary to a no parking sign" },
+    "no_stopping":     { "code": "0793", "provision": "RR 167",    "penaltyUnits": 1.0, "summary": "Stopping contrary to a no stopping sign" },
+    "clearway":        { "code": "0800", "provision": "RR 176(1)", "penaltyUnits": 1.0, "summary": "Stopped on a clearway" },
+    "loading_zone":    { "code": "0720", "provision": "RR 179(1)", "penaltyUnits": 1.0, "summary": "Stopped in a loading zone" },
+    "loading_overstay":{ "code": "0721", "provision": "RR 179(2)(a)", "penaltyUnits": 1.0, "summary": "Stopped in a loading zone longer than 30 minutes" },
+    "truck_zone":      { "code": "0723", "provision": "RR 180(1)", "penaltyUnits": 0.6, "summary": "Stopped in a truck zone" },
+    "mail_zone":       { "code": "0724", "provision": "RR 186(1)", "penaltyUnits": 0.6, "summary": "Stopped in a mail zone" },
+    "works_zone":      { "code": "0725", "provision": "RR 181(1)", "penaltyUnits": 0.6, "summary": "Stopped in a works zone" },
+    "taxi_zone":       { "code": "0726", "provision": "RR 182(1)", "penaltyUnits": 0.6, "summary": "Stopped in a taxi zone" },
+    "bus_zone":        { "code": "0727", "provision": "RR 183(1)", "penaltyUnits": 0.6, "summary": "Stopped in a bus zone" },
+    "permit_zone":     { "code": "0728", "provision": "RR 185(1)", "penaltyUnits": 0.6, "summary": "Stopped in a permit zone" },
+    "disabled":        { "code": "0803", "provision": "RR 203(1)", "penaltyUnits": 1.0, "summary": "Stopped in an accessible parking area without a current accessible parking permit" },
+    "motorbike":       { "code": "0705", "provision": "RR 202",    "penaltyUnits": 0.2, "summary": "Stopped on a motor bike parking area" },
+    "bicycle":         { "code": "0704", "provision": "RR 201",    "penaltyUnits": 0.2, "summary": "Stopped on a bicycle parking area" },
+    "ev_charging":     { "code": "0950", "provision": "RR 203C(1)", "penaltyUnits": 0.6, "summary": "Stopped in a parking area for the charging of electric-powered vehicles" },
+    "minibus_zone":    { "code": "0727", "provision": "RR 183(1)", "penaltyUnits": 0.6, "summary": "Stopped in a bus zone (minibus zones are not listed separately; bus zone rate shown)" },
+    "intersection_lights": { "code": "0742", "provision": "RR 170(2)", "penaltyUnits": 0.6, "summary": "Stopped within 20 metres of intersection with traffic lights" },
+    "intersection":    { "code": "0804", "provision": "RR 170(3)", "penaltyUnits": 1.0, "summary": "Stopped within 10 metres of intersection" },
+    "driveway":        { "code": "0626", "provision": "RR 198(2)", "penaltyUnits": 0.6, "summary": "Stopped on or across a driveway or other way of access" },
+    "bus_stop":        { "code": "0734", "provision": "RR 195(1)", "penaltyUnits": 0.6, "summary": "Stopped within 20 metres before a sign indicating a bus stop" },
+    "pedestrian_crossing": { "code": "0798", "provision": "RR 172(1)", "penaltyUnits": 1.0, "summary": "Stopped within 20 metres before pedestrian crossing" },
+    "yellow_edge_line":{ "code": "0758", "provision": "RR 169",    "penaltyUnits": 0.6, "summary": "Stopped next to a yellow edge line" },
+    "double_parking":  { "code": "0729", "provision": "RR 189(1)", "penaltyUnits": 0.6, "summary": "Stopped—double park" },
+    "fire_hydrant":    { "code": "0730", "provision": "RR 194(1)", "penaltyUnits": 0.6, "summary": "Stopped within 1 metre of fire hydrant" },
+    "tram_stop":       { "code": "0624", "provision": "RR 196(1)", "penaltyUnits": 1.0, "summary": "Stopped within 20 metres before a tram stop sign" },
+    "footpath":        { "code": "0737", "provision": "RR 197(1)", "penaltyUnits": 0.6, "summary": "Stopped on a footpath" }
+  }
+}

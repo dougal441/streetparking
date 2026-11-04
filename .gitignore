@@ -10,3 +10,5 @@ worker/public/
 __pycache__/
 *.pyc
 local-reader/.venv/
+local-reader/state/
+local-reader/logs/
