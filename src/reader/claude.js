@@ -47,7 +47,7 @@ export async function readWithClaude(image, config, onProgress) {
     if (!body.sign && !body.error) throw new Error('Reader took too long (5 min). Is the Mac busy?');
   }
   if (!body.sign) throw new Error(body.error ?? 'Reader returned no sign');
-  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText } };
+  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes } };
 }
 
 function blobToDataUrl(blob) {

@@ -1,0 +1,11 @@
+{
+  "jurisdiction": "au-qld",
+  "councils": {},
+  "default": {
+    "publicHolidayPolicy": {
+      "dayInLieu": "unknown",
+      "note": "No council policies recorded for this state yet."
+    }
+  },
+  "names": {}
+}

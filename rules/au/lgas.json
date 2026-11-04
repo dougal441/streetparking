@@ -1,0 +1,3251 @@
+{
+ "source": {
+  "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files",
+  "file": "LGA_2025_AUST.xlsx",
+  "note": "ABS Local Government Areas 2025 (ASGS Edition 3). Names are the ABS short names (e.g. \"Melbourne\", \"Merri-bek\", \"Port Phillip\"); the app matches them loosely against what OpenStreetMap reports for a location."
+ },
+ "checkedOn": "2026-11-04",
+ "count": 540,
+ "lgas": [
+  {
+   "id": "albury",
+   "name": "Albury",
+   "abs": "10050",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "armidale",
+   "name": "Armidale",
+   "abs": "10180",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "ballina",
+   "name": "Ballina",
+   "abs": "10250",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "balranald",
+   "name": "Balranald",
+   "abs": "10300",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bathurst",
+   "name": "Bathurst",
+   "abs": "10470",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bayside-nsw",
+   "name": "Bayside (NSW)",
+   "abs": "10500",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bega-valley",
+   "name": "Bega Valley",
+   "abs": "10550",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bellingen",
+   "name": "Bellingen",
+   "abs": "10600",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "berrigan",
+   "name": "Berrigan",
+   "abs": "10650",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "blacktown",
+   "name": "Blacktown",
+   "abs": "10750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bland",
+   "name": "Bland",
+   "abs": "10800",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "blayney",
+   "name": "Blayney",
+   "abs": "10850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "blue-mountains",
+   "name": "Blue Mountains",
+   "abs": "10900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bogan",
+   "name": "Bogan",
+   "abs": "10950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "bourke",
+   "name": "Bourke",
+   "abs": "11150",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "brewarrina",
+   "name": "Brewarrina",
+   "abs": "11200",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "broken-hill",
+   "name": "Broken Hill",
+   "abs": "11250",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "burwood",
+   "name": "Burwood",
+   "abs": "11300",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "byron",
+   "name": "Byron",
+   "abs": "11350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cabonne",
+   "name": "Cabonne",
+   "abs": "11400",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "camden",
+   "name": "Camden",
+   "abs": "11450",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "campbelltown-nsw",
+   "name": "Campbelltown (NSW)",
+   "abs": "11500",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "canada-bay",
+   "name": "Canada Bay",
+   "abs": "11520",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "canterbury-bankstown",
+   "name": "Canterbury-Bankstown",
+   "abs": "11570",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "carrathool",
+   "name": "Carrathool",
+   "abs": "11600",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "central-coast-nsw",
+   "name": "Central Coast (NSW)",
+   "abs": "11650",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "central-darling",
+   "name": "Central Darling",
+   "abs": "11700",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cessnock",
+   "name": "Cessnock",
+   "abs": "11720",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "clarence-valley",
+   "name": "Clarence Valley",
+   "abs": "11730",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cobar",
+   "name": "Cobar",
+   "abs": "11750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "coffs-harbour",
+   "name": "Coffs Harbour",
+   "abs": "11800",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "coolamon",
+   "name": "Coolamon",
+   "abs": "12000",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "coonamble",
+   "name": "Coonamble",
+   "abs": "12150",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cootamundra-gundagai",
+   "name": "Cootamundra-Gundagai",
+   "abs": "12160",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cowra",
+   "name": "Cowra",
+   "abs": "12350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "cumberland",
+   "name": "Cumberland",
+   "abs": "12380",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "dubbo",
+   "name": "Dubbo",
+   "abs": "12390",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "dungog",
+   "name": "Dungog",
+   "abs": "12700",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "edward-river",
+   "name": "Edward River",
+   "abs": "12730",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "eurobodalla",
+   "name": "Eurobodalla",
+   "abs": "12750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "fairfield",
+   "name": "Fairfield",
+   "abs": "12850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "federation",
+   "name": "Federation",
+   "abs": "12870",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "forbes",
+   "name": "Forbes",
+   "abs": "12900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "georges-river",
+   "name": "Georges River",
+   "abs": "12930",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "gilgandra",
+   "name": "Gilgandra",
+   "abs": "12950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "glen-innes-severn",
+   "name": "Glen Innes Severn",
+   "abs": "13010",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "goulburn-mulwaree",
+   "name": "Goulburn Mulwaree",
+   "abs": "13310",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "greater-hume",
+   "name": "Greater Hume",
+   "abs": "13340",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "griffith",
+   "name": "Griffith",
+   "abs": "13450",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "gunnedah",
+   "name": "Gunnedah",
+   "abs": "13550",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "gwydir",
+   "name": "Gwydir",
+   "abs": "13660",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "hawkesbury",
+   "name": "Hawkesbury",
+   "abs": "13800",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "hay",
+   "name": "Hay",
+   "abs": "13850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "hilltops",
+   "name": "Hilltops",
+   "abs": "13910",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "hornsby",
+   "name": "Hornsby",
+   "abs": "14000",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "hunters-hill",
+   "name": "Hunters Hill",
+   "abs": "14100",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "inner-west",
+   "name": "Inner West",
+   "abs": "14170",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "inverell",
+   "name": "Inverell",
+   "abs": "14220",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "junee",
+   "name": "Junee",
+   "abs": "14300",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "kempsey",
+   "name": "Kempsey",
+   "abs": "14350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "kiama",
+   "name": "Kiama",
+   "abs": "14400",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "ku-ring-gai",
+   "name": "Ku-ring-gai",
+   "abs": "14500",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "kyogle",
+   "name": "Kyogle",
+   "abs": "14550",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lachlan",
+   "name": "Lachlan",
+   "abs": "14600",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lake-macquarie",
+   "name": "Lake Macquarie",
+   "abs": "14650",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lane-cove",
+   "name": "Lane Cove",
+   "abs": "14700",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "leeton",
+   "name": "Leeton",
+   "abs": "14750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lismore",
+   "name": "Lismore",
+   "abs": "14850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lithgow",
+   "name": "Lithgow",
+   "abs": "14870",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "liverpool",
+   "name": "Liverpool",
+   "abs": "14900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "liverpool-plains",
+   "name": "Liverpool Plains",
+   "abs": "14920",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "lockhart",
+   "name": "Lockhart",
+   "abs": "14950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "maitland",
+   "name": "Maitland",
+   "abs": "15050",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "mid-coast",
+   "name": "Mid-Coast",
+   "abs": "15240",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "mid-western",
+   "name": "Mid-Western",
+   "abs": "15270",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "moree-plains",
+   "name": "Moree Plains",
+   "abs": "15300",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "mosman",
+   "name": "Mosman",
+   "abs": "15350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "murray-river",
+   "name": "Murray River",
+   "abs": "15520",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "murrumbidgee",
+   "name": "Murrumbidgee",
+   "abs": "15560",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "muswellbrook",
+   "name": "Muswellbrook",
+   "abs": "15650",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "nambucca-valley",
+   "name": "Nambucca Valley",
+   "abs": "15700",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "narrabri",
+   "name": "Narrabri",
+   "abs": "15750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "narrandera",
+   "name": "Narrandera",
+   "abs": "15800",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "narromine",
+   "name": "Narromine",
+   "abs": "15850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "newcastle",
+   "name": "Newcastle",
+   "abs": "15900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "north-sydney",
+   "name": "North Sydney",
+   "abs": "15950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "northern-beaches",
+   "name": "Northern Beaches",
+   "abs": "15990",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "oberon",
+   "name": "Oberon",
+   "abs": "16100",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "orange",
+   "name": "Orange",
+   "abs": "16150",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "parkes",
+   "name": "Parkes",
+   "abs": "16200",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "parramatta",
+   "name": "Parramatta",
+   "abs": "16260",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "penrith",
+   "name": "Penrith",
+   "abs": "16350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "port-macquarie-hastings",
+   "name": "Port Macquarie-Hastings",
+   "abs": "16380",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "port-stephens",
+   "name": "Port Stephens",
+   "abs": "16400",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "queanbeyan-palerang",
+   "name": "Queanbeyan-Palerang",
+   "abs": "16490",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "randwick",
+   "name": "Randwick",
+   "abs": "16550",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "richmond-valley",
+   "name": "Richmond Valley",
+   "abs": "16610",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "ryde",
+   "name": "Ryde",
+   "abs": "16700",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "shellharbour",
+   "name": "Shellharbour",
+   "abs": "16900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "shoalhaven",
+   "name": "Shoalhaven",
+   "abs": "16950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "singleton",
+   "name": "Singleton",
+   "abs": "17000",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "snowy-monaro",
+   "name": "Snowy Monaro",
+   "abs": "17040",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "snowy-valleys",
+   "name": "Snowy Valleys",
+   "abs": "17080",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "strathfield",
+   "name": "Strathfield",
+   "abs": "17100",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "sutherland",
+   "name": "Sutherland",
+   "abs": "17150",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "sydney",
+   "name": "Sydney",
+   "abs": "17200",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "tamworth",
+   "name": "Tamworth",
+   "abs": "17310",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "temora",
+   "name": "Temora",
+   "abs": "17350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "tenterfield",
+   "name": "Tenterfield",
+   "abs": "17400",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "the-hills",
+   "name": "The Hills",
+   "abs": "17420",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "tweed",
+   "name": "Tweed",
+   "abs": "17550",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "upper-hunter",
+   "name": "Upper Hunter",
+   "abs": "17620",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "upper-lachlan",
+   "name": "Upper Lachlan",
+   "abs": "17640",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "uralla",
+   "name": "Uralla",
+   "abs": "17650",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "wagga-wagga",
+   "name": "Wagga Wagga",
+   "abs": "17750",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "walcha",
+   "name": "Walcha",
+   "abs": "17850",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "walgett",
+   "name": "Walgett",
+   "abs": "17900",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "warren",
+   "name": "Warren",
+   "abs": "17950",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "warrumbungle",
+   "name": "Warrumbungle",
+   "abs": "18020",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "waverley",
+   "name": "Waverley",
+   "abs": "18050",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "weddin",
+   "name": "Weddin",
+   "abs": "18100",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "wentworth",
+   "name": "Wentworth",
+   "abs": "18200",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "willoughby",
+   "name": "Willoughby",
+   "abs": "18250",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "wingecarribee",
+   "name": "Wingecarribee",
+   "abs": "18350",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "wollondilly",
+   "name": "Wollondilly",
+   "abs": "18400",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "wollongong",
+   "name": "Wollongong",
+   "abs": "18450",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "woollahra",
+   "name": "Woollahra",
+   "abs": "18500",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "yass-valley",
+   "name": "Yass Valley",
+   "abs": "18710",
+   "jurisdiction": "au-nsw"
+  },
+  {
+   "id": "alpine",
+   "name": "Alpine",
+   "abs": "20110",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "ararat",
+   "name": "Ararat",
+   "abs": "20260",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "ballarat",
+   "name": "Ballarat",
+   "abs": "20570",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "banyule",
+   "name": "Banyule",
+   "abs": "20660",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "bass-coast",
+   "name": "Bass Coast",
+   "abs": "20740",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "baw-baw",
+   "name": "Baw Baw",
+   "abs": "20830",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "bayside-vic",
+   "name": "Bayside (Vic.)",
+   "abs": "20910",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "benalla",
+   "name": "Benalla",
+   "abs": "21010",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "boroondara",
+   "name": "Boroondara",
+   "abs": "21110",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "brimbank",
+   "name": "Brimbank",
+   "abs": "21180",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "buloke",
+   "name": "Buloke",
+   "abs": "21270",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "campaspe",
+   "name": "Campaspe",
+   "abs": "21370",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "cardinia",
+   "name": "Cardinia",
+   "abs": "21450",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "casey",
+   "name": "Casey",
+   "abs": "21610",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "central-goldfields",
+   "name": "Central Goldfields",
+   "abs": "21670",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "colac-otway",
+   "name": "Colac Otway",
+   "abs": "21750",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "corangamite",
+   "name": "Corangamite",
+   "abs": "21830",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "darebin",
+   "name": "Darebin",
+   "abs": "21890",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "east-gippsland",
+   "name": "East Gippsland",
+   "abs": "22110",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "frankston",
+   "name": "Frankston",
+   "abs": "22170",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "gannawarra",
+   "name": "Gannawarra",
+   "abs": "22250",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "glen-eira",
+   "name": "Glen Eira",
+   "abs": "22310",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "glenelg",
+   "name": "Glenelg",
+   "abs": "22410",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "golden-plains",
+   "name": "Golden Plains",
+   "abs": "22490",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "greater-bendigo",
+   "name": "Greater Bendigo",
+   "abs": "22620",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "greater-dandenong",
+   "name": "Greater Dandenong",
+   "abs": "22670",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "greater-geelong",
+   "name": "Greater Geelong",
+   "abs": "22750",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "greater-shepparton",
+   "name": "Greater Shepparton",
+   "abs": "22830",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "hepburn",
+   "name": "Hepburn",
+   "abs": "22910",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "hindmarsh",
+   "name": "Hindmarsh",
+   "abs": "22980",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "hobsons-bay",
+   "name": "Hobsons Bay",
+   "abs": "23110",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "horsham",
+   "name": "Horsham",
+   "abs": "23190",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "hume",
+   "name": "Hume",
+   "abs": "23270",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "indigo",
+   "name": "Indigo",
+   "abs": "23350",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "kingston-vic",
+   "name": "Kingston (Vic.)",
+   "abs": "23430",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "knox",
+   "name": "Knox",
+   "abs": "23670",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "latrobe-vic",
+   "name": "Latrobe (Vic.)",
+   "abs": "23810",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "loddon",
+   "name": "Loddon",
+   "abs": "23940",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "macedon-ranges",
+   "name": "Macedon Ranges",
+   "abs": "24130",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "manningham",
+   "name": "Manningham",
+   "abs": "24210",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "mansfield",
+   "name": "Mansfield",
+   "abs": "24250",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "maribyrnong",
+   "name": "Maribyrnong",
+   "abs": "24330",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "maroondah",
+   "name": "Maroondah",
+   "abs": "24410",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "melbourne",
+   "name": "Melbourne",
+   "abs": "24600",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "melton",
+   "name": "Melton",
+   "abs": "24650",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "merri-bek",
+   "name": "Merri-bek",
+   "abs": "24700",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "mildura",
+   "name": "Mildura",
+   "abs": "24780",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "mitchell",
+   "name": "Mitchell",
+   "abs": "24850",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "moira",
+   "name": "Moira",
+   "abs": "24900",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "monash",
+   "name": "Monash",
+   "abs": "24970",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "moonee-valley",
+   "name": "Moonee Valley",
+   "abs": "25060",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "moorabool",
+   "name": "Moorabool",
+   "abs": "25150",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "mornington-peninsula",
+   "name": "Mornington Peninsula",
+   "abs": "25340",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "mount-alexander",
+   "name": "Mount Alexander",
+   "abs": "25430",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "moyne",
+   "name": "Moyne",
+   "abs": "25490",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "murrindindi",
+   "name": "Murrindindi",
+   "abs": "25620",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "nillumbik",
+   "name": "Nillumbik",
+   "abs": "25710",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "northern-grampians",
+   "name": "Northern Grampians",
+   "abs": "25810",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "port-phillip",
+   "name": "Port Phillip",
+   "abs": "25900",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "pyrenees",
+   "name": "Pyrenees",
+   "abs": "25990",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "queenscliffe",
+   "name": "Queenscliffe",
+   "abs": "26080",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "south-gippsland",
+   "name": "South Gippsland",
+   "abs": "26170",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "southern-grampians",
+   "name": "Southern Grampians",
+   "abs": "26260",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "stonnington",
+   "name": "Stonnington",
+   "abs": "26350",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "strathbogie",
+   "name": "Strathbogie",
+   "abs": "26430",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "surf-coast",
+   "name": "Surf Coast",
+   "abs": "26490",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "swan-hill",
+   "name": "Swan Hill",
+   "abs": "26610",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "towong",
+   "name": "Towong",
+   "abs": "26670",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "wangaratta",
+   "name": "Wangaratta",
+   "abs": "26700",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "warrnambool",
+   "name": "Warrnambool",
+   "abs": "26730",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "wellington",
+   "name": "Wellington",
+   "abs": "26810",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "west-wimmera",
+   "name": "West Wimmera",
+   "abs": "26890",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "whitehorse",
+   "name": "Whitehorse",
+   "abs": "26980",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "whittlesea",
+   "name": "Whittlesea",
+   "abs": "27070",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "wodonga",
+   "name": "Wodonga",
+   "abs": "27170",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "wyndham",
+   "name": "Wyndham",
+   "abs": "27260",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "yarra",
+   "name": "Yarra",
+   "abs": "27350",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "yarra-ranges",
+   "name": "Yarra Ranges",
+   "abs": "27450",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "yarriambiack",
+   "name": "Yarriambiack",
+   "abs": "27630",
+   "jurisdiction": "au-vic"
+  },
+  {
+   "id": "aurukun",
+   "name": "Aurukun",
+   "abs": "30250",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "balonne",
+   "name": "Balonne",
+   "abs": "30300",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "banana",
+   "name": "Banana",
+   "abs": "30370",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "barcaldine",
+   "name": "Barcaldine",
+   "abs": "30410",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "barcoo",
+   "name": "Barcoo",
+   "abs": "30450",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "blackall-tambo",
+   "name": "Blackall Tambo",
+   "abs": "30760",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "boulia",
+   "name": "Boulia",
+   "abs": "30900",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "brisbane",
+   "name": "Brisbane",
+   "abs": "31000",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "bulloo",
+   "name": "Bulloo",
+   "abs": "31750",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "bundaberg",
+   "name": "Bundaberg",
+   "abs": "31820",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "burdekin",
+   "name": "Burdekin",
+   "abs": "31900",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "burke",
+   "name": "Burke",
+   "abs": "31950",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "cairns",
+   "name": "Cairns",
+   "abs": "32080",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "carpentaria",
+   "name": "Carpentaria",
+   "abs": "32250",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "cassowary-coast",
+   "name": "Cassowary Coast",
+   "abs": "32260",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "central-highlands-qld",
+   "name": "Central Highlands (Qld)",
+   "abs": "32270",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "charters-towers",
+   "name": "Charters Towers",
+   "abs": "32310",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "cherbourg",
+   "name": "Cherbourg",
+   "abs": "32330",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "cloncurry",
+   "name": "Cloncurry",
+   "abs": "32450",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "cook",
+   "name": "Cook",
+   "abs": "32500",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "croydon",
+   "name": "Croydon",
+   "abs": "32600",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "diamantina",
+   "name": "Diamantina",
+   "abs": "32750",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "doomadgee",
+   "name": "Doomadgee",
+   "abs": "32770",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "douglas",
+   "name": "Douglas",
+   "abs": "32810",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "etheridge",
+   "name": "Etheridge",
+   "abs": "33100",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "flinders-qld",
+   "name": "Flinders (Qld)",
+   "abs": "33200",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "fraser-coast",
+   "name": "Fraser Coast",
+   "abs": "33220",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "gladstone",
+   "name": "Gladstone",
+   "abs": "33360",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "gold-coast",
+   "name": "Gold Coast",
+   "abs": "33430",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "goondiwindi",
+   "name": "Goondiwindi",
+   "abs": "33610",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "gympie",
+   "name": "Gympie",
+   "abs": "33620",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "hinchinbrook",
+   "name": "Hinchinbrook",
+   "abs": "33800",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "hope-vale",
+   "name": "Hope Vale",
+   "abs": "33830",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "ipswich",
+   "name": "Ipswich",
+   "abs": "33960",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "isaac",
+   "name": "Isaac",
+   "abs": "33980",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "kowanyama",
+   "name": "Kowanyama",
+   "abs": "34420",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "livingstone",
+   "name": "Livingstone",
+   "abs": "34530",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "lockhart-river",
+   "name": "Lockhart River",
+   "abs": "34570",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "lockyer-valley",
+   "name": "Lockyer Valley",
+   "abs": "34580",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "logan",
+   "name": "Logan",
+   "abs": "34590",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "longreach",
+   "name": "Longreach",
+   "abs": "34710",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mackay",
+   "name": "Mackay",
+   "abs": "34770",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mapoon",
+   "name": "Mapoon",
+   "abs": "34830",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "maranoa",
+   "name": "Maranoa",
+   "abs": "34860",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mareeba",
+   "name": "Mareeba",
+   "abs": "34880",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mckinlay",
+   "name": "McKinlay",
+   "abs": "34800",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "moreton-bay",
+   "name": "Moreton Bay",
+   "abs": "35010",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mornington",
+   "name": "Mornington",
+   "abs": "35250",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "mount-isa",
+   "name": "Mount Isa",
+   "abs": "35300",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "murweh",
+   "name": "Murweh",
+   "abs": "35600",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "napranum",
+   "name": "Napranum",
+   "abs": "35670",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "noosa",
+   "name": "Noosa",
+   "abs": "35740",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "north-burnett",
+   "name": "North Burnett",
+   "abs": "35760",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "northern-peninsula-area",
+   "name": "Northern Peninsula Area",
+   "abs": "35780",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "palm-island",
+   "name": "Palm Island",
+   "abs": "35790",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "paroo",
+   "name": "Paroo",
+   "abs": "35800",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "pormpuraaw",
+   "name": "Pormpuraaw",
+   "abs": "36070",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "quilpie",
+   "name": "Quilpie",
+   "abs": "36150",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "redland",
+   "name": "Redland",
+   "abs": "36250",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "richmond",
+   "name": "Richmond",
+   "abs": "36300",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "rockhampton",
+   "name": "Rockhampton",
+   "abs": "36370",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "scenic-rim",
+   "name": "Scenic Rim",
+   "abs": "36510",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "somerset",
+   "name": "Somerset",
+   "abs": "36580",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "south-burnett",
+   "name": "South Burnett",
+   "abs": "36630",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "southern-downs",
+   "name": "Southern Downs",
+   "abs": "36660",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "sunshine-coast",
+   "name": "Sunshine Coast",
+   "abs": "36720",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "tablelands",
+   "name": "Tablelands",
+   "abs": "36820",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "toowoomba",
+   "name": "Toowoomba",
+   "abs": "36910",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "torres",
+   "name": "Torres",
+   "abs": "36950",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "torres-strait-island",
+   "name": "Torres Strait Island",
+   "abs": "36960",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "townsville",
+   "name": "Townsville",
+   "abs": "37010",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "weipa",
+   "name": "Weipa",
+   "abs": "37300",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "western-downs",
+   "name": "Western Downs",
+   "abs": "37310",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "whitsunday",
+   "name": "Whitsunday",
+   "abs": "37340",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "winton",
+   "name": "Winton",
+   "abs": "37400",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "woorabinda",
+   "name": "Woorabinda",
+   "abs": "37550",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "wujal-wujal",
+   "name": "Wujal Wujal",
+   "abs": "37570",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "yarrabah",
+   "name": "Yarrabah",
+   "abs": "37600",
+   "jurisdiction": "au-qld"
+  },
+  {
+   "id": "adelaide",
+   "name": "Adelaide",
+   "abs": "40070",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "adelaide-hills",
+   "name": "Adelaide Hills",
+   "abs": "40120",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "adelaide-plains",
+   "name": "Adelaide Plains",
+   "abs": "40150",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "alexandrina",
+   "name": "Alexandrina",
+   "abs": "40220",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "anangu-pitjantjatjara-yankunytjatjara",
+   "name": "Anangu Pitjantjatjara Yankunytjatjara",
+   "abs": "40250",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "barossa",
+   "name": "Barossa",
+   "abs": "40310",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "barunga-west",
+   "name": "Barunga West",
+   "abs": "40430",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "berri-barmera",
+   "name": "Berri Barmera",
+   "abs": "40520",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "burnside",
+   "name": "Burnside",
+   "abs": "40700",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "campbelltown-sa",
+   "name": "Campbelltown (SA)",
+   "abs": "40910",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "ceduna",
+   "name": "Ceduna",
+   "abs": "41010",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "charles-sturt",
+   "name": "Charles Sturt",
+   "abs": "41060",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "clare-and-gilbert-valleys",
+   "name": "Clare and Gilbert Valleys",
+   "abs": "41140",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "cleve",
+   "name": "Cleve",
+   "abs": "41190",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "coober-pedy",
+   "name": "Coober Pedy",
+   "abs": "41330",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "coorong",
+   "name": "Coorong",
+   "abs": "47800",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "copper-coast",
+   "name": "Copper Coast",
+   "abs": "41560",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "elliston",
+   "name": "Elliston",
+   "abs": "41750",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "flinders-ranges",
+   "name": "Flinders Ranges",
+   "abs": "41830",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "franklin-harbour",
+   "name": "Franklin Harbour",
+   "abs": "41960",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "gawler",
+   "name": "Gawler",
+   "abs": "42030",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "goyder",
+   "name": "Goyder",
+   "abs": "42110",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "grant",
+   "name": "Grant",
+   "abs": "42250",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "holdfast-bay",
+   "name": "Holdfast Bay",
+   "abs": "42600",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "kangaroo-island",
+   "name": "Kangaroo Island",
+   "abs": "42750",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "karoonda-east-murray",
+   "name": "Karoonda East Murray",
+   "abs": "43080",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "kimba",
+   "name": "Kimba",
+   "abs": "43220",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "kingston-sa",
+   "name": "Kingston (SA)",
+   "abs": "43360",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "light",
+   "name": "Light",
+   "abs": "43650",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "lower-eyre",
+   "name": "Lower Eyre",
+   "abs": "43710",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "loxton-waikerie",
+   "name": "Loxton Waikerie",
+   "abs": "43790",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "maralinga-tjarutja",
+   "name": "Maralinga Tjarutja",
+   "abs": "44000",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "marion",
+   "name": "Marion",
+   "abs": "44060",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "mid-murray",
+   "name": "Mid Murray",
+   "abs": "44210",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "mitcham",
+   "name": "Mitcham",
+   "abs": "44340",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "mount-barker",
+   "name": "Mount Barker",
+   "abs": "44550",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "mount-gambier",
+   "name": "Mount Gambier",
+   "abs": "44620",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "mount-remarkable",
+   "name": "Mount Remarkable",
+   "abs": "44830",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "murray-bridge",
+   "name": "Murray Bridge",
+   "abs": "45040",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "naracoorte-lucindale",
+   "name": "Naracoorte Lucindale",
+   "abs": "45090",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "northern-areas",
+   "name": "Northern Areas",
+   "abs": "45120",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "norwood-payneham-and-st-peters",
+   "name": "Norwood Payneham and St Peters",
+   "abs": "45290",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "onkaparinga",
+   "name": "Onkaparinga",
+   "abs": "45340",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "orroroo-carrieton",
+   "name": "Orroroo Carrieton",
+   "abs": "45400",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "peterborough",
+   "name": "Peterborough",
+   "abs": "45540",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "playford",
+   "name": "Playford",
+   "abs": "45680",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "port-adelaide-enfield",
+   "name": "Port Adelaide Enfield",
+   "abs": "45890",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "port-augusta",
+   "name": "Port Augusta",
+   "abs": "46090",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "port-lincoln",
+   "name": "Port Lincoln",
+   "abs": "46300",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "port-pirie",
+   "name": "Port Pirie",
+   "abs": "46450",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "prospect",
+   "name": "Prospect",
+   "abs": "46510",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "renmark-paringa",
+   "name": "Renmark Paringa",
+   "abs": "46670",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "robe",
+   "name": "Robe",
+   "abs": "46860",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "roxby-downs",
+   "name": "Roxby Downs",
+   "abs": "46970",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "salisbury",
+   "name": "Salisbury",
+   "abs": "47140",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "southern-mallee",
+   "name": "Southern Mallee",
+   "abs": "47290",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "streaky-bay",
+   "name": "Streaky Bay",
+   "abs": "47490",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "tatiara",
+   "name": "Tatiara",
+   "abs": "47630",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "tea-tree-gully",
+   "name": "Tea Tree Gully",
+   "abs": "47700",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "tumby-bay",
+   "name": "Tumby Bay",
+   "abs": "47910",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "unley",
+   "name": "Unley",
+   "abs": "47980",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "victor-harbor",
+   "name": "Victor Harbor",
+   "abs": "48050",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "wakefield",
+   "name": "Wakefield",
+   "abs": "48130",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "walkerville",
+   "name": "Walkerville",
+   "abs": "48260",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "wattle-range",
+   "name": "Wattle Range",
+   "abs": "48340",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "west-torrens",
+   "name": "West Torrens",
+   "abs": "48410",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "whyalla",
+   "name": "Whyalla",
+   "abs": "48540",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "wudinna",
+   "name": "Wudinna",
+   "abs": "48640",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "yankalilla",
+   "name": "Yankalilla",
+   "abs": "48750",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "yorke-peninsula",
+   "name": "Yorke Peninsula",
+   "abs": "48830",
+   "jurisdiction": "au-sa"
+  },
+  {
+   "id": "albany",
+   "name": "Albany",
+   "abs": "50080",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "armadale",
+   "name": "Armadale",
+   "abs": "50210",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "ashburton",
+   "name": "Ashburton",
+   "abs": "50250",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "augusta-margaret-river",
+   "name": "Augusta Margaret River",
+   "abs": "50280",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "bassendean",
+   "name": "Bassendean",
+   "abs": "50350",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "bayswater",
+   "name": "Bayswater",
+   "abs": "50420",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "belmont",
+   "name": "Belmont",
+   "abs": "50490",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "beverley",
+   "name": "Beverley",
+   "abs": "50560",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "boddington",
+   "name": "Boddington",
+   "abs": "50630",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "boyup-brook",
+   "name": "Boyup Brook",
+   "abs": "50770",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "bridgetown-greenbushes",
+   "name": "Bridgetown-Greenbushes",
+   "abs": "50840",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "brookton",
+   "name": "Brookton",
+   "abs": "50910",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "broome",
+   "name": "Broome",
+   "abs": "50980",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "broomehill-tambellup",
+   "name": "Broomehill-Tambellup",
+   "abs": "51080",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "bruce-rock",
+   "name": "Bruce Rock",
+   "abs": "51120",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "bunbury",
+   "name": "Bunbury",
+   "abs": "51190",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "busselton",
+   "name": "Busselton",
+   "abs": "51260",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cambridge",
+   "name": "Cambridge",
+   "abs": "51310",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "canning",
+   "name": "Canning",
+   "abs": "51330",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "capel",
+   "name": "Capel",
+   "abs": "51400",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "carnamah",
+   "name": "Carnamah",
+   "abs": "51470",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "carnarvon",
+   "name": "Carnarvon",
+   "abs": "51540",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "chapman-valley",
+   "name": "Chapman Valley",
+   "abs": "51610",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "chittering",
+   "name": "Chittering",
+   "abs": "51680",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "claremont",
+   "name": "Claremont",
+   "abs": "51750",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cockburn",
+   "name": "Cockburn",
+   "abs": "51820",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "collie",
+   "name": "Collie",
+   "abs": "51890",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "coolgardie",
+   "name": "Coolgardie",
+   "abs": "51960",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "coorow",
+   "name": "Coorow",
+   "abs": "52030",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "corrigin",
+   "name": "Corrigin",
+   "abs": "52100",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cottesloe",
+   "name": "Cottesloe",
+   "abs": "52170",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cranbrook",
+   "name": "Cranbrook",
+   "abs": "52240",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cuballing",
+   "name": "Cuballing",
+   "abs": "52310",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cue",
+   "name": "Cue",
+   "abs": "52380",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "cunderdin",
+   "name": "Cunderdin",
+   "abs": "52450",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dalwallinu",
+   "name": "Dalwallinu",
+   "abs": "52520",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dandaragan",
+   "name": "Dandaragan",
+   "abs": "52590",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dardanup",
+   "name": "Dardanup",
+   "abs": "52660",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "denmark",
+   "name": "Denmark",
+   "abs": "52730",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "derby-west-kimberley",
+   "name": "Derby-West Kimberley",
+   "abs": "52800",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "donnybrook-balingup",
+   "name": "Donnybrook-Balingup",
+   "abs": "52870",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dowerin",
+   "name": "Dowerin",
+   "abs": "52940",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dumbleyung",
+   "name": "Dumbleyung",
+   "abs": "53010",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "dundas",
+   "name": "Dundas",
+   "abs": "53080",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "east-fremantle",
+   "name": "East Fremantle",
+   "abs": "53150",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "east-pilbara",
+   "name": "East Pilbara",
+   "abs": "53220",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "esperance",
+   "name": "Esperance",
+   "abs": "53290",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "exmouth",
+   "name": "Exmouth",
+   "abs": "53360",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "fremantle",
+   "name": "Fremantle",
+   "abs": "53430",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "gingin",
+   "name": "Gingin",
+   "abs": "53570",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "gnowangerup",
+   "name": "Gnowangerup",
+   "abs": "53640",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "goomalling",
+   "name": "Goomalling",
+   "abs": "53710",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "gosnells",
+   "name": "Gosnells",
+   "abs": "53780",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "greater-geraldton",
+   "name": "Greater Geraldton",
+   "abs": "53800",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "halls-creek",
+   "name": "Halls Creek",
+   "abs": "53920",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "harvey",
+   "name": "Harvey",
+   "abs": "53990",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "irwin",
+   "name": "Irwin",
+   "abs": "54060",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "jerramungup",
+   "name": "Jerramungup",
+   "abs": "54130",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "joondalup",
+   "name": "Joondalup",
+   "abs": "54170",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kalamunda",
+   "name": "Kalamunda",
+   "abs": "54200",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kalgoorlie-boulder",
+   "name": "Kalgoorlie-Boulder",
+   "abs": "54280",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "karratha",
+   "name": "Karratha",
+   "abs": "54310",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "katanning",
+   "name": "Katanning",
+   "abs": "54340",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kellerberrin",
+   "name": "Kellerberrin",
+   "abs": "54410",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kent",
+   "name": "Kent",
+   "abs": "54480",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kojonup",
+   "name": "Kojonup",
+   "abs": "54550",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kondinin",
+   "name": "Kondinin",
+   "abs": "54620",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "koorda",
+   "name": "Koorda",
+   "abs": "54690",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kulin",
+   "name": "Kulin",
+   "abs": "54760",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "kwinana",
+   "name": "Kwinana",
+   "abs": "54830",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "lake-grace",
+   "name": "Lake Grace",
+   "abs": "54900",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "laverton",
+   "name": "Laverton",
+   "abs": "54970",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "leonora",
+   "name": "Leonora",
+   "abs": "55040",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mandurah",
+   "name": "Mandurah",
+   "abs": "55110",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "manjimup",
+   "name": "Manjimup",
+   "abs": "55180",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "meekatharra",
+   "name": "Meekatharra",
+   "abs": "55250",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "melville",
+   "name": "Melville",
+   "abs": "55320",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "menzies",
+   "name": "Menzies",
+   "abs": "55390",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "merredin",
+   "name": "Merredin",
+   "abs": "55460",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mingenew",
+   "name": "Mingenew",
+   "abs": "55530",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "moora",
+   "name": "Moora",
+   "abs": "55600",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "morawa",
+   "name": "Morawa",
+   "abs": "55670",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mosman-park",
+   "name": "Mosman Park",
+   "abs": "55740",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mount-magnet",
+   "name": "Mount Magnet",
+   "abs": "55810",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mount-marshall",
+   "name": "Mount Marshall",
+   "abs": "55880",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mukinbudin",
+   "name": "Mukinbudin",
+   "abs": "55950",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "mundaring",
+   "name": "Mundaring",
+   "abs": "56090",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "murchison",
+   "name": "Murchison",
+   "abs": "56160",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "murray",
+   "name": "Murray",
+   "abs": "56230",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "nannup",
+   "name": "Nannup",
+   "abs": "56300",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "narembeen",
+   "name": "Narembeen",
+   "abs": "56370",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "narrogin",
+   "name": "Narrogin",
+   "abs": "56460",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "nedlands",
+   "name": "Nedlands",
+   "abs": "56580",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "ngaanyatjarraku",
+   "name": "Ngaanyatjarraku",
+   "abs": "56620",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "northam",
+   "name": "Northam",
+   "abs": "56730",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "northampton",
+   "name": "Northampton",
+   "abs": "56790",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "nungarin",
+   "name": "Nungarin",
+   "abs": "56860",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "peppermint-grove",
+   "name": "Peppermint Grove",
+   "abs": "56930",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "perenjori",
+   "name": "Perenjori",
+   "abs": "57000",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "perth",
+   "name": "Perth",
+   "abs": "57080",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "pingelly",
+   "name": "Pingelly",
+   "abs": "57140",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "plantagenet",
+   "name": "Plantagenet",
+   "abs": "57210",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "port-hedland",
+   "name": "Port Hedland",
+   "abs": "57280",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "quairading",
+   "name": "Quairading",
+   "abs": "57350",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "ravensthorpe",
+   "name": "Ravensthorpe",
+   "abs": "57420",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "rockingham",
+   "name": "Rockingham",
+   "abs": "57490",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "sandstone",
+   "name": "Sandstone",
+   "abs": "57630",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "serpentine-jarrahdale",
+   "name": "Serpentine-Jarrahdale",
+   "abs": "57700",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "shark-bay",
+   "name": "Shark Bay",
+   "abs": "57770",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "south-perth",
+   "name": "South Perth",
+   "abs": "57840",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "stirling",
+   "name": "Stirling",
+   "abs": "57910",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "subiaco",
+   "name": "Subiaco",
+   "abs": "57980",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "swan",
+   "name": "Swan",
+   "abs": "58050",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "tammin",
+   "name": "Tammin",
+   "abs": "58190",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "three-springs",
+   "name": "Three Springs",
+   "abs": "58260",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "toodyay",
+   "name": "Toodyay",
+   "abs": "58330",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "trayning",
+   "name": "Trayning",
+   "abs": "58400",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "upper-gascoyne",
+   "name": "Upper Gascoyne",
+   "abs": "58470",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "victoria-park",
+   "name": "Victoria Park",
+   "abs": "58510",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "victoria-plains",
+   "name": "Victoria Plains",
+   "abs": "58540",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "vincent",
+   "name": "Vincent",
+   "abs": "58570",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wagin",
+   "name": "Wagin",
+   "abs": "58610",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wandering",
+   "name": "Wandering",
+   "abs": "58680",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wanneroo",
+   "name": "Wanneroo",
+   "abs": "58760",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "waroona",
+   "name": "Waroona",
+   "abs": "58820",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "west-arthur",
+   "name": "West Arthur",
+   "abs": "58890",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "westonia",
+   "name": "Westonia",
+   "abs": "59030",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wickepin",
+   "name": "Wickepin",
+   "abs": "59100",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "williams",
+   "name": "Williams",
+   "abs": "59170",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wiluna",
+   "name": "Wiluna",
+   "abs": "59250",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wongan-ballidu",
+   "name": "Wongan-Ballidu",
+   "abs": "59310",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "woodanilling",
+   "name": "Woodanilling",
+   "abs": "59320",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wyalkatchem",
+   "name": "Wyalkatchem",
+   "abs": "59330",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "wyndham-east-kimberley",
+   "name": "Wyndham-East Kimberley",
+   "abs": "59340",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "yalgoo",
+   "name": "Yalgoo",
+   "abs": "59350",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "yilgarn",
+   "name": "Yilgarn",
+   "abs": "59360",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "york",
+   "name": "York",
+   "abs": "59370",
+   "jurisdiction": "au-wa"
+  },
+  {
+   "id": "break-o-day",
+   "name": "Break O'Day",
+   "abs": "60210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "brighton",
+   "name": "Brighton",
+   "abs": "60410",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "burnie",
+   "name": "Burnie",
+   "abs": "60610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "central-coast-tas",
+   "name": "Central Coast (Tas.)",
+   "abs": "60810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "central-highlands-tas",
+   "name": "Central Highlands (Tas.)",
+   "abs": "61010",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "circular-head",
+   "name": "Circular Head",
+   "abs": "61210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "clarence",
+   "name": "Clarence",
+   "abs": "61410",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "derwent-valley",
+   "name": "Derwent Valley",
+   "abs": "61510",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "devonport",
+   "name": "Devonport",
+   "abs": "61610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "dorset",
+   "name": "Dorset",
+   "abs": "61810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "flinders-tas",
+   "name": "Flinders (Tas.)",
+   "abs": "62010",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "george-town",
+   "name": "George Town",
+   "abs": "62210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "glamorgan-spring-bay",
+   "name": "Glamorgan-Spring Bay",
+   "abs": "62410",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "glenorchy",
+   "name": "Glenorchy",
+   "abs": "62610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "hobart",
+   "name": "Hobart",
+   "abs": "62810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "huon-valley",
+   "name": "Huon Valley",
+   "abs": "63010",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "kentish",
+   "name": "Kentish",
+   "abs": "63210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "king-island",
+   "name": "King Island",
+   "abs": "63410",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "kingborough",
+   "name": "Kingborough",
+   "abs": "63610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "latrobe-tas",
+   "name": "Latrobe (Tas.)",
+   "abs": "63810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "launceston",
+   "name": "Launceston",
+   "abs": "64010",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "meander-valley",
+   "name": "Meander Valley",
+   "abs": "64210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "northern-midlands",
+   "name": "Northern Midlands",
+   "abs": "64610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "sorell",
+   "name": "Sorell",
+   "abs": "64810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "southern-midlands",
+   "name": "Southern Midlands",
+   "abs": "65010",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "tasman",
+   "name": "Tasman",
+   "abs": "65210",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "waratah-wynyard",
+   "name": "Waratah-Wynyard",
+   "abs": "65410",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "west-coast",
+   "name": "West Coast",
+   "abs": "65610",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "west-tamar",
+   "name": "West Tamar",
+   "abs": "65810",
+   "jurisdiction": "au-tas"
+  },
+  {
+   "id": "alice-springs",
+   "name": "Alice Springs",
+   "abs": "70200",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "barkly",
+   "name": "Barkly",
+   "abs": "70420",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "belyuen",
+   "name": "Belyuen",
+   "abs": "70540",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "central-desert",
+   "name": "Central Desert",
+   "abs": "70620",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "coomalie",
+   "name": "Coomalie",
+   "abs": "70700",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "darwin",
+   "name": "Darwin",
+   "abs": "71000",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "darwin-waterfront-precinct",
+   "name": "Darwin Waterfront Precinct",
+   "abs": "71150",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "east-arnhem",
+   "name": "East Arnhem",
+   "abs": "71500",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "groote-archipelago",
+   "name": "Groote Archipelago",
+   "abs": "71700",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "katherine",
+   "name": "Katherine",
+   "abs": "72200",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "litchfield",
+   "name": "Litchfield",
+   "abs": "72300",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "macdonnell",
+   "name": "MacDonnell",
+   "abs": "72330",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "palmerston",
+   "name": "Palmerston",
+   "abs": "72800",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "roper-gulf",
+   "name": "Roper Gulf",
+   "abs": "73600",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "tiwi-islands",
+   "name": "Tiwi Islands",
+   "abs": "74050",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "victoria-daly",
+   "name": "Victoria Daly",
+   "abs": "74550",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "wagait",
+   "name": "Wagait",
+   "abs": "74560",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "west-arnhem",
+   "name": "West Arnhem",
+   "abs": "74660",
+   "jurisdiction": "au-nt"
+  },
+  {
+   "id": "west-daly",
+   "name": "West Daly",
+   "abs": "74680",
+   "jurisdiction": "au-nt"
+  }
+ ]
+}

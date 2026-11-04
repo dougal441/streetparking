@@ -8,6 +8,7 @@
 import { localParts, dateAtMinutes, addDays, hhmmToMinutes, minutesToLabel, durationLabel, DEFAULT_TZ } from './time.js';
 import { holidayStatus } from './holidays.js';
 import { fineFor, offenceKeyFor } from './fines.js';
+import { planFor } from './plan.js';
 
 export const VERDICT = Object.freeze({
   OK: 'ok',              // you can park (maybe with a time limit / fee)
@@ -206,6 +207,14 @@ function boundaries(panels, parts, tz, horizonDays) {
   return [...out].sort((a, b) => a - b);
 }
 
+/** Short name of what a timeline segment is, for "leave by" reasons: "clearway", "no stopping", "2 hour limit". */
+function shortName(seg) {
+  const kinds = (seg.activePanels ?? []).map(p => p.kind);
+  for (const k of ['clearway', 'no_stopping', 'no_parking', 'loading_zone', 'works_zone', 'bus_zone', 'taxi_zone', 'permit_zone', 'truck_zone', 'mail_zone', 'disabled', 'motorbike']) if (kinds.includes(k)) return k.replace(/_/g, ' ');
+  if (seg.maxStayMinutes != null) return `${durationLabel(seg.maxStayMinutes)} limit`;
+  return seg.verdict === VERDICT.OK ? 'parking' : 'restriction';
+}
+
 function sameOutcome(a, b) {
   return a.verdict === b.verdict && a.maxStayMinutes === b.maxStayMinutes && a.fee === b.fee && a.headline === b.headline;
 }
@@ -263,7 +272,7 @@ export function interpret(sign, opts = {}) {
           let i = 1; let lb = null; let reason = null;
           while (i < segs.length) {
             const s = segs[i];
-            if (s.verdict !== VERDICT.OK) { lb = s.from; reason = `${s.headline.replace(/\.$/, '')} from ${minutesToLabel(localParts(s.from, tz).minutesOfDay)}`; break; }
+            if (s.verdict !== VERDICT.OK) { lb = s.from; reason = `${shortName(s)} starts at ${minutesToLabel(localParts(s.from, tz).minutesOfDay)}`; break; }
             if (s.maxStayMinutes != null) { lb = new Date(s.from.getTime() + s.maxStayMinutes * 60000); reason = `new ${durationLabel(s.maxStayMinutes)} limit starts ${minutesToLabel(localParts(s.from, tz).minutesOfDay)} (assumes a fresh limit — check rule 205A)`; break; }
             i++;
           }
@@ -272,7 +281,7 @@ export function interpret(sign, opts = {}) {
         }
       } else {
         const next = segs.find(s => s.verdict !== VERDICT.OK || s.maxStayMinutes != null);
-        if (next) { leaveBy = next.from; leaveByReason = `${next.headline.replace(/\.$/, '')} starts`; }
+        if (next) { leaveBy = next.from; leaveByReason = `${shortName(next)} starts`; }
       }
     } else if (now.verdict === VERDICT.STOP_ONLY) {
       leaveBy = new Date(at.getTime() + (now.maxStayMinutes ?? 2) * 60000); leaveByReason = 'drop-off only';
@@ -282,7 +291,15 @@ export function interpret(sign, opts = {}) {
     const offence = offenceKeyFor(now);
     const fine = offence ? fineFor(opts.penalties, offence, at, councilId) : null;
     const feeFine = now.verdict === VERDICT.OK && now.fee && offence !== 'fee' ? fineFor(opts.penalties, 'fee', at, councilId) : null;
-    sides[side] = { ...now, leaveBy, leaveByReason, fine, feeFine, timeline: segs.map(s => ({ from: s.from, to: s.to, verdict: s.verdict, headline: s.headline, maxStayMinutes: s.maxStayMinutes, fee: s.fee })) };
+    const entry = { ...now, leaveBy, leaveByReason, fine, feeFine, timeline: segs.map(s => ({ from: s.from, to: s.to, verdict: s.verdict, headline: s.headline, maxStayMinutes: s.maxStayMinutes, fee: s.fee })) };
+    if (entry.unsigned && panels.length && sideKeys.length === 2 && !sidePanels.length) {
+      entry.verdict = VERDICT.UNKNOWN;
+      entry.headline = 'The reader put every panel on the other side.';
+      entry.detail = 'Open "Show my working" and tap ← ↔ → on a panel to move it, or re-take the photo straight on.';
+      entry.fine = null;
+    }
+    const plan = planFor(entry, at, tz);
+    sides[side] = { ...entry, plan: plan.sentences, nextOk: plan.nextOk };
   }
 
   const general = (opts.rulesPack?.rules ?? []).filter(r => (r.appliesTo ?? []).includes('general') && r.id !== 'sign-times-days');

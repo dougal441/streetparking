@@ -1,0 +1,850 @@
+{
+  "id": "au-qld",
+  "name": "Queensland",
+  "timezone": "Australia/Brisbane",
+  "instrument": {
+    "title": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld)",
+    "citation": "Part 12 — Restrictions on stopping and parking; sections 316–318",
+    "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+    "altUrl": "https://classic.austlii.edu.au/au/legis/qld/consol_reg/toumrr2009629/"
+  },
+  "rules": [
+    {
+      "id": "no-stopping",
+      "number": "167",
+      "title": "No stopping signs",
+      "plain": "You must not stop at all, for any reason, while a NO STOPPING (or older NO STANDING) sign applies. Not even to drop someone off.",
+      "quote": null,
+      "appliesTo": [
+        "no_stopping"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 167; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "no-parking",
+      "number": "168",
+      "title": "No parking signs",
+      "plain": "While a NO PARKING sign applies you may stop only to drop off or pick up passengers or goods, must not leave the vehicle unattended (more than 3 m away), and must drive on within 2 minutes (or the time shown on the sign; 5 minutes with an accessible parking permit).",
+      "quote": null,
+      "params": {
+        "maxMinutes": 2,
+        "maxMinutesAccessiblePermit": 5,
+        "maxDistanceMetres": 3
+      },
+      "appliesTo": [
+        "no_parking"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 168; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "yellow-edge-line",
+      "number": "169",
+      "title": "No stopping on a road with a yellow edge line",
+      "plain": "A continuous yellow line along the edge of the road means NO STOPPING, whether or not there is a sign.",
+      "quote": null,
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 169; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "intersection-lights",
+      "number": "170(2)",
+      "title": "Stopping near an intersection with traffic lights",
+      "plain": "Don't stop within 20 m of an intersection with traffic lights unless you are at a place covered by a parking control sign that permits it.",
+      "quote": null,
+      "params": {
+        "metres": 20
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 170(2); wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "intersection-no-lights",
+      "number": "170(3)",
+      "title": "Stopping near an intersection without traffic lights",
+      "plain": "Don't stop within 10 m of an intersection without traffic lights, unless a parking sign permits it or you're on the continuous side of a T-intersection.",
+      "quote": null,
+      "params": {
+        "metres": 10
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 170(3); wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "childrens-crossing",
+      "number": "171",
+      "title": "Stopping on or near a children's crossing",
+      "plain": "Don't stop on a children's crossing, or within 20 m before and 10 m after it, unless a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metresBefore": 20,
+        "metresAfter": 10
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 171; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "pedestrian-crossing",
+      "number": "172",
+      "title": "Stopping on or near a pedestrian crossing (except at an intersection)",
+      "plain": "Don't stop on a pedestrian (zebra) crossing, or within 20 m before and 10 m after it, unless a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metresBefore": 20,
+        "metresAfter": 10
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 172; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "marked-foot-crossing",
+      "number": "173",
+      "title": "Stopping on or near a marked foot crossing (except at an intersection)",
+      "plain": "At a signalised pedestrian crossing: don't stop within 10 m before the nearest traffic-lights pole and 3 m after the crossing.",
+      "quote": null,
+      "params": {
+        "metresBefore": 10,
+        "metresAfter": 3
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 173; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "clearway",
+      "number": "176",
+      "title": "Stopping on a clearway",
+      "plain": "You must not stop on a clearway while the CLEARWAY sign applies (buses and commercial passenger vehicles may stop to pick up/drop off). Vehicles are commonly towed. The clearway runs from the sign to the next clearway sign with different times, an END CLEARWAY sign, or the end of the road.",
+      "quote": null,
+      "appliesTo": [
+        "clearway"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 176; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "loading-zone",
+      "number": "179",
+      "title": "Stopping in a loading zone",
+      "plain": "Only buses and commercial passenger vehicles (dropping off/picking up passengers), trucks, signed courier/delivery vehicles, taxis, and vehicles built mainly for carrying loads (not sedans, station wagons or motorbikes) that are loading or unloading goods may stop in a LOADING ZONE. Max 30 minutes unless the sign shows another time. Ordinary cars must not stop, even to load.",
+      "quote": null,
+      "params": {
+        "defaultMaxMinutes": 30
+      },
+      "appliesTo": [
+        "loading_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 179; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "truck-zone",
+      "number": "180",
+      "title": "Stopping in a truck zone",
+      "plain": "Only a truck (over 4.5 t) dropping off or picking up goods may stop in a TRUCK ZONE.",
+      "quote": null,
+      "appliesTo": [
+        "truck_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 180; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "works-zone",
+      "number": "181",
+      "title": "Stopping in a works zone",
+      "plain": "Only vehicles engaged in construction work in or near the zone may stop in a WORKS ZONE.",
+      "quote": null,
+      "appliesTo": [
+        "works_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 181; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "taxi-zone",
+      "number": "182",
+      "title": "Stopping in a taxi zone",
+      "plain": "Only taxis may stop in a TAXI ZONE.",
+      "quote": null,
+      "appliesTo": [
+        "taxi_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 182; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "bus-zone",
+      "number": "183",
+      "title": "Stopping in a bus zone",
+      "plain": "Only public buses may stop in a BUS ZONE (unless the sign excludes a kind of bus).",
+      "quote": null,
+      "appliesTo": [
+        "bus_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 183; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "minibus-zone",
+      "number": "184",
+      "title": "Stopping in a minibus zone",
+      "plain": "Only public minibuses may stop in a MINIBUS ZONE.",
+      "quote": null,
+      "appliesTo": [
+        "minibus_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 184; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "permit-zone",
+      "number": "185",
+      "title": "Stopping in a permit zone",
+      "plain": "You must not stop in a PERMIT ZONE unless your vehicle displays (or you hold electronically) a current permit issued by the council for that zone, e.g. 'Area 1A' resident permit.",
+      "quote": null,
+      "appliesTo": [
+        "permit_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 185; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "mail-zone",
+      "number": "186",
+      "title": "Stopping in a mail zone",
+      "plain": "Nobody may stop in a MAIL ZONE except exempted postal vehicles.",
+      "quote": null,
+      "appliesTo": [
+        "mail_zone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 186; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "double-parking",
+      "number": "189",
+      "title": "Double parking",
+      "plain": "Don't stop between a parked vehicle and the centre of the road.",
+      "quote": null,
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 189; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "safety-zone",
+      "number": "190",
+      "title": "Stopping in or near a safety zone",
+      "plain": "Don't stop in a safety zone (tram stop island) or within 10 m before or after it, unless a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metres": 10
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 190; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "fire-hydrant",
+      "number": "194",
+      "title": "Stopping near a fire hydrant etc.",
+      "plain": "Don't stop within 1 m of a fire hydrant, fire hydrant indicator or fire plug indicator.",
+      "quote": null,
+      "params": {
+        "metres": 1
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 194; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "bus-stop",
+      "number": "195",
+      "title": "Stopping at or near a bus stop",
+      "plain": "Don't stop within 20 m before or 10 m after a bus stop sign, unless a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metresBefore": 20,
+        "metresAfter": 10
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 195; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "tram-stop",
+      "number": "196",
+      "title": "Stopping at or near a tram stop",
+      "plain": "Don't stop at a tram stop or within 20 m before the tram stop sign, unless a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metresBefore": 20
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 196; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "nature-strip-footpath",
+      "number": "197",
+      "title": "Stopping on a path, dividing strip, nature strip, painted island or traffic island",
+      "plain": "Don't stop on a footpath, shared path, dividing strip, nature strip (in a built-up area), painted island or traffic island — not even partly. Motorcycles may stop on a path if they don't obstruct anyone.",
+      "quote": null,
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 197; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "driveway",
+      "number": "198",
+      "title": "Obstructing access to and from a footpath, driveway etc.",
+      "plain": "Don't stop on or across a driveway (including your own) — you may park up to its edge. Exception: dropping off/picking up passengers, staying with the car, and driving on within 2 minutes.",
+      "quote": null,
+      "params": {
+        "maxMinutes": 2
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 198; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "postbox",
+      "number": "199",
+      "title": "Stopping near a postbox",
+      "plain": "Don't stop within 3 m of a public postbox unless dropping off/picking up passengers or mail, or a parking sign permits it.",
+      "quote": null,
+      "params": {
+        "metres": 3
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 199; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "bicycle-parking",
+      "number": "201",
+      "title": "Stopping on a road with a bicycle parking sign",
+      "plain": "Only bicycles (and e-scooters) may stop where a BICYCLE PARKING sign applies, except to drop off or pick up passengers.",
+      "quote": null,
+      "appliesTo": [
+        "bicycle"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 201; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "motorbike-parking",
+      "number": "202",
+      "title": "Stopping on a road with a motor bike parking sign",
+      "plain": "Only motorbikes may stop where a MOTOR BIKE PARKING / MOTOR BIKES ONLY sign applies, except to drop off or pick up passengers.",
+      "quote": null,
+      "appliesTo": [
+        "motorbike"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 202; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "disabled-parking",
+      "number": "203",
+      "title": "Stopping in an accessible parking area",
+      "plain": "You must not stop in an accessible (disabled) parking bay unless your vehicle displays a current accessible parking permit and you follow its conditions.",
+      "quote": null,
+      "appliesTo": [
+        "disabled"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 203; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "accessible-permit-double-time",
+      "number": "206",
+      "title": "Time extension for people with an accessible parking permit",
+      "plain": "National rule 206: a vehicle displaying a current disability parking permit may park longer than the signed time — in most states twice the period where the sign shows 30 minutes or more. Exact concession varies by state; verify.",
+      "quote": null,
+      "params": {
+        "permitTimeMultiplier": 2
+      },
+      "appliesTo": [
+        "time_limited"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 206; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "permissive-sign-meaning",
+      "number": "204",
+      "title": "Meaning of certain information on or with permissive parking signs",
+      "plain": "A number (or fraction) to the left of P is the maximum time in hours: 2P = 2 hours, 1/2P = 30 min, 1/4P = 15 min. A number with 'minute' to the right of P is minutes. Times and days on the sign limit when it applies; no days shown = every day.",
+      "quote": null,
+      "appliesTo": [
+        "time_limited",
+        "unrestricted"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 204; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "time-limited",
+      "number": "205",
+      "title": "Parking for longer than indicated",
+      "plain": "You must not park longer than the time shown on the sign (or double that with an accessible parking permit). The clock runs from when you park until the vehicle is moved off that length of road or out of the area. A plain P sign with no time and no hours means you may park at any time, for any length, unless another sign prohibits it.",
+      "quote": null,
+      "appliesTo": [
+        "time_limited"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 205; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "fees",
+      "number": "207",
+      "title": "Parking where fees are payable",
+      "plain": "Where the sign shows a fee is payable (TICKET / METER / PAY), you must pay the fee and obey any instructions on or with the sign, as well as the time limit.",
+      "quote": null,
+      "appliesTo": [
+        "time_limited",
+        "unrestricted"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 207; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "parallel-parking",
+      "number": "208",
+      "title": "Parallel parking on a road (except in a median strip parking area)",
+      "plain": "Park facing the direction of travel, parallel and as close as practicable to the kerb; at least 1 m from vehicles in front and behind; at least 3 m from a continuous dividing line or dividing strip (or leave 3 m clear alongside if there is no line); don't unreasonably obstruct others.",
+      "quote": null,
+      "params": {
+        "metresToDividingLine": 3,
+        "metresClear": 3,
+        "metresBetweenVehicles": 1
+      },
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 208; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    },
+    {
+      "id": "sign-times-days",
+      "number": "318",
+      "title": "Limited effect of certain traffic control devices (times, days, public holidays)",
+      "plain": "A sign that shows times/days applies only at those times/days. A sign that names a day of the week does NOT apply on a public holiday unless the sign says otherwise. A sign with no days shown applies every day, including public holidays.",
+      "quote": null,
+      "appliesTo": [
+        "general"
+      ],
+      "sources": [
+        {
+          "url": "https://www.legislation.qld.gov.au/view/html/inforce/current/sl-2009-0194",
+          "kind": "legislation",
+          "note": "Transport Operations (Road Use Management—Road Rules) Regulation 2009 (Qld) — national rule 318; wording not yet checked"
+        }
+      ],
+      "verification": {
+        "status": "needs_primary_check",
+        "checkedOn": "2026-11-04",
+        "checkedBy": "scripts/make-state-packs.py (derived from au-vic / national rules)",
+        "notes": "Generated from the Victorian pack because every state adopts the Australian Road Rules. Verify wording, numbering and any state modifications against the instrument above."
+      }
+    }
+  ]
+}

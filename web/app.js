@@ -11,9 +11,10 @@ try {
   cfg.readerUrl = localStorage.getItem('caniparkhere.readerUrl') || cfg.readerUrl;
 } catch { /* storage unavailable */ }
 
-const TZ = 'Australia/Melbourne';
+let TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
-const data = { rulesPack: null, holidays: null, councils: null, penalties: null };
+const data = { rulesPack: null, holidays: null, councils: null, penalties: null, jurisdiction: null, lgas: null, jurisdictions: null };
+let lastReader = null;    // what the vision reader returned (raw text, OCR lines, side fixes)
 let currentSign = null;   // last parsed/read sign
 let sideOverrides = {};   // panelId -> side
 let currentFile = null;
@@ -23,17 +24,42 @@ function esc(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;'
 function fmtT(d) { return d ? time.formatDateTime(d, TZ) : ''; }
 
 // ---------------------------------------------------------------- data + reader + location
-async function loadData() {
-  const base = new URL('../rules/' + cfg.jurisdiction + '/', import.meta.url);
-  const get = (f) => fetch(new URL(f, base)).then(r => r.ok ? r.json() : null);
-  [data.rulesPack, data.holidays, data.councils, data.penalties] = await Promise.all([get('rules.json'), get('public-holidays.json'), get('councils.json'), get('penalties.json')]);
-  $('instrument-link').href = data.rulesPack.instrument.url;
-  $('general-rules').innerHTML = data.rulesPack.rules.filter(r => r.appliesTo?.includes('general') && r.id !== 'sign-times-days' && r.id !== 'sign-likeness')
+const rulesBase = new URL('../rules/', import.meta.url);
+const getJson = (p) => fetch(new URL(p, rulesBase)).then(r => r.ok ? r.json() : null).catch(() => null);
+
+/** Load one state's pack (rules, holidays, councils, penalties) and rebuild the council list for it. */
+async function loadPack(id) {
+  const [rulesPack, holidays, councils, penalties] = await Promise.all([getJson(`${id}/rules.json`), getJson(`${id}/public-holidays.json`), getJson(`${id}/councils.json`), getJson(`${id}/penalties.json`)]);
+  if (!rulesPack) throw new Error(`no rules pack for ${id}`);
+  Object.assign(data, { rulesPack, holidays: holidays ?? { holidays: [] }, councils: councils ?? { councils: {}, default: {} }, penalties, jurisdiction: id });
+  TZ = rulesPack.timezone || TZ;
+  $('instrument-link').href = rulesPack.instrument.url;
+  $('general-rules').innerHTML = rulesPack.rules.filter(r => r.appliesTo?.includes('general') && r.id !== 'sign-times-days' && r.id !== 'sign-likeness')
     .map(r => `<li><a href="${r.sources[0].url}" target="_blank" rel="noopener">r ${esc(r.number)}</a> — ${esc(r.plain)}</li>`).join('');
-  const names = data.councils?.names ?? {};
+  // Council list: this state's councils from the national ABS list.
+  const names = councilNames(id);
   const sel = $('council');
-  sel.innerHTML = Object.entries(names).map(([id, name]) => `<option value="${id}">${esc(name)}</option>`).join('') + '<option value="">Other / unsure</option>';
-  try { const saved = localStorage.getItem('caniparkhere.council'); if (saved !== null && (saved === '' || names[saved])) { sel.value = saved; councilSource = 'saved'; } else sel.value = cfg.council ?? ''; } catch { sel.value = cfg.council ?? ''; }
+  sel.innerHTML = Object.entries(names).sort((a, b) => a[1].localeCompare(b[1])).map(([cid, name]) => `<option value="${cid}">${esc(name)}</option>`).join('') + '<option value="">Other / unsure</option>';
+  $('state').value = id;
+}
+
+/** {id: display name} for one state: the pack's own names (with policies) plus the ABS list. */
+function councilNames(jurisdiction) {
+  const out = {};
+  for (const l of data.lgas?.lgas ?? []) if (l.jurisdiction === jurisdiction) out[l.id] = l.name;
+  for (const [cid, name] of Object.entries(data.councils?.names ?? {})) out[cid] = name;
+  return out;
+}
+
+async function loadData() {
+  [data.jurisdictions, data.lgas] = await Promise.all([getJson('au/jurisdictions.json'), getJson('au/lgas.json')]);
+  const js = data.jurisdictions?.jurisdictions ?? { [cfg.jurisdiction]: { name: cfg.jurisdiction } };
+  $('state').innerHTML = Object.entries(js).map(([id, j]) => `<option value="${id}">${esc(j.name)}${j.status === 'verified_primary' ? '' : ' (rules not yet verified)'}</option>`).join('');
+  let start = cfg.jurisdiction;
+  try { const saved = localStorage.getItem('caniparkhere.jurisdiction'); if (saved && js[saved]) start = saved; } catch { /* ignore */ }
+  await loadPack(start);
+  try { const saved = localStorage.getItem('caniparkhere.council'); if (saved !== null && (saved === '' || $('council').querySelector(`option[value="${saved}"]`))) { $('council').value = saved; councilSource = 'saved'; } else $('council').value = cfg.council ?? ''; } catch { $('council').value = cfg.council ?? ''; }
+  if (!$('council').value && $('council').querySelector(`option[value="${cfg.council}"]`)) $('council').value = cfg.council;
 }
 
 /** When served by the Cloudflare Worker or the Mac reader, ../api/read-sign exists next to the app. */
@@ -51,6 +77,11 @@ async function detectReader() {
 
 const STRIP = /\b(city of|shire of|shire|city council|city|council|rural|borough of|borough)\b/gi;
 const norm = (s) => String(s ?? '').toLowerCase().replace(STRIP, ' ').replace(/[^a-z]+/g, ' ').trim();
+export function matchState(address, jurisdictions) {
+  const st = norm(address?.state ?? '');
+  for (const [id, j] of Object.entries(jurisdictions ?? {})) if (st && norm(j.state) === st) return id;
+  return null;
+}
 export function matchCouncil(address, names) {
   const candidates = [address?.municipality, address?.city, address?.county, address?.city_district, address?.town, address?.state_district].filter(Boolean);
   for (const c of candidates) {
@@ -71,10 +102,14 @@ async function locate(manual = false) {
     const { latitude: lat, longitude: lon } = pos.coords;
     const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=${lat}&lon=${lon}`, { headers: { accept: 'application/json' } });
     const j = await r.json();
-    const id = matchCouncil(j.address ?? {}, data.councils?.names ?? {});
+    const stateId = matchState(j.address ?? {}, data.jurisdictions?.jurisdictions);
+    if (stateId && stateId !== data.jurisdiction) { await loadPack(stateId); try { localStorage.setItem('caniparkhere.jurisdiction', stateId); } catch { /* ignore */ } }
+    const names = councilNames(data.jurisdiction);
+    const id = matchCouncil(j.address ?? {}, names);
     const label = j.address?.municipality || j.address?.city || j.address?.county || 'unknown area';
-    if (id) { $('council').value = id; councilSource = 'location'; note.textContent = `📍 ${data.councils.names[id]} (from your location)`; try { localStorage.setItem('caniparkhere.council', id); } catch { /* ignore */ } }
-    else { $('council').value = ''; councilSource = 'location'; note.textContent = `📍 ${label} — not a council I know; using general rules.`; }
+    const stateName = data.jurisdictions?.jurisdictions?.[data.jurisdiction]?.name ?? '';
+    if (id) { $('council').value = id; councilSource = 'location'; note.textContent = `📍 ${names[id]}, ${stateName} (from your location)`; try { localStorage.setItem('caniparkhere.council', id); } catch { /* ignore */ } }
+    else { $('council').value = ''; councilSource = 'location'; note.textContent = `📍 ${label}, ${stateName} — council not matched; using state rules.`; }
     if (currentSign) runInterpret();
   } catch (e) {
     note.textContent = manual ? `Could not get location (${e.message || e.code || 'denied'}).` : '';
@@ -124,9 +159,22 @@ function renderPanels(sign) {
   list.querySelectorAll('button[data-side]').forEach(b => b.addEventListener('click', () => { sideOverrides[b.dataset.pid] = b.dataset.side; runInterpret(); }));
 }
 
+function dayStrip(s, at) {
+  // 24 hours from now as a coloured strip, plus the schedule underneath.
+  const start = new Date(at).getTime(), end = start + 24 * 3600 * 1000;
+  const segs = s.timeline.filter(seg => (seg.to ? seg.to.getTime() : Infinity) > start && seg.from.getTime() < end);
+  const bar = segs.map(seg => { const a = Math.max(seg.from.getTime(), start), b = Math.min(seg.to ? seg.to.getTime() : end, end); return `<span class="${seg.verdict}" style="width:${((b - a) / (end - start) * 100).toFixed(1)}%" title="${esc(seg.headline)}"></span>`; }).join('');
+  const rows = segs.slice(0, 8).map(seg => `<div><span class="t">${esc(seg.from.getTime() <= start ? 'now' : fmtT(seg.from).replace(/^\w+, /, ''))}</span><span><span class="dot ${seg.verdict}"></span>${esc(seg.headline)}</span></div>`).join('');
+  const nowP = time.localParts(new Date(at), TZ);
+  return `<div class="strip">${bar}</div><div class="strip-labels"><span>now (${esc(time.minutesToLabel(nowP.minutesOfDay))})</span><span>+12h</span><span>+24h</span></div><details class="sched"><summary>Full schedule</summary>${rows}</details>`;
+}
+
 function fineHtml(s) {
   const f = s.fine;
-  if (!f) return '';
+  if (!f) {
+    if (!data.penalties && s.verdict !== 'unknown' && s.verdict !== 'ok') return `<div class="fine soft"><span class="lbl">fine amount not loaded for this state yet</span></div>`;
+    return '';
+  }
   const soft = s.verdict === VERDICT.OK;
   const label = s.verdict === VERDICT.OK ? (f.key === 'fee' ? 'fine if you don\'t pay' : 'fine if you overstay') : s.verdict === VERDICT.STOP_ONLY ? 'fine if you park' : 'fine if you stop here';
   const extra = s.feeFine ? ` · +$${s.feeFine.amount} if you don't pay` : '';
@@ -144,7 +192,6 @@ function renderResult(res) {
     const arrow = key === 'left' ? '←' : key === 'right' ? '→' : '↔';
     const label = key === 'both' ? 'this side of the post' : key === 'left' ? 'left of the sign' : 'right of the sign';
     const leave = s.leaveBy ? `<div class="leave">⏱ Leave by <strong>${esc(fmtT(s.leaveBy))}</strong><br><span class="muted small">${esc(s.leaveByReason)}</span></div>` : (s.verdict === VERDICT.OK ? `<div class="leave">⏱ No restriction found in the next 2 days.</div>` : '');
-    const tl = s.timeline.slice(0, 6).map(seg => `<div><span class="t">${esc(seg.from.getTime() === new Date(res.at).getTime() ? 'now' : fmtT(seg.from))}</span><span><span class="dot ${seg.verdict}"></span>${esc(seg.headline)}</span></div>`).join('');
     html += `<div class="verdict ${s.verdict} ${key}">
       <span class="arrow">${arrow}</span>
       <div class="side-label">${label}</div>
@@ -152,16 +199,27 @@ function renderResult(res) {
       ${s.detail ? `<div class="small">${esc(s.detail)}</div>` : ''}
       ${leave}
       ${fineHtml(s)}
+      ${s.plan?.length ? `<ul class="plan">${s.plan.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
       ${s.notes.length ? `<ul>${s.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-      <details class="timeline"><summary>What happens next</summary>${tl}</details>
+      ${s.verdict !== 'unknown' ? dayStrip(s, res.at) : ''}
     </div>`;
   }
   html += '</div>';
-  const councilName = res.council ? (data.councils?.names?.[res.council] ?? res.council) : 'council unknown';
-  html += `<p class="meta">${esc(councilName)}${councilSource === 'location' ? ' (from your location)' : ''} · ${esc(fmtT(new Date(res.at)))} · ${esc($('vehicle').selectedOptions[0]?.textContent ?? '')}</p>`;
+  const councilName = res.council ? (councilNames(data.jurisdiction)[res.council] ?? res.council) : 'council unknown';
+  const jur = data.jurisdictions?.jurisdictions?.[data.jurisdiction];
+  html += `<p class="meta">${esc(councilName)}, ${esc(jur?.name ?? data.jurisdiction)}${councilSource === 'location' ? ' (from your location)' : ''} · ${esc(fmtT(new Date(res.at)))} · ${esc($('vehicle').selectedOptions[0]?.textContent ?? '')}${jur && jur.status !== 'verified_primary' ? ' · <strong>rules for this state not yet verified against its legislation</strong>' : ''}</p>`;
   out.innerHTML = html;
   $('rules-applied').innerHTML = res.rules.length ? `<ul>${res.rules.map(r => `<li><a href="${r.url}" target="_blank" rel="noopener">Rule ${esc(r.number)} — ${esc(r.title)}</a>: ${esc(r.plain)}</li>`).join('')}</ul><div class="muted small">Source: ${esc(res.instrument?.title ?? '')} (${esc(res.instrument?.citation ?? '')})</div>` : '<p class="muted small">None yet.</p>';
   out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderReaderSaid(sign, meta) {
+  const parts = [];
+  if (meta?.backend) parts.push(`<div>Reader: <strong>${esc(meta.backend)}</strong>${meta.model ? ' · ' + esc(meta.model) : ''}${meta.seconds ? ' · ' + meta.seconds + 's' : ''}</div>`);
+  if (meta?.sideFixes?.length) parts.push(`<div>Side corrections from word positions: ${esc(meta.sideFixes.join('; '))}</div>`);
+  if (meta?.ocrText) parts.push(`<div>Apple Vision read:</div><pre class="raw">${esc(meta.ocrText)}</pre>`);
+  if (meta?.raw) parts.push(`<div>Model output:</div><pre class="raw">${esc(meta.raw)}</pre>`);
+  $('reader-said').innerHTML = parts.join('') || 'Nothing yet.';
 }
 
 function showError(msg) { $('results').hidden = false; $('results').innerHTML = `<div class="card err">${esc(msg)}</div>`; }
@@ -192,8 +250,9 @@ async function readPhoto() {
       $('status-line').textContent = 'Reading the sign…';
       const small = await downscaleImage(currentFile);
       const t0 = Date.now();
-      const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
+      const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null, jurisdiction: data.jurisdiction }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
       if (meta?.seconds) $('reader-mode').textContent = `vision reader on (${meta.backend ?? ''}) · last read ${meta.seconds}s`;
+      lastReader = meta; renderReaderSaid(sign, meta);
       sideOverrides = {};
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
       runInterpret({ ...sign, rawText: $('sign-text').value });
@@ -230,6 +289,7 @@ function init() {
   $('btn-locate').addEventListener('click', () => locate(true));
   for (const id of ['when', 'vehicle', 'accessible', 'permit-area']) $(id).addEventListener('change', () => { if (currentSign) runInterpret(); });
   $('council').addEventListener('change', () => { councilSource = 'manual'; try { localStorage.setItem('caniparkhere.council', $('council').value); } catch { /* ignore */ } if (currentSign) runInterpret(); });
+  $('state').addEventListener('change', async () => { await loadPack($('state').value); $('council').value = ''; councilSource = 'manual'; try { localStorage.setItem('caniparkhere.jurisdiction', $('state').value); localStorage.setItem('caniparkhere.council', ''); } catch { /* ignore */ } $('now-note').textContent = `Times are ${data.rulesPack.timezone}. Now: ${fmtT(new Date())}.`; if (currentSign) runInterpret(); });
   $('sign-text').addEventListener('input', () => { currentSign = null; });
   if (cfg.geolocate && councilSource !== 'saved') locate(false);
 }

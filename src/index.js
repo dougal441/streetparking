@@ -3,6 +3,7 @@ export { parseSignText, normaliseText, extractTimeRanges, extractDays } from './
 export { interpret, evaluate, windowActive, VERDICT } from './engine/interpret.js';
 export { holidayStatus } from './engine/holidays.js';
 export { fineFor, offenceKeyFor, penaltyUnitValue } from './engine/fines.js';
+export { planFor } from './engine/plan.js';
 export * as time from './engine/time.js';
 
 /**

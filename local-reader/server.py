@@ -135,6 +135,85 @@ def normalise_sign(parsed, jurisdiction="au-vic", council=None):
     return {"sign": {"jurisdiction": jurisdiction, "council": council, "rawText": raw, "confidence": conf, "panels": panels}}
 
 
+# ---------------------------------------------------------------- layout from Apple Vision positions
+
+def split_columns(lines: list[dict]):
+    """Is the printed text in two side-by-side columns (a split sign)? Returns {"split": bool, "gap": x} or None.
+
+    The vision model is the weak link on split signs: it puts both halves on one side, or drops the arrow.
+    Apple Vision knows WHERE each word is, so we look for a vertical gap with words on both sides of it.
+    """
+    xs = sorted((l["x0"], l["x1"]) for l in lines if l["conf"] >= 0.3)
+    if len(xs) < 3:
+        return None
+    left_edge, right_edge = min(a for a, _ in xs), max(b for _, b in xs)
+    width = right_edge - left_edge
+    if width <= 0:
+        return None
+    # candidate gaps between the sorted intervals, measured as a fraction of the text's total width
+    best = None
+    for i in range(1, len(xs)):
+        right_of_left = max(b for _, b in xs[:i])
+        gap = xs[i][0] - right_of_left
+        if gap / width > 0.12 and i >= 1 and len(xs) - i >= 1:
+            cand = (gap, (right_of_left + xs[i][0]) / 2)
+            if best is None or cand[0] > best[0]:
+                best = cand
+    if not best:
+        return {"split": False}
+    gap, x = best
+    n_left = sum(1 for l in lines if l["xc"] < x)
+    n_right = len(lines) - n_left
+    return {"split": n_left >= 1 and n_right >= 1, "gap": round(x, 3)}
+
+
+def ocr_hint(lines: list[dict], columns) -> str:
+    if not lines:
+        return ""
+    lines = sorted(lines, key=lambda l: -l["y"])  # top of the sign first: panels are stacked top-to-bottom
+    if columns and columns.get("split"):
+        return "\n".join(f"[{'left column' if l['xc'] < columns['gap'] else 'right column'}] {l['text']}" for l in lines)
+    return "\n".join(l["text"] for l in lines)
+
+
+def _norm_words(t: str) -> set[str]:
+    return set(re.findall(r"[A-Z0-9]+", (t or "").upper()))
+
+
+def fix_sides_from_columns(panels: list[dict], lines: list[dict], columns) -> list[str]:
+    """On a two-column sign, put each panel on the side its printed words sit. Symbol-only panels (the red Ⓢ)
+    have no words: they take the column nothing else claimed. Returns a list of what was changed."""
+    if not columns or not columns.get("split") or len(panels) < 2:
+        return []
+    gap = columns["gap"]
+    changes = []
+    unplaced = []
+    taken = set()
+    for p in panels:
+        words = _norm_words(p.get("rawText", "")) - {"LEFT", "RIGHT", "SIDE", "ARROW"}
+        votes = {"left": 0, "right": 0}
+        for l in lines:
+            lw = _norm_words(l["text"])
+            overlap = len(words & lw)
+            if overlap:
+                votes["left" if l["xc"] < gap else "right"] += overlap
+        if votes["left"] == votes["right"]:
+            unplaced.append(p)
+            continue
+        side = "left" if votes["left"] > votes["right"] else "right"
+        taken.add(side)
+        if p["side"] != side:
+            changes.append(f'{p.get("kind")}: {p["side"]} -> {side} (its words sit in the {side} column)')
+            p["side"] = side
+    free = [s for s in ("left", "right") if s not in taken]
+    if len(unplaced) == 1 and len(free) == 1:
+        p = unplaced[0]
+        if p["side"] != free[0]:
+            changes.append(f'{p.get("kind")}: {p["side"]} -> {free[0]} (the other column was taken)')
+            p["side"] = free[0]
+    return changes
+
+
 # ---------------------------------------------------------------- the model
 
 def life_lock_path() -> Path | None:
@@ -235,11 +314,12 @@ class Reader:
             with tempfile.TemporaryDirectory() as d:
                 path = Path(d) / "sign.jpg"
                 self._normalise(image_bytes, path)
+                ocr_lines = []
                 if self.ocr_available:
                     progress("reading printed text (Apple Vision)")
-                    ocr_text = self._ocr(path)
-                else:
-                    ocr_text = ""
+                    ocr_lines = self._ocr_lines(path)
+                columns = split_columns(ocr_lines)
+                ocr_text = ocr_hint(ocr_lines, columns)
                 if self._loaded is None:
                     progress("loading the model (20-40 s)")
                     self._ensure_loaded()
@@ -249,7 +329,10 @@ class Reader:
         if ends_in_runaway_repeat(raw):
             raise ValueError("the model got stuck repeating itself; try a closer, straighter photo")
         out = normalise_sign(extract_json(raw), jurisdiction, council)
-        return {**out, "raw": raw, "ocrText": ocr_text, "backend": "local-mlx", "model": self.model_id}
+        fixes = []
+        if out.get("sign"):
+            fixes = fix_sides_from_columns(out["sign"]["panels"], ocr_lines, columns)
+        return {**out, "raw": raw, "ocrText": ocr_text, "sideFixes": fixes, "columns": columns, "backend": "local-mlx", "model": self.model_id}
 
     @staticmethod
     def _normalise(image_bytes: bytes, dst: Path):
@@ -265,16 +348,23 @@ class Reader:
         im.save(dst, "JPEG", quality=88)
 
     @staticmethod
-    def _ocr(path: Path) -> str:
+    def _ocr_lines(path: Path) -> list[dict]:
+        """Apple Vision lines with their horizontal position (0 = left edge, 1 = right edge of the photo)."""
         from ocrmac import ocrmac
         res = ocrmac.OCR(str(path), recognition_level="accurate").recognize()
-        return "\n".join(t for t, _c, _b in res if t.strip()).strip()
+        out = []
+        for text, conf, bbox in res:
+            if not text.strip():
+                continue
+            x, y, w, h = bbox  # normalised, origin bottom-left
+            out.append({"text": text.strip(), "conf": float(conf), "x0": float(x), "x1": float(x + w), "xc": float(x + w / 2), "y": float(y)})
+        return out
 
     def _generate(self, path: Path, ocr_text: str, jurisdiction: str, council: str | None) -> str:
         from mlx_vlm import generate
         from mlx_vlm.prompt_utils import apply_chat_template
         model, processor, config = self._ensure_loaded()
-        hint = f"\nApple Vision OCR read these printed lines (reliable for words and numbers, blind to symbols and arrows):\n{ocr_text}\n" if ocr_text else ""
+        hint = f"\nApple Vision OCR read these printed lines (reliable for words and numbers, blind to symbols and arrows). Where a line is tagged [left column]/[right column] the sign is split down the middle: everything in the left column is one or more panels with side \"left\", everything in the right column has side \"right\". A column with no printed words but a red circled S is a NO STOPPING panel on that side.\n{ocr_text}\n" if ocr_text else ""
         prompt = f"{SYSTEM}\n\nJurisdiction: {jurisdiction}{', council: ' + council if council else ''}. Transcribe this parking sign.{hint}\n{JSON_SHAPE}"
         formatted = apply_chat_template(processor, config, prompt, num_images=1)
         result = generate(model, processor, formatted, image=[str(path)], verbose=False, max_tokens=MAX_TOKENS)

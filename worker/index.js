@@ -75,7 +75,7 @@ async function runReader(env, args) {
       if (!body) throw Object.assign(new Error('local reader took too long'), { local: true });
     }
     if (!body.sign) return { sign: null, error: body.error || 'local reader returned no sign', backend: 'local' };
-    return { sign: normaliseSign(body.sign, args).sign, backend: 'local', model: body.model, ocrText: body.ocrText, seconds: body.seconds };
+    return { sign: normaliseSign(body.sign, args).sign, backend: 'local', model: body.model, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes, seconds: body.seconds };
   }
 
   if (backend === 'unified' || backend === 'workers-ai') {
