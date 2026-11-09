@@ -1,6 +1,6 @@
 import { parseSignText, interpret, VERDICT, time } from '../src/index.js';
 import { readWithTesseract, readWithClaude, pickReader } from '../src/reader/index.js';
-import { downscaleImage } from '../src/reader/claude.js';
+import { downscaleImage, sendReport } from '../src/reader/claude.js';
 
 const cfg = Object.assign({ readerUrl: null, council: 'melbourne', jurisdiction: 'au-vic', geolocate: true }, globalThis.CANIPARKHERE ?? {});
 // Reader URL can be set without redeploying: ?reader=https://... (persisted) or ?reader=off (clear).
@@ -15,6 +15,8 @@ let TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
 const data = { rulesPack: null, holidays: null, councils: null, penalties: null, jurisdiction: null, lgas: null, jurisdictions: null };
 let lastReader = null;    // what the vision reader returned (raw text, OCR lines, side fixes)
+let lastResult = null;    // last interpret() output, for reports
+let reportState = {};     // readId -> { status, note } for "Reader got it wrong"
 let currentSign = null;   // last parsed/read sign
 let sideOverrides = {};   // panelId -> side
 let currentFile = null;
@@ -222,6 +224,34 @@ function renderReaderSaid(sign, meta) {
   $('reader-said').innerHTML = parts.join('') || 'Nothing yet.';
 }
 
+// "Reader got it wrong": one tap sends the photo's read id; the reader (the Mac) already holds the photo and its
+// full log, files them as a report and uploads them. A note can follow. Fixes made by hand first (side arrows,
+// edited sign text) travel with the report as the best guess at the right answer.
+function renderReport() {
+  const box = $('report-box');
+  const id = cfg.readerUrl ? lastReader?.readId : null;
+  if (!id) { box.hidden = true; box.innerHTML = ''; return; }
+  const st = reportState[id];
+  box.hidden = false;
+  if (!st) box.innerHTML = `<button class="btn" id="btn-report">👎 Reader got it wrong</button><p class="muted small">Fix it first if you can (arrows or sign text in Show my working), then tap. Sends this photo and the reader's log to the project's public reports so the mistake gets fixed for good.</p>`;
+  else box.innerHTML = `<p class="small">${st.status === 'sending' ? 'Sending…' : esc(st.note)}</p>${st.status === 'sending' ? '' : `<div class="row"><input type="text" id="report-note" placeholder="What was wrong? (optional)"><button class="btn" id="btn-report">${st.status === 'failed' ? 'Try again' : 'Add note'}</button></div>`}`;
+  $('btn-report')?.addEventListener('click', () => report(id, $('report-note')?.value ?? ''));
+}
+
+async function report(readId, note) {
+  reportState[readId] = { status: 'sending' }; renderReport();
+  const app = {
+    signText: $('sign-text').value, sign: currentSign ? applyOverrides({ ...currentSign }) : null, sideOverrides,
+    when: whenDate().toISOString(), vehicle: vehicle(), council: $('council').value || null, error: lastReader?.error ?? null,
+    verdicts: lastResult ? Object.fromEntries(Object.entries(lastResult.sides).map(([k, s]) => [k, { verdict: s.verdict, headline: s.headline }])) : null,
+  };
+  try {
+    const r = await sendReport(cfg.readerUrl, { readId, note, app });
+    reportState[readId] = { status: 'sent', note: r.uploaded ? '✓ Reported and uploaded. Thanks.' : `✓ Saved on the Mac. Not uploaded yet (${r.uploadNote ?? 'unknown reason'}); it will go with the next report.` };
+  } catch (e) { reportState[readId] = { status: 'failed', note: `Could not send the report: ${e.message}` }; }
+  renderReport();
+}
+
 function showError(msg) { $('results').hidden = false; $('results').innerHTML = `<div class="card err">${esc(msg)}</div>`; }
 
 // ---------------------------------------------------------------- flow
@@ -235,6 +265,7 @@ function runInterpret(signOverride) {
     renderPanels(sign);
     if (!sign.panels.length) { showError('Nothing recognisable yet — photograph the sign, or open "Show my working" and type it.'); return; }
     const res = interpret(sign, { ...data, at: whenDate(), vehicle: vehicle(), council, tz: TZ });
+    lastResult = res;
     renderResult(res);
     $('report-link').href = `https://github.com/dougal441/streetparking/issues/new?template=sign-report.yml&title=${encodeURIComponent('Sign misread: ' + (text.split('\n')[0] || '').slice(0, 40))}&sign-text=${encodeURIComponent(text)}`;
   } catch (e) { showError('Something went wrong: ' + e.message); console.error(e); }
@@ -252,7 +283,7 @@ async function readPhoto() {
       const t0 = Date.now();
       const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null, jurisdiction: data.jurisdiction }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
       if (meta?.seconds) $('reader-mode').textContent = `vision reader on (${meta.backend ?? ''}) · last read ${meta.seconds}s`;
-      lastReader = meta; renderReaderSaid(sign, meta);
+      lastReader = meta; renderReaderSaid(sign, meta); renderReport();
       sideOverrides = {};
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
       runInterpret({ ...sign, rawText: $('sign-text').value });
@@ -260,7 +291,7 @@ async function readPhoto() {
       $('status-line').textContent = 'Reading the sign (on-device OCR)…';
       const { text, confidence } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
       $('sign-text').value = text.trim();
-      currentSign = null; sideOverrides = {};
+      currentSign = null; sideOverrides = {}; lastReader = null; renderReport();
       runInterpret();
       const parsed = parseSignText(text);
       if (!parsed.panels.length || parsed.confidence < 0.5 || confidence < 0.5) {
@@ -272,6 +303,7 @@ async function readPhoto() {
   } catch (e) {
     showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
     $('status-line').textContent = 'Reader unavailable.';
+    lastReader = e.readId ? { readId: e.readId, error: e.message } : null; lastResult = null; renderReport();
   } finally { btn.classList.remove('busy'); prog.hidden = true; }
 }
 

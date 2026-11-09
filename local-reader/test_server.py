@@ -174,3 +174,106 @@ class Unprinted(unittest.TestCase):
         server.drop_unprinted(sign["panels"], [])
         self.assertEqual(sign["panels"][0]["windows"], [])
         self.assertEqual(len(sign["panels"][0]["exceptions"]), 1)  # nothing to check it against
+
+
+class ReadLogAndReports(unittest.TestCase):
+    """Every read is logged; a report copies it to reports/ and pushes it to the reader-reports branch."""
+
+    def setUp(self):
+        import subprocess
+        self.tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self.tmp.name) / "reader"
+        self.base.mkdir()
+        self.remote = Path(self.tmp.name) / "remote.git"
+        subprocess.run(["git", "init", "-q", "--bare", str(self.remote)], check=True)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def remote_files(self):
+        import subprocess
+        r = subprocess.run(["git", "--git-dir", str(self.remote), "ls-tree", "-r", "--name-only", server.REPORTS_BRANCH], capture_output=True, text=True)
+        return r.stdout.split()
+
+    def test_read_is_logged_reported_and_uploaded(self):
+        log = server.ReadLog(self.base, remote=str(self.remote))
+        reader = server.Reader("fake", 10, fake=True, log=log)
+        out = reader.read(b"jpegbytes", "au-vic", "melbourne")
+        rid = out["readId"]
+        self.assertRegex(rid, server.READ_ID)
+        rec = json.loads((self.base / "reads" / rid / "read.json").read_text())
+        self.assertEqual(rec["result"]["sign"]["panels"][0]["kind"], "no_stopping")
+        self.assertEqual((self.base / "reads" / rid / "photo.jpg").read_bytes(), b"jpegbytes")
+
+        res = log.report(rid, {"note": "left side is wrong", "app": {"signText": "NO STOPPING <-"}})
+        self.assertTrue(res["uploaded"], res["uploadNote"])
+        self.assertEqual(sorted(self.remote_files()), ["README.md", f"reports/{rid}/photo.jpg", f"reports/{rid}/read.json", f"reports/{rid}/report.json"])
+        self.assertEqual(log.sync(), (True, "nothing new to upload"))
+
+        # a second note on the same read updates the same report; a second read lands beside the first
+        res = log.report(rid, {"note": "should be all times"})
+        self.assertTrue(res["uploaded"], res["uploadNote"])
+        self.assertEqual(json.loads((self.base / "reports" / rid / "report.json").read_text())["notes"], ["left side is wrong", "should be all times"])
+        rid2 = reader.read(b"second", "au-vic", None)["readId"]
+        self.assertTrue(log.report(rid2, {})["uploaded"])
+        self.assertEqual(len([f for f in self.remote_files() if f.endswith("report.json")]), 2)
+
+    def test_upload_failure_keeps_the_report_for_next_time(self):
+        log = server.ReadLog(self.base, remote=str(Path(self.tmp.name) / "missing.git"))
+        rid = server.Reader("fake", 10, fake=True, log=log).read(b"x", "au-vic", None)["readId"]
+        res = log.report(rid, {"note": "n"})
+        self.assertTrue(res["saved"]); self.assertFalse(res["uploaded"])
+        log.remote = str(self.remote)
+        self.assertEqual(log.sync()[0], True)
+        self.assertIn(f"reports/{rid}/report.json", self.remote_files())
+
+    def test_failed_read_is_logged_with_its_id(self):
+        log = server.ReadLog(self.base, sync=False)
+        reader = server.Reader("fake", 10, fake=True, log=log)
+        reader._read = lambda *a, **k: (_ for _ in ()).throw(ValueError("boom"))
+        with self.assertRaises(ValueError) as cm:
+            reader.read(b"x", "au-vic", None)
+        rec = json.loads((self.base / "reads" / cm.exception.read_id / "read.json").read_text())
+        self.assertEqual(rec["error"], "ValueError: boom")
+
+    def test_report_endpoint(self):
+        import http.client, threading, base64
+        from http.server import ThreadingHTTPServer
+        reader = server.Reader("fake", 10, fake=True, log=server.ReadLog(self.base, sync=False))
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), server.make_handler(reader, "tok", server.Jobs(reader)))
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            c = http.client.HTTPConnection("127.0.0.1", srv.server_address[1], timeout=5)
+            post = lambda path, body: (c.request("POST", path, body=json.dumps(body), headers={"content-type": "application/json"}), c.getresponse())[1]
+            r = post("/api/read-sign?token=tok", {"image": base64.b64encode(b"x").decode()}); rid = json.loads(r.read())["readId"]
+            r = post("/streetparking/api/read-sign/reports", {"readId": rid}); r.read(); self.assertEqual(r.status, 401)
+            r = post("/streetparking/api/read-sign/reports?token=tok", {"readId": rid, "note": "wrong"}); body = json.loads(r.read())
+            self.assertEqual((r.status, body["saved"], body["uploaded"]), (200, True, False))
+            r = post("/api/read-sign/reports?token=tok", {"readId": "../../etc"}); r.read(); self.assertEqual(r.status, 404)
+        finally:
+            srv.shutdown()
+
+
+class ReplayCases(unittest.TestCase):
+    """cases/*.json: reads that were reported wrong. Each holds what the reader saw (Apple Vision lines + the
+    model's raw reply) and the sign a person confirmed. status "fixed" = post-processing must now produce the
+    right sign, forever. status "model" = only a better prompt or model can fix it (tracked, not asserted)."""
+
+    FIELDS = ("kind", "side", "limitMinutes", "fee", "towAway", "windows")
+
+    @staticmethod
+    def view(panels):
+        return [{**{k: p.get(k) for k in ReplayCases.FIELDS}, "exceptions": sorted(e.get("type") for e in p.get("exceptions") or [])} for p in panels]
+
+    def test_cases(self):
+        for f in sorted((Path(__file__).parent / "cases").glob("*.json")):
+            case = json.loads(f.read_text())
+            with self.subTest(case=f.stem):
+                self.assertIn(case.get("status"), ("fixed", "model"), "triage it: set status and expected")
+                self.assertIsInstance(case.get("expected"), dict)
+                if case["status"] != "fixed":
+                    continue
+                out = server.postprocess(case["raw"], case["ocrLines"], case.get("jurisdiction", "au-vic"), case.get("council"))
+                got = server.normalise_sign({"panels": out["sign"]["panels"]})["sign"]["panels"]
+                want = server.normalise_sign(case["expected"])["sign"]["panels"]
+                self.assertEqual(self.view(got), self.view(want))

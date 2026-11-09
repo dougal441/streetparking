@@ -14,6 +14,8 @@ Speaks the same contract as the Cloudflare Worker, so the app needs no changes:
   GET  /api/read-sign                      -> {"service":"caniparkhere-reader","backend":"local-mlx",...}
   POST /api/read-sign {image,mediaType,...} -> {"sign":{...},"raw":"...","ocrText":"..."}
   POST /api/read-sign {..., "async": true} -> 202 {"jobId":...}; then poll
+  POST /api/read-sign/reports {"readId","note","app"}  -> the person says a read was wrong: kept in reports/ and pushed
+                                                          to the reader-reports branch (docs/REPORTS.md)
   GET  /api/read-sign/jobs/<jobId>         -> {"status":"queued|running|done|error","stage":"...","result":{...}}
 A first photo can take a minute on a MacBook Air (model load + reading); phones and proxies give up at
 ~60 s, so the app always uses the async form and shows the stage while it waits.
@@ -305,6 +307,147 @@ def drop_unprinted(panels: list[dict], lines: list[dict]) -> list[str]:
     return notes
 
 
+def postprocess(raw: str, ocr_lines: list[dict], jurisdiction="au-vic", council=None) -> dict:
+    """Model reply + Apple Vision lines -> the sign the app gets. Pure, so a saved read can be replayed in tests
+    (cases/*.json): every guard that fixes a reported misread stays fixed."""
+    if ends_in_runaway_repeat(raw):
+        raise ValueError("the model got stuck repeating itself; try a closer, straighter photo")
+    columns = split_columns(ocr_lines)
+    out = normalise_sign(extract_json(raw), jurisdiction, council)
+    fixes = []
+    if out.get("sign"):
+        sign = out["sign"]
+        before = panels_text(sign["panels"])
+        fixes = drop_unprinted(sign["panels"], ocr_lines) + fix_sides_from_columns(sign["panels"], ocr_lines, columns)
+        if sign["rawText"] == before:  # text was rebuilt from the panels: keep it in step with the fixes
+            sign["rawText"] = panels_text(sign["panels"])
+    return {**out, "sideFixes": fixes, "columns": columns}
+
+
+# ---------------------------------------------------------------- read log and "the reader got it wrong" reports
+
+READ_ID = re.compile(r"\d{8}-\d{6}-[0-9a-f]{6}")
+REPORTS_BRANCH = "reader-reports"
+REPORTS_README = """# Reader reports
+
+Photos the local reader got wrong, sent from the app's "Reader got it wrong" button.
+Each folder: `photo.jpg` (what the model saw), `read.json` (Apple Vision lines, the model's raw reply, the
+sign it was turned into, timings) and `report.json` (what the app showed and what the person said).
+See docs/REPORTS.md on the main branch for how these become test cases.
+"""
+
+
+def new_read_id() -> str:
+    return time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:6]
+
+
+def _git(args: list[str], cwd: Path, timeout=60):
+    import subprocess
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+    r = subprocess.run(["git", *args], cwd=str(cwd), env=env, capture_output=True, text=True, timeout=timeout)
+    return r.returncode, re.sub(r"://[^@/\s]+@", "://", (r.stdout + r.stderr).strip())  # never echo credentials
+
+
+class ReadLog:
+    """Every read is kept on disk (photo + everything the reader saw and said), newest KEEP of them. A report
+    copies one read into reports/ and pushes it to the reader-reports branch so it can be studied off this Mac."""
+
+    KEEP = 200
+
+    def __init__(self, base: Path, remote: str | None = None, sync=True):
+        self.base, self.remote, self.sync_enabled = Path(base), remote, sync
+        self.reads, self.reports, self.work = self.base / "reads", self.base / "reports", self.base / "state" / "reports-git"
+        self.lock = threading.Lock()
+
+    def save(self, read_id: str, photo: bytes | None, record: dict):
+        try:
+            d = self.reads / read_id
+            d.mkdir(parents=True, exist_ok=True)
+            if photo:
+                (d / "photo.jpg").write_bytes(photo)
+            (d / "read.json").write_text(json.dumps(record, indent=1))
+            for old in sorted(p for p in self.reads.iterdir() if p.is_dir())[:-self.KEEP]:
+                for f in old.iterdir():
+                    f.unlink()
+                old.rmdir()
+        except Exception as e:  # logging must never break a read
+            print("could not log the read:", repr(e), file=sys.stderr)
+
+    def report(self, read_id: str, payload: dict) -> dict:
+        """Save (or update) the report for one read, then try to upload. Always answers; upload may fail."""
+        src = self.reads / read_id
+        dst = self.reports / read_id
+        if not READ_ID.fullmatch(read_id) or not (src.is_dir() or dst.is_dir()):
+            raise KeyError(read_id)
+        dst.mkdir(parents=True, exist_ok=True)
+        if src.is_dir():
+            for f in src.iterdir():
+                (dst / f.name).write_bytes(f.read_bytes())
+        rp = dst / "report.json"
+        prev = json.loads(rp.read_text()) if rp.exists() else {}
+        notes = prev.get("notes", []) + ([payload["note"].strip()] if isinstance(payload.get("note"), str) and payload["note"].strip() else [])
+        rp.write_text(json.dumps({"readId": read_id, "reportedAt": prev.get("reportedAt") or time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+                                  "updatedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "notes": notes, "app": payload.get("app")}, indent=1))
+        (dst / ".uploaded").unlink(missing_ok=True)
+        print(f"report saved: {dst}", file=sys.stderr)
+        uploaded, note = self.sync() if self.sync_enabled else (False, "upload is off")
+        return {"saved": True, "reportId": read_id, "uploaded": uploaded, "uploadNote": note}
+
+    def sync(self) -> tuple[bool, str]:
+        """Push every report not yet uploaded to the reader-reports branch (its own history: no code, no CI)."""
+        try:
+            with self.lock:
+                return self._sync()
+        except Exception as e:
+            print("report upload failed:", repr(e), file=sys.stderr)
+            return False, str(e)[:300]
+
+    def _sync(self) -> tuple[bool, str]:
+        pending = [d for d in sorted(self.reports.iterdir()) if d.is_dir() and not (d / ".uploaded").exists()] if self.reports.is_dir() else []
+        if not pending:
+            return True, "nothing new to upload"
+        remote = self.remote
+        if not remote:
+            rc, remote = _git(["remote", "get-url", "origin"], self.base)
+            if rc:
+                return False, "this folder is not a git checkout with an origin remote"
+        w = self.work
+        if not (w / ".git").exists():
+            w.mkdir(parents=True, exist_ok=True)
+            _git(["init", "-q"], w)
+            _git(["remote", "add", "origin", remote], w)
+        _git(["remote", "set-url", "origin", remote], w)
+        rc, heads = _git(["ls-remote", "--heads", "origin", REPORTS_BRANCH], w)
+        if rc:
+            return False, "could not reach GitHub: " + heads[-200:]
+        if heads.strip():
+            rc, out = _git(["fetch", "-q", "--depth", "1", "origin", REPORTS_BRANCH], w, timeout=120)
+            if rc:
+                return False, "fetch failed: " + out[-200:]
+            _git(["checkout", "-q", "-f", "-B", REPORTS_BRANCH, "FETCH_HEAD"], w)
+        else:
+            _git(["symbolic-ref", "HEAD", f"refs/heads/{REPORTS_BRANCH}"], w)
+        (w / "README.md").write_text(REPORTS_README)
+        for d in pending:
+            out_dir = w / "reports" / d.name
+            out_dir.mkdir(parents=True, exist_ok=True)
+            for f in d.iterdir():
+                if not f.name.startswith("."):
+                    (out_dir / f.name).write_bytes(f.read_bytes())
+        _git(["add", "-A"], w)
+        if _git(["diff", "--cached", "--quiet"], w)[0]:
+            rc, out = _git(["-c", "user.name=CanIparkhere reader", "-c", "user.email=reader@localhost", "commit", "-q", "-m",
+                            "Reader report: " + ", ".join(d.name for d in pending)], w)
+            if rc:
+                return False, "commit failed: " + out[-200:]
+        rc, out = _git(["push", "-q", "origin", f"HEAD:refs/heads/{REPORTS_BRANCH}"], w, timeout=180)
+        if rc:
+            return False, "push failed (is this Mac signed in to GitHub for git push?): " + out[-200:]
+        for d in pending:
+            (d / ".uploaded").write_text(time.strftime("%Y-%m-%dT%H:%M:%S%z"))
+        return True, f"uploaded {len(pending)} report(s)"
+
+
 # ---------------------------------------------------------------- the model
 
 def life_lock_path() -> Path | None:
@@ -319,7 +462,8 @@ def life_lock_path() -> Path | None:
 class Reader:
     """Loads the model on first use, holds the lock while loaded, unloads after idle."""
 
-    def __init__(self, model_id: str, idle_minutes: float, fake: bool):
+    def __init__(self, model_id: str, idle_minutes: float, fake: bool, log: "ReadLog | None" = None):
+        self.log = log
         self.model_id, self.idle, self.fake = model_id, idle_minutes * 60, fake
         self.lock = threading.Lock()
         self._loaded = None
@@ -395,39 +539,51 @@ class Reader:
 
     # work ------------------------------------------------------------------
     def read(self, image_bytes: bytes, jurisdiction: str, council: str | None, progress=lambda stage: None) -> dict:
+        """Read one photo. Everything seen and said is logged under reads/<readId>/ whether it works or not."""
+        read_id, t0 = new_read_id(), time.time()
+        rec = {"id": read_id, "at": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "jurisdiction": jurisdiction, "council": council,
+               "backend": "local-fake" if self.fake else "local-mlx", "model": "fake" if self.fake else self.model_id,
+               "ocrLines": [], "ocrText": "", "raw": None, "result": None, "error": None}
+        photo = [image_bytes]  # replaced by the normalised JPEG the model actually saw
+        try:
+            out = self._read(image_bytes, jurisdiction, council, progress, rec, photo)
+            rec["result"] = {k: out.get(k) for k in ("sign", "error", "sideFixes", "columns")}
+            return {**out, "readId": read_id}
+        except Exception as e:
+            rec["error"] = f"{type(e).__name__}: {e}"
+            e.read_id = read_id
+            raise
+        finally:
+            rec["seconds"] = round(time.time() - t0, 1)
+            if self.log:
+                self.log.save(read_id, photo[0], rec)
+
+    def _read(self, image_bytes, jurisdiction, council, progress, rec, photo) -> dict:
         if self.fake:
             progress("reading (fake)")
             time.sleep(0.2)
-            return {**normalise_sign(FAKE_SIGN, jurisdiction, council), "raw": json.dumps(FAKE_SIGN), "ocrText": "", "backend": "local-fake", "model": "fake"}
+            rec["raw"] = json.dumps(FAKE_SIGN)
+            return {**normalise_sign(FAKE_SIGN, jurisdiction, council), "raw": rec["raw"], "ocrText": "", "backend": "local-fake", "model": "fake"}
         progress("waiting for the model" if self.lock.locked() else "starting")
         with self.lock:
             self.last_used = time.time()
             with tempfile.TemporaryDirectory() as d:
                 path = Path(d) / "sign.jpg"
                 self._normalise(image_bytes, path)
+                photo[0] = path.read_bytes()
                 ocr_lines = []
                 if self.ocr_available:
                     progress("reading printed text (Apple Vision)")
                     ocr_lines = self._ocr_lines(path)
-                columns = split_columns(ocr_lines)
-                ocr_text = ocr_hint(ocr_lines, columns)
+                ocr_text = ocr_hint(ocr_lines, split_columns(ocr_lines))
+                rec["ocrLines"], rec["ocrText"] = ocr_lines, ocr_text
                 if self._loaded is None:
                     progress("loading the model (20-40 s)")
                     self._ensure_loaded()
                 progress("reading the sign with the vision model")
-                raw = self._generate(path, ocr_text, jurisdiction, council)
+                raw = rec["raw"] = self._generate(path, ocr_text, jurisdiction, council)
             self.last_used = time.time()
-        if ends_in_runaway_repeat(raw):
-            raise ValueError("the model got stuck repeating itself; try a closer, straighter photo")
-        out = normalise_sign(extract_json(raw), jurisdiction, council)
-        fixes = []
-        if out.get("sign"):
-            sign = out["sign"]
-            before = panels_text(sign["panels"])
-            fixes = drop_unprinted(sign["panels"], ocr_lines) + fix_sides_from_columns(sign["panels"], ocr_lines, columns)
-            if sign["rawText"] == before:  # text was rebuilt from the panels: keep it in step with the fixes
-                sign["rawText"] = panels_text(sign["panels"])
-        return {**out, "raw": raw, "ocrText": ocr_text, "sideFixes": fixes, "columns": columns, "backend": "local-mlx", "model": self.model_id}
+        return {**postprocess(raw, ocr_lines, jurisdiction, council), "raw": raw, "ocrText": ocr_text, "backend": "local-mlx", "model": self.model_id}
 
     @staticmethod
     def _normalise(image_bytes: bytes, dst: Path):
@@ -518,7 +674,7 @@ class Jobs:
                 j["result"], j["status"], j["stage"] = res, "done", "done"
             except Exception as e:
                 print("read-sign job failed:", repr(e), file=sys.stderr)
-                j["error"], j["status"], j["stage"] = str(e), "error", "error"
+                j["error"], j["status"], j["stage"], j["readId"] = str(e), "error", "error", getattr(e, "read_id", None)
 
 
 def make_handler(reader: Reader, token: str | None, jobs: Jobs):
@@ -573,9 +729,28 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
             if not self._route():
                 return self._json({"error": "not found"}, 404)
             self._json({"service": "caniparkhere-reader", "backend": "local-fake" if reader.fake else "local-mlx", "model": reader.model_id,
-                        "modelLoaded": reader._loaded is not None, "ocr": reader.ocr_available, "auth": bool(token), "async": True})
+                        "modelLoaded": reader._loaded is not None, "ocr": reader.ocr_available, "auth": bool(token), "async": True, "reports": reader.log is not None})
+
+        def _report(self):
+            """POST /api/read-sign/reports {readId, note?, app?}: the person says this read was wrong."""
+            if not self._authorised():
+                return self._json({"error": "unauthorised: send x-reader-token"}, 401)
+            n = int(self.headers.get("content-length") or 0)
+            if n > 512 * 1024 or reader.log is None:
+                return self._json({"error": "report too large" if reader.log else "this reader keeps no log"}, 413 if reader.log else 404)
+            try:
+                body = json.loads(self.rfile.read(n) or b"{}")
+                out = reader.log.report(str(body.get("readId")), body)
+            except KeyError:
+                return self._json({"error": "no such read (the log keeps the last %d)" % ReadLog.KEEP}, 404)
+            except Exception as e:
+                print("report failed:", repr(e), file=sys.stderr)
+                return self._json({"error": str(e)}, 400)
+            self._json(out)
 
         def do_POST(self):
+            if self._path() == "/api/read-sign/reports":
+                return self._report()
             if not self._route():
                 return self._json({"error": "not found"}, 404)
             if not self._authorised():
@@ -601,7 +776,7 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
                 self._json(out)
             except Exception as e:  # report plainly; this is a single-user tool
                 print("read-sign failed:", repr(e), file=sys.stderr)
-                self._json({"error": str(e)}, 502)
+                self._json({"error": str(e), "readId": getattr(e, "read_id", None)}, 502)
 
         def log_message(self, fmt, *args):
             print(f"{self.address_string()} {fmt % args}", file=sys.stderr)
@@ -618,8 +793,16 @@ def main():
     ap.add_argument("--idle-minutes", type=float, default=10, help="unload the model after this long unused")
     ap.add_argument("--fake", action="store_true", help="never load the model; answer with a canned sign")
     ap.add_argument("--preload", action="store_true", help="load the model at startup instead of on first request")
+    ap.add_argument("--data-dir", default=str(Path(__file__).parent), help="where reads/ and reports/ are kept")
+    ap.add_argument("--no-upload", action="store_true", help="keep reports on this machine; do not push them to GitHub")
+    ap.add_argument("--sync-reports", action="store_true", help="upload any reports not yet on GitHub, then exit")
     a = ap.parse_args()
-    reader = Reader(a.model, a.idle_minutes, a.fake)
+    log = ReadLog(Path(a.data_dir), sync=not a.no_upload)
+    if a.sync_reports:
+        ok, note = log.sync()
+        print(note)
+        sys.exit(0 if ok else 1)
+    reader = Reader(a.model, a.idle_minutes, a.fake, log)
     if a.preload and not a.fake:
         reader._ensure_loaded()
     srv = ThreadingHTTPServer((a.host, a.port), make_handler(reader, a.token, Jobs(reader)))

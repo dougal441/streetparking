@@ -12,3 +12,6 @@ __pycache__/
 local-reader/.venv/
 local-reader/state/
 local-reader/logs/
+local-reader/reads/
+local-reader/reports/
+.reports/

@@ -17,7 +17,7 @@ Nothing else. The Worker's AI binding is pre-authenticated; no tokens or keys to
 ## 2. Deploy (laptop, ~3 min)
 
 ```bash
-cd ~/Desktop/streetparking && git pull
+cd ~/Documents/Claude/Projects/streetparking && git pull
 ```
 ```bash
 cd worker && npm install
