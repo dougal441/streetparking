@@ -58,7 +58,8 @@ JSON_SHAPE = """Reply with ONE JSON object and nothing else, exactly this shape:
  "panels": [{"kind": "<one of %s>", "side": "left|right|both", "limitMinutes": <integer or null>, "fee": <true or false>, "area": <true or false>, "towAway": <true or false>,
    "windows": [{"days": <weekday numbers 1=Mon to 7=Sun, e.g. [1,2,3,4,5], or null>, "start": <"HH:MM" or null>, "end": <"HH:MM" or null>, "publicHolidays": "unspecified|include|exclude"}],
    "exceptions": [{"type": "permit_holders|resident_permit|buses|taxis|goods_vehicles|motorbikes|disability_permit|other", "area": "<code or null>", "text": "<as printed>"}],
-   "rawText": "<this panel as printed>"}]}""" % "|".join(PANEL_KINDS)
+   "rawText": "<this panel as printed>"}]}
+Each panel gets only the times, days and exceptions printed inside that panel. A panel that is just a symbol and an arrow (a red circled S) has "windows": [] and "exceptions": []. Never copy times or exceptions from one panel to another, or from these instructions.""" % "|".join(PANEL_KINDS)
 
 FAKE_SIGN = {"isParkingSign": True, "rawText": "LEFT:\nNO STOPPING <-\nRIGHT:\nWORKS ZONE 7AM-4PM MON-FRI 9AM-1PM SAT ->", "confidence": 0.5,
              "panels": [{"kind": "no_stopping", "side": "left", "limitMinutes": None, "fee": False, "area": False, "towAway": False, "windows": [], "exceptions": [], "rawText": "NO STOPPING"},
@@ -131,6 +132,20 @@ def _hhmm(v):
     return None
 
 
+ARROWS = {"left": "<-", "right": "->", "both": "<->"}
+
+
+def panels_text(panels: list[dict]) -> str:
+    """One line per panel with its arrow, in the form the app's text parser reads."""
+    out = []
+    for p in panels:
+        text = " ".join((p.get("rawText") or "").split())
+        if len(re.sub(r"[^A-Za-z]", "", text)) < 3 and p.get("kind") != "unknown":  # a symbol-only panel ("S")
+            text = p["kind"].replace("_", " ").upper()
+        out.append(f"{text} {ARROWS[p['side']]}".strip())
+    return "\n".join(out)
+
+
 def normalise_sign(parsed, jurisdiction="au-vic", council=None):
     if not isinstance(parsed, dict):
         raise ValueError("reader returned no object")
@@ -161,7 +176,9 @@ def normalise_sign(parsed, jurisdiction="au-vic", council=None):
         })
     if not panels:
         raise ValueError("reader found no panels")
-    raw = parsed.get("rawText") if isinstance(parsed.get("rawText"), str) else "\n".join(p["rawText"] for p in panels)
+    raw = parsed.get("rawText") if isinstance(parsed.get("rawText"), str) else ""
+    if not raw.strip() or re.search(r"<[A-Za-z][^<>]*>", raw):  # missing, or a placeholder copied from the prompt
+        raw = panels_text(panels)
     conf = parsed.get("confidence") if isinstance(parsed.get("confidence"), (int, float)) else None
     return {"sign": {"jurisdiction": jurisdiction, "council": council, "rawText": raw, "confidence": conf, "panels": panels}}
 
@@ -243,6 +260,49 @@ def fix_sides_from_columns(panels: list[dict], lines: list[dict], columns) -> li
             changes.append(f'{p.get("kind")}: {p["side"]} -> {free[0]} (the other column was taken)')
             p["side"] = free[0]
     return changes
+
+
+TIME_RANGE = re.compile(r"\d{1,2}(?:[.:]\d{2})?\s*(?:AM|PM)?\s*[-\u2013\u2014]\s*\d{1,2}(?:[.:]\d{2})?\s*(?:AM|PM)", re.I)
+HAS_TIME = re.compile(r"\d\s*(?:AM|PM)|\d\s*[-\u2013\u2014]\s*\d|\d[.:]\d{2}", re.I)
+
+
+def drop_unprinted(panels: list[dict], lines: list[dict]) -> list[str]:
+    """Remove what the model invented rather than read. Two habits of the small model: it repeats one panel's
+    times on its neighbour (a bare red S given the WORKS ZONE hours), and it adds the prompt's example permit
+    exception. Both make a prohibition look lifted, so anything unsupported goes: fewer exceptions and fewer
+    time windows only ever make the answer stricter. Returns a list of what was removed."""
+    notes = []
+    ocr_words = set().union(*[_norm_words(l["text"]) for l in lines]) if lines else set()
+    if ocr_words:
+        for p in panels:
+            kept = []
+            for e in p.get("exceptions") or []:
+                words = {w for w in _norm_words(e.get("text") or "") if len(w) >= 4 and w.isalpha()}
+                if words and not words & ocr_words:
+                    notes.append(f'{p.get("kind")}: dropped exception "{e.get("text")}" (not printed on the sign)')
+                else:
+                    kept.append(e)
+            p["exceptions"] = kept
+    groups = {}
+    for p in panels:
+        if p.get("windows"):
+            groups.setdefault(json.dumps(p["windows"], sort_keys=True), []).append(p)
+    printed = len(TIME_RANGE.findall(" ".join(l["text"] for l in lines))) if lines else None
+    for same in groups.values():
+        if len(same) < 2:
+            continue
+        timed = sum(1 for w in same[0]["windows"] if w.get("start") or w.get("end"))
+        if printed is not None and printed >= timed * len(same):
+            continue  # every copy is printed: two panels really do share hours
+        bare = [p for p in same if not HAS_TIME.search(p.get("rawText") or "")]
+        if not bare and printed is not None:  # the model copied the text too: symbol panels have no printed name
+            bare = [p for p in same if p.get("kind") in ("no_stopping", "no_parking") and not _norm_words(p["kind"].replace("_", " ")) <= ocr_words]
+        if len(bare) == len(same):
+            continue
+        for p in bare:
+            notes.append(f'{p.get("kind")}: dropped times copied from another panel (none printed on it), so it applies at all times')
+            p["windows"] = []
+    return notes
 
 
 # ---------------------------------------------------------------- the model
@@ -362,7 +422,11 @@ class Reader:
         out = normalise_sign(extract_json(raw), jurisdiction, council)
         fixes = []
         if out.get("sign"):
-            fixes = fix_sides_from_columns(out["sign"]["panels"], ocr_lines, columns)
+            sign = out["sign"]
+            before = panels_text(sign["panels"])
+            fixes = drop_unprinted(sign["panels"], ocr_lines) + fix_sides_from_columns(sign["panels"], ocr_lines, columns)
+            if sign["rawText"] == before:  # text was rebuilt from the panels: keep it in step with the fixes
+                sign["rawText"] = panels_text(sign["panels"])
         return {**out, "raw": raw, "ocrText": ocr_text, "sideFixes": fixes, "columns": columns, "backend": "local-mlx", "model": self.model_id}
 
     @staticmethod
