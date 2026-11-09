@@ -82,3 +82,11 @@ better with a named tunnel on a fixed hostname (`cloudflared tunnel create canip
 
 This is a server that must be alive — exactly the pattern `life` forbids for unattended jobs. It is fine here
 because a human is holding the phone: if the Mac is asleep, the app falls back to on-device OCR and says so.
+
+## Logs and reports
+
+- Every read is kept in `reads/<readId>/` (photo + everything the reader saw and said; newest 200).
+- **Reader got it wrong** in the app files that read under `reports/` and pushes it to the public
+  `reader-reports` branch. Needs `git push` to work on this Mac. Start the server with `--no-upload` to keep reports here.
+- Push any that did not upload: `.venv/bin/python server.py --sync-reports`
+- How reports become fixes: [docs/REPORTS.md](../docs/REPORTS.md).

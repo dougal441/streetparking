@@ -11,6 +11,26 @@ export function jobUrl(readerUrl, jobId) {
   return u.toString();
 }
 
+/** /api/read-sign?token=x  →  /api/read-sign/reports?token=x */
+export function reportUrl(readerUrl) {
+  const u = new URL(readerUrl);
+  u.pathname = u.pathname.replace(/\/api\/read-sign\/?$/, '/api/read-sign/reports');
+  return u.toString();
+}
+
+/**
+ * Tell the reader a read was wrong. It keeps the photo and its full log and uploads them for study.
+ * @returns {Promise<{saved:boolean, uploaded:boolean, uploadNote?:string}>}
+ */
+export async function sendReport(readerUrl, { readId, note = '', app = null }) {
+  const res = await fetch(reportUrl(readerUrl), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ readId, note, app }) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `report failed (${res.status})`);
+  return body;
+}
+
+const failed = (message, readId) => Object.assign(new Error(message), { readId: readId ?? null });
+
 /**
  * @param {Blob} image
  * @param {{readerUrl:string, council?:string|null, jurisdiction?:string}} config
@@ -27,7 +47,11 @@ export async function readWithClaude(image, config, onProgress) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ image: data, mediaType, jurisdiction: config.jurisdiction ?? 'au-vic', council: config.council ?? null, async: true }),
   });
-  if (!res.ok) throw new Error(`Reader failed: ${res.status} ${await res.text().catch(() => '')}`);
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    let readId = null; try { readId = JSON.parse(text).readId; } catch { /* not JSON */ }
+    throw failed(`Reader failed: ${res.status} ${text}`, readId);
+  }
   let body = await res.json();
   // Slow readers (a laptop loading a 5 GB model) answer 202 + a job id; poll until done. Phones give up on
   // a single request after ~60 s, so this is the only way a first photo gets through.
@@ -42,12 +66,12 @@ export async function readWithClaude(image, config, onProgress) {
       const j = await r.json();
       if (j.stage && j.stage !== lastStage) { lastStage = j.stage; onProgress?.(j.stage + (j.queued_ahead ? ` (${j.queued_ahead} ahead of you)` : '')); }
       if (j.status === 'done') { body = j.result; break; }
-      if (j.status === 'error') throw new Error(j.error ?? 'reader failed');
+      if (j.status === 'error') throw failed(j.error ?? 'reader failed', j.readId);
     }
     if (!body.sign && !body.error) throw new Error('Reader took too long (5 min). Is the Mac busy?');
   }
-  if (!body.sign) throw new Error(body.error ?? 'Reader returned no sign');
-  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes } };
+  if (!body.sign) throw failed(body.error ?? 'Reader returned no sign', body.readId);
+  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { readId: body.readId ?? null, backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes } };
 }
 
 function blobToDataUrl(blob) {
