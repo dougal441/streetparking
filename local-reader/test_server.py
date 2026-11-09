@@ -124,3 +124,53 @@ class ColumnFixes(unittest.TestCase):
         panels = [{"kind": "no_stopping", "side": "both", "rawText": "NO STOPPING"}]
         self.assertEqual(server.fix_sides_from_columns(panels, lines, cols), [])
         self.assertEqual(panels[0]["side"], "both")
+
+
+class Unprinted(unittest.TestCase):
+    """The real read that got it wrong: red S <- | WORKS ZONE 7-4 Mon-Fri, 9-1 Sat ->. The model gave the S the
+    works zone's hours and the prompt's example permit exception, so the app said you could stop there."""
+    LINES = [{"text": t, "conf": 0.9, "x0": 0.56, "x1": 0.74, "xc": 0.65, "y": 0.8 - i / 10}
+             for i, t in enumerate(["WORKS", "ZONE", "7 AM - 4PM", "MON - FRI", "9 AM - 1 PM", "SAT"])]
+    WINDOWS = [{"days": [1, 2, 3, 4, 5], "start": "07:00", "end": "16:00"}, {"days": [6], "start": "09:00", "end": "13:00"}]
+    EXC = [{"type": "resident_permit", "area": "7", "text": "AREA 7 RESIDENT PERMIT EXCEPTED"}]
+
+    def reply(self, s_text="S"):
+        return {"isParkingSign": True, "rawText": "<left column>/<right column>", "confidence": 0.9, "panels": [
+            {"kind": "no_stopping", "side": "left", "windows": self.WINDOWS, "exceptions": self.EXC, "rawText": s_text},
+            {"kind": "works_zone", "side": "right", "windows": self.WINDOWS, "exceptions": self.EXC, "rawText": "WORKS ZONE 7 AM - 4PM MON - FRI 9 AM - 1 PM SAT"}]}
+
+    def test_copied_times_and_invented_exception_are_removed(self):
+        sign = server.normalise_sign(self.reply())["sign"]
+        notes = server.drop_unprinted(sign["panels"], self.LINES)
+        stop, works = sign["panels"]
+        self.assertEqual((stop["windows"], stop["exceptions"]), ([], []))
+        self.assertEqual(len(works["windows"]), 2)
+        self.assertEqual(works["exceptions"], [])
+        self.assertEqual(len(notes), 3)
+        self.assertEqual(server.panels_text(sign["panels"]).splitlines()[0], "NO STOPPING <-")
+
+    def test_placeholder_raw_text_is_rebuilt(self):
+        raw = server.normalise_sign(self.reply())["sign"]["rawText"]
+        self.assertNotIn("column", raw)
+        self.assertTrue(raw.startswith("NO STOPPING <-"))
+
+    def test_copied_text_is_caught_from_the_printed_count(self):
+        sign = server.normalise_sign(self.reply("NO STOPPING 7 AM - 4PM MON - FRI 9 AM - 1 PM SAT"))["sign"]
+        server.drop_unprinted(sign["panels"], self.LINES)
+        self.assertEqual(sign["panels"][0]["windows"], [])
+        self.assertEqual(len(sign["panels"][1]["windows"]), 2)
+
+    def test_hours_printed_on_both_panels_are_kept(self):
+        lines = self.LINES + [{"text": t, "conf": 0.9, "x0": 0.3, "x1": 0.4, "xc": 0.35, "y": 0.5} for t in ["NO STOPPING", "7 AM - 4PM", "9 AM - 1 PM", "PERMIT HOLDERS EXCEPTED"]]
+        r = self.reply("NO STOPPING 7 AM - 4PM 9 AM - 1 PM")
+        r["panels"][0]["exceptions"] = [{"type": "permit_holders", "area": None, "text": "PERMIT HOLDERS EXCEPTED"}]
+        sign = server.normalise_sign(r)["sign"]
+        server.drop_unprinted(sign["panels"], lines)
+        self.assertEqual(len(sign["panels"][0]["windows"]), 2)
+        self.assertEqual(len(sign["panels"][0]["exceptions"]), 1)
+
+    def test_no_ocr_still_clears_the_bare_symbol(self):
+        sign = server.normalise_sign(self.reply())["sign"]
+        server.drop_unprinted(sign["panels"], [])
+        self.assertEqual(sign["panels"][0]["windows"], [])
+        self.assertEqual(len(sign["panels"][0]["exceptions"]), 1)  # nothing to check it against

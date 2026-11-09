@@ -216,7 +216,7 @@ function renderResult(res) {
 function renderReaderSaid(sign, meta) {
   const parts = [];
   if (meta?.backend) parts.push(`<div>Reader: <strong>${esc(meta.backend)}</strong>${meta.model ? ' · ' + esc(meta.model) : ''}${meta.seconds ? ' · ' + meta.seconds + 's' : ''}</div>`);
-  if (meta?.sideFixes?.length) parts.push(`<div>Side corrections from word positions: ${esc(meta.sideFixes.join('; '))}</div>`);
+  if (meta?.sideFixes?.length) parts.push(`<div>Corrections from the printed text: ${esc(meta.sideFixes.join('; '))}</div>`);
   if (meta?.ocrText) parts.push(`<div>Apple Vision read:</div><pre class="raw">${esc(meta.ocrText)}</pre>`);
   if (meta?.raw) parts.push(`<div>Model output:</div><pre class="raw">${esc(meta.raw)}</pre>`);
   $('reader-said').innerHTML = parts.join('') || 'Nothing yet.';
