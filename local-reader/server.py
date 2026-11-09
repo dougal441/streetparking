@@ -54,9 +54,9 @@ PANEL_KINDS = ["time_limited", "unrestricted", "no_stopping", "no_parking", "cle
 SYSTEM = """You transcribe Australian (Victorian) street parking signs into structured data for a rules engine. Signs follow AS 1742.11: red-on-white panels prohibit (a red circle with a struck-through S = NO STOPPING; struck-through P = NO PARKING; CLEARWAY), green-on-white "P" panels permit with limits (2P = 2 hours, 1/2P = 30 minutes, "P 10 MINUTE" = 10 minutes, plain P = no limit), zone panels reserve the space (LOADING ZONE, PERMIT ZONE, BUS ZONE, TAXI ZONE, WORKS ZONE, MAIL ZONE, TRUCK ZONE, wheelchair symbol = disabled, MOTOR BIKES ONLY). TICKET/METER/PAY means a fee. Times like "7-9AM" share the suffix (07:00-09:00); "4-6.30PM" is 16:00-18:30; small AM/PM letters belong to the number before them. Days: MON-FRI = [1,2,3,4,5]; no days shown = null. Arrows: a panel's arrow says which side of the post it governs as you face the sign; a split sign (left half and right half with different content, often with a vertical line between) gives different panels different sides. A horizontal line or a change of colour separates panels. "AREA 7 RESIDENT PERMIT EXCEPTED" is an exception on the panel above it, not a new panel. Transcribe exactly what is printed; do not infer restrictions that are not on the sign. If text is unreadable, use kind "unknown" and say so in rawText."""
 
 JSON_SHAPE = """Reply with ONE JSON object and nothing else, exactly this shape:
-{"isParkingSign": true, "rawText": "<every panel, one per line, with <- -> <-> for arrows and LEFT:/RIGHT: for split signs>", "confidence": 0.0-1.0,
- "panels": [{"kind": "<one of %s>", "side": "left|right|both", "limitMinutes": <integer or null>, "fee": true|false, "area": true|false, "towAway": true|false,
-   "windows": [{"days": [1..7] or null, "start": "HH:MM" or null, "end": "HH:MM" or null, "publicHolidays": "unspecified|include|exclude"}],
+{"isParkingSign": true, "rawText": "<every panel, one per line, with <- -> <-> for arrows and LEFT:/RIGHT: for split signs>", "confidence": <number between 0 and 1, e.g. 0.8>,
+ "panels": [{"kind": "<one of %s>", "side": "left|right|both", "limitMinutes": <integer or null>, "fee": <true or false>, "area": <true or false>, "towAway": <true or false>,
+   "windows": [{"days": <weekday numbers 1=Mon to 7=Sun, e.g. [1,2,3,4,5], or null>, "start": <"HH:MM" or null>, "end": <"HH:MM" or null>, "publicHolidays": "unspecified|include|exclude"}],
    "exceptions": [{"type": "permit_holders|resident_permit|buses|taxis|goods_vehicles|motorbikes|disability_permit|other", "area": "<code or null>", "text": "<as printed>"}],
    "rawText": "<this panel as printed>"}]}""" % "|".join(PANEL_KINDS)
 
@@ -85,13 +85,44 @@ def ends_in_runaway_repeat(text: str) -> bool:
     return False
 
 
+def _repair_bare(s: str) -> str:
+    """Fix the slips a small model makes outside strings: placeholders copied from the prompt, Python literals, stray commas."""
+    s = re.sub(r"//[^\n]*", "", s)                                                        # // comments
+    s = re.sub(r"<[^<>]*>", "null", s)                                                    # <integer or null>
+    s = re.sub(r"(\d+)\s*\.\.\s*(\d+)", lambda m: ",".join(str(n) for n in range(int(m.group(1)), min(int(m.group(2)), 31) + 1)), s)  # 1..5
+    s = re.sub(r"(\d+(?:\.\d+)?)\s*-\s*\d+(?:\.\d+)?", r"\1", s)                      # 0.0-1.0 -> 0.0
+    s = re.sub(r"\b(?:true|false)(?:\s*\|\s*(?:true|false))+", "false", s)                # true|false
+    s = re.sub(r"\bNone\b", "null", s)
+    s = re.sub(r"\bTrue\b", "true", s)
+    s = re.sub(r"\bFalse\b", "false", s)
+    return re.sub(r",(\s*[}\]])", r"\1", s)                                               # trailing commas
+
+
+def repair_json(body: str) -> str:
+    """Apply _repair_bare to everything that is not inside a JSON string."""
+    out, i = [], 0
+    for m in re.finditer(r'"(?:\\.|[^"\\])*"', body):
+        out += [_repair_bare(body[i:m.start()]), m.group(0)]
+        i = m.end()
+    out.append(_repair_bare(body[i:]))
+    return "".join(out)
+
+
 def extract_json(text: str):
     m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.I)
     body = m.group(1) if m else text
     start, end = body.find("{"), body.rfind("}")
     if start < 0 or end < start:
         raise ValueError("no JSON object in model reply")
-    return json.loads(body[start:end + 1])
+    body = body[start:end + 1]
+    try:
+        return json.loads(body, strict=False)  # strict=False: raw newlines inside strings are fine
+    except json.JSONDecodeError as first:
+        try:
+            return json.loads(repair_json(body), strict=False)
+        except json.JSONDecodeError:
+            print("unparseable model reply:\n" + text, file=sys.stderr)
+            raise ValueError(f"the vision model's reply was not valid JSON ({first}); take the photo again, closer and straighter") from first
 
 
 def _hhmm(v):

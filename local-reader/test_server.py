@@ -17,6 +17,19 @@ class JsonHandling(unittest.TestCase):
         with self.assertRaises(ValueError):
             server.extract_json("no json")
 
+    def test_extract_json_repairs_small_model_slips(self):
+        # The reply that broke a real read: the prompt's "0.0-1.0" placeholder copied verbatim.
+        reply = '{\n  "isParkingSign": true,\n  "rawText": "2P 9AM-6PM MON-FRI <->",\n  "confidence": 0.9-1.0,\n  "panels": []\n}'
+        self.assertEqual(server.extract_json(reply)["confidence"], 0.9)
+        out = server.extract_json('{"a": True, "b": None, "fee": true|false, "days": [1..5], "lim": <integer or null>, // note\n "s": "7-9AM, 1..2 <- None",\n "t": "line\nbreak",}')
+        self.assertEqual(out, {"a": True, "b": None, "fee": False, "days": [1, 2, 3, 4, 5], "lim": None, "s": "7-9AM, 1..2 <- None", "t": "line\nbreak"})
+        with self.assertRaisesRegex(ValueError, "not valid JSON"):
+            server.extract_json('{"a": [1, 2}')
+
+    def test_prompt_shape_has_no_copyable_invalid_json(self):
+        for trap in ("0.0-1.0", "true|false", "[1..7]"):
+            self.assertNotIn(trap, server.JSON_SHAPE)
+
     def test_normalise_cleans_and_pads(self):
         out = server.normalise_sign(server.FAKE_SIGN, council="melbourne")
         self.assertEqual(len(out["sign"]["panels"]), 2)
