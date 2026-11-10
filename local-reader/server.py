@@ -29,6 +29,7 @@ import argparse
 import base64
 import fcntl
 import gc
+import hmac
 import io
 import json
 import os
@@ -678,6 +679,11 @@ class Jobs:
                 j["error"], j["status"], j["stage"], j["readId"] = str(e), "error", "error", getattr(e, "read_id", None)
 
 
+def redact_query(line: str) -> str:
+    """A log line with every URL query string replaced, so a ?token= never reaches logs/reader.stderr.log."""
+    return re.sub(r"\?[^\s\"']*", "?[redacted]", str(line))
+
+
 def make_handler(reader: Reader, token: str | None, jobs: Jobs):
     class Handler(BaseHTTPRequestHandler):
         server_version = "caniparkhere-local-reader/1"
@@ -702,10 +708,15 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
                 print("client went away before the reply", file=sys.stderr)
 
         def _authorised(self) -> bool:
+            """The x-reader-token header (what the site sends), or ?token= for the old phone link (kept until RET-01
+            rotates the token and drops the link). Both compared in constant time."""
             if not token:
                 return True
-            q = re.search(r"[?&]token=([^&]+)", self.path)
-            return self.headers.get("x-reader-token") == token or (q is not None and q.group(1) == token)
+            want = token.encode()
+            got = (self.headers.get("x-reader-token") or "").encode()
+            q = re.search(r"[?&]token=([^&#]*)", self.path)
+            from_query = (q.group(1) if q else "").encode()
+            return hmac.compare_digest(got, want) | hmac.compare_digest(from_query, want)
 
         def _path(self) -> str:
             return re.sub(r"^/streetparking", "", self.path.split("?")[0])
@@ -780,7 +791,8 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
                 self._json({"error": str(e), "readId": getattr(e, "read_id", None)}, 502)
 
         def log_message(self, fmt, *args):
-            print(f"{self.address_string()} {fmt % args}", file=sys.stderr)
+            # every query string is dropped from the log: the old phone link carries the token in ?token=
+            print(f"{self.address_string()} {redact_query(fmt % args)}", file=sys.stderr)
 
     return Handler
 

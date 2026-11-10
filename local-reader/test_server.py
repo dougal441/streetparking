@@ -96,6 +96,52 @@ class AsyncJobs(unittest.TestCase):
             srv.shutdown()
 
 
+class TokenAndLog(unittest.TestCase):
+    """WR-05: the token is compared in constant time, and no query string (the old phone link's ?token=) is logged."""
+
+    TOKEN = "Zq7-tok_9fXkL2mPa8Rc4"
+
+    def test_header_and_old_link_work_and_the_log_never_holds_the_query(self):
+        import contextlib, http.client, io, threading
+        from http.server import ThreadingHTTPServer
+        reader = server.Reader("fake", 10, fake=True)
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), server.make_handler(reader, self.TOKEN, server.Jobs(reader)))
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        err = io.StringIO()
+        try:
+            with contextlib.redirect_stderr(err):
+                c = http.client.HTTPConnection("127.0.0.1", srv.server_address[1], timeout=5)
+                def status(path, headers=None):
+                    c.request("GET", path, headers=headers or {}); r = c.getresponse(); r.read(); return r.status
+                self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN}), 404)  # authorised, no job
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN}"), 404)  # the old phone link still works
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?a=1&token={self.TOKEN}"), 404)
+                self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN[:-1]}), 401)
+                self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN + "x"}), 401)
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN[:-1]}"), 401)
+                self.assertEqual(status("/api/read-sign/jobs/000000000000?token="), 401)
+                self.assertEqual(status("/api/read-sign/jobs/000000000000"), 401)
+        finally:
+            srv.shutdown(); srv.server_close()
+        log = err.getvalue()
+        self.assertIn("/api/read-sign/jobs/000000000000?[redacted]", log)  # the request lines are still logged
+        self.assertNotIn(self.TOKEN[:-1], log)
+        self.assertNotIn("token=", log)
+
+    def test_redact_query(self):
+        self.assertEqual(server.redact_query('"GET /streetparking/api/read-sign?token=abc HTTP/1.1" 200 -'),
+                         '"GET /streetparking/api/read-sign?[redacted] HTTP/1.1" 200 -')
+        self.assertEqual(server.redact_query("code 400, message Bad request syntax ('GET /x?token=abc&b=2')"),
+                         "code 400, message Bad request syntax ('GET /x?[redacted]')")
+        self.assertEqual(server.redact_query('"GET /api/read-sign HTTP/1.1" 200 -'), '"GET /api/read-sign HTTP/1.1" 200 -')
+
+    def test_compare_is_constant_time(self):
+        src = (Path(__file__).parent / "server.py").read_text()
+        body = src[src.index("def _authorised"):src.index("def _path")]
+        self.assertIn("hmac.compare_digest", body)
+        self.assertNotIn("== token", body)
+
+
 class ColumnFixes(unittest.TestCase):
     LINES = [
         {"text": "WORKS", "conf": 0.9, "x0": 0.58, "x1": 0.72, "xc": 0.65, "y": 0.8},
