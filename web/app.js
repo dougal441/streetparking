@@ -323,7 +323,7 @@ async function readPhoto() {
       await readOnDevice(cfg.readerBackend === 'site' ? "The vision readers couldn't answer." : e.message);
       $('status-line').textContent = 'Photograph the sign. Get a straight answer.';
     } catch {
-      showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
+      showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|stopped answering|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
       $('status-line').textContent = 'Reader unavailable.';
       lastReader = e.readId ? { readId: e.readId, error: e.message } : null; lastResult = null; renderReport();
     }

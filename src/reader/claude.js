@@ -40,6 +40,12 @@ const failed = (message, readId) => Object.assign(new Error(message), { readId: 
 export const JOB_TIMEOUT_MS = 3 * 60 * 1000;
 /** How often the phone asks how the job is going. `config.pollMs` wins. */
 export const POLL_MS = 1500;
+/**
+ * How many polls in a row may fail in a way that can pass (no network, a 5xx, the site's `unreachable` while the Mac
+ * restarts) before the phone stops waiting: about 6 s at POLL_MS. One blip never drops a Mac read (D-01).
+ * `config.maxUnreachable` wins.
+ */
+export const MAX_UNREACHABLE = 4;
 
 /** A reader answer that is not OK becomes one error, with the read id when the body carries one. */
 async function failedAnswer(res) {
@@ -50,18 +56,28 @@ async function failedAnswer(res) {
 
 /**
  * Poll a Mac job until it ends. Returns `{ result }` when the job is done (even with no sign: that is an answer),
- * or `{ fellThrough }` (a message, plus the read id) when the job errored with `fallback`, was lost, or ran out of time.
+ * or `{ fellThrough }` (a message, plus the read id) when the job errored with `fallback`, was lost (a 4xx poll), stopped
+ * answering for MAX_UNREACHABLE polls in a row, or ran out of time.
  * A job error without `fallback` throws.
  */
 async function pollJob(url, config, onProgress) {
   const deadline = Date.now() + (config.jobTimeoutMs ?? JOB_TIMEOUT_MS);
   const pollMs = config.pollMs ?? POLL_MS;
+  const maxUnreachable = config.maxUnreachable ?? MAX_UNREACHABLE;
   let lastStage = '';
+  let unreachable = 0;
   while (Date.now() < deadline) {
     await sleep(pollMs);
-    const r = await fetch(url, { cache: 'no-store' });
-    if (!r.ok) return { fellThrough: `Reader lost the job (${r.status})`, readId: null };
-    const j = await r.json();
+    const r = await fetch(url, { cache: 'no-store' }).catch(() => null);
+    // Only a 404 or another 4xx means the job is gone. A poll that failed in a way that can pass is counted instead.
+    if (r && !r.ok && r.status < 500 && r.status !== 429) return { fellThrough: `Reader lost the job (${r.status})`, readId: null };
+    const j = r && r.ok ? await r.json().catch(() => null) : null;
+    if (!j || j.status === 'unreachable') {
+      if (++unreachable >= maxUnreachable) return { fellThrough: 'Reader stopped answering', readId: null };
+      if (j?.stage && j.stage !== lastStage) { lastStage = j.stage; onProgress?.(j.stage); }
+      continue;
+    }
+    unreachable = 0;
     if (j.stage && j.stage !== lastStage) { lastStage = j.stage; onProgress?.(j.stage + (j.queued_ahead ? ` (${j.queued_ahead} ahead of you)` : '')); }
     if (j.status === 'done') return { result: j.result ?? {} };
     if (j.status === 'error') {

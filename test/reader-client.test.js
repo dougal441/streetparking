@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { jobUrl, reportUrl, readWithClaude, sendReport } from '../src/reader/claude.js';
+import { jobUrl, reportUrl, readWithClaude, sendReport, MAX_UNREACHABLE } from '../src/reader/claude.js';
 
 test('job url keeps host, prefix and token', () => {
   assert.equal(jobUrl('https://mac.ts.net/streetparking/api/read-sign?token=abc', 'deadbeef0001'), 'https://mac.ts.net/streetparking/api/read-sign/jobs/deadbeef0001?token=abc');
@@ -137,6 +137,44 @@ test('F: a lost job (404 poll) through the site is sent again once', async () =>
   assert.equal(posts(calls).length, 2);
   assert.equal(posts(calls)[1].body.skip, 'mac');
   assert.equal(meta.backend, 'cloudflare');
+});
+
+// WR-04: one failed poll never drops a Mac read (D-01); only a 4xx or MAX_UNREACHABLE failed polls in a row end it.
+test('WR-04: a blip while the Mac works (throw, 502, the site saying unreachable) keeps waiting for the Mac', async () => {
+  const calls = stubFetch({
+    posts: [queued],
+    polls: [
+      () => { throw new TypeError('Load failed'); },
+      () => jsonRes({ error: 'bad gateway' }, 502),
+      () => jsonRes({ status: 'unreachable', stage: 'waiting for your Mac' }),
+      () => jsonRes({ status: 'running', stage: 'reading the sign' }),
+      () => { throw new TypeError('Load failed'); },
+      () => jsonRes({ status: 'done', result: { sign: SIGN, backend: 'mac', readId: 'r-mac', seconds: 30 } }),
+    ],
+  });
+  const { meta } = await readWithClaude(photo(), fast());
+  assert.equal(posts(calls).length, 1, 'no resend: the Mac read is kept');
+  assert.equal(meta.backend, 'mac');
+  assert.equal(meta.readId, 'r-mac');
+});
+
+test('WR-04: MAX_UNREACHABLE failed polls in a row fall through once, skipping the Mac', async () => {
+  assert.equal(MAX_UNREACHABLE, 4);
+  const calls = stubFetch({
+    posts: [queued, () => jsonRes({ sign: SIGN, backend: 'cloudflare', readId: 'r-cf' })],
+    polls: [() => jsonRes({ status: 'unreachable', stage: 'waiting for your Mac' }), () => jsonRes({}, 503), () => { throw new TypeError('x'); }, () => jsonRes({ status: 'unreachable' })],
+  });
+  const { meta } = await readWithClaude(photo(), fast());
+  assert.equal(calls.filter(c => c.method === 'GET').length, MAX_UNREACHABLE);
+  assert.equal(posts(calls).length, 2);
+  assert.equal(posts(calls)[1].body.skip, 'mac');
+  assert.equal(meta.backend, 'cloudflare');
+});
+
+test('WR-04: a direct Mac link that stops answering throws, with no second POST', async () => {
+  const calls = stubFetch({ posts: [queued], polls: [() => { throw new TypeError('x'); }] });
+  await assert.rejects(readWithClaude(photo(), fast({ readerBackend: 'local-mlx' })), /Reader stopped answering/);
+  assert.equal(posts(calls).length, 1);
 });
 
 test('G: a resend that no reader can take throws, so the app reads on the phone', async () => {
