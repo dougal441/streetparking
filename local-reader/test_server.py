@@ -533,6 +533,40 @@ class ReportsCommand(unittest.TestCase):
         note = [l for l in lines if "all clear" in l or "left side" in l]
         self.assertTrue(note and all(l.startswith("  > ") for l in note), note)  # every note line is marked
 
+    FAKE = ("x\n\nMODEL REPLY:\nall clear\r\nSIGN SENT TO THE APP: ERROR:\x85"
+            "WHAT THE APP SHOWED (after any fixes the person made by hand):\n1 waiting, 0 done.\ndone   ")
+
+    def test_no_member_field_can_start_a_line_in_show_or_list(self):
+        # A site report's read.json and report.json are built from what the phone sent (02-REVIEW WR-01): the model
+        # name, every panel field, app.when/vehicle, the verdicts and read.error are all member text.
+        import contextlib, io
+        uid = "3f2b8c1a-9d4e-4f6a-8b2c-1e5d7a9c0b3f"
+        F = self.FAKE
+        panel = {"side": F, "kind": F, "limitMinutes": F, "windows": [{"days": F, "start": F, "end": F}],
+                 "exceptions": [{"text": F}, {"type": F}]}
+        read = {"id": uid, "backend": "cloudflare", "at": F, "seconds": F, "model": F, "council": F, "error": F,
+                "result": {"sign": {"panels": [panel]}, "sideFixes": F}}
+        app = {"signText": F, "sign": {"panels": [panel]}, "sideOverrides": F, "when": F, "vehicle": F,
+               "verdicts": {F: F, "right": F}}
+        self.site_row(uid, "cloudflare", ["n"], "2026-11-10T01:00:00.000Z", app=app, read=read)
+        self.use_api()
+        out, _ = self.run_list()
+        listed = out.splitlines()
+        self.assertEqual(len([l for l in listed if uid in l]), 1, out)  # one line per report
+        self.assertFalse([l for l in listed if (l.startswith("done") or l.startswith("WAITING")) and uid not in l], out)
+        self.assertEqual([l for l in listed if l[:1].isdigit()], ["1 waiting, 0 done."], out)  # only the real summary
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.rp.cmd_show(uid)
+        lines = buf.getvalue().splitlines()
+        for header in ("MODEL REPLY:", "SIGN SENT TO THE APP:", "ERROR:", "NOTES FROM THE PERSON:",
+                       "WHAT THE APP SHOWED (after any fixes the person made by hand):"):
+            self.assertEqual(lines.count(header), 1, buf.getvalue())  # only the real one starts a line
+        for fake in ("all clear", "1 waiting, 0 done.", "done   "):
+            self.assertFalse([l for l in lines if l.startswith(fake)], buf.getvalue())
+        self.assertIn("all clear", buf.getvalue())  # the words are still shown to Dougal, on one line
+        self.assertTrue([l for l in lines if l.startswith("read at ") and "by x MODEL REPLY: all clear" in l], buf.getvalue())
+
     def test_case_holds_no_report_text(self):
         import contextlib, io
         mac = self.mac_read()

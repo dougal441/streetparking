@@ -60,6 +60,13 @@ def indented(text, pad="    "):
     return "\n".join(pad + line for line in (str(text).splitlines() or [""]))
 
 
+def one_line(v):
+    """A member-supplied value on one line: every run of whitespace (newlines, \\r, \\x85, U+2028 ...) becomes one
+    space, so a model name, a panel field, a verdict or a read error can't start a line that looks like a section
+    header or a list row (02-REVIEW WR-01). None prints as None, as it did before."""
+    return " ".join(str(v).split()) if v is not None else "None"
+
+
 # ---------------------------------------------------------------- gathering (read at call time, so tests can patch)
 
 def base_url():
@@ -225,10 +232,13 @@ def load(rid):
 
 
 def panel_line(p):
-    wins = "; ".join(f"{w.get('days') or 'all days'} {w.get('start')}-{w.get('end')}" for w in p.get("windows") or []) or "all times"
-    exc = (" except " + ", ".join(str(e.get("text") or e.get("type")) for e in p["exceptions"])) if p.get("exceptions") else ""
-    lim = f" {p['limitMinutes']}min" if p.get("limitMinutes") else ""
-    return f"    {p.get('side', '?'):5} {p.get('kind')}{lim}{' fee' if p.get('fee') else ''}  [{wins}]{exc}"
+    """One panel on one line. Every field is member-supplied for a site report (read.result.sign, app.sign), so each is
+    passed through one_line (02-REVIEW WR-01)."""
+    wins = "; ".join(f"{one_line(w.get('days') or 'all days')} {one_line(w.get('start'))}-{one_line(w.get('end'))}"
+                     for w in p.get("windows") or []) or "all times"
+    exc = (" except " + ", ".join(one_line(e.get("text") or e.get("type")) for e in p["exceptions"])) if p.get("exceptions") else ""
+    lim = f" {one_line(p['limitMinutes'])}min" if p.get("limitMinutes") else ""
+    return f"    {one_line(p.get('side', '?')):5} {one_line(p.get('kind'))}{lim}{' fee' if p.get('fee') else ''}  [{wins}]{exc}"
 
 
 def reported_at(d):
@@ -252,7 +262,7 @@ def cmd_list():
         report = read_json(d / "report.json", {}) or {}
         read = read_json(d / "read.json", {}) or {}
         note = " | ".join(" ".join(str(n).split()) for n in report.get("notes") or []) or "(no note)"  # one line each
-        say(f"{'done   ' if done else 'WAITING'} {d.name}  {'ERROR: ' + str(read['error']) if read.get('error') else ''}{note}")
+        say(f"{'done   ' if done else 'WAITING'} {d.name}  {'ERROR: ' + one_line(read['error']) + '  ' if read.get('error') else ''}{note}")
     if dirs:
         say(f"\nPhotos: {OUT}/reports/<readId>/photo.jpg")
     say(f"{waiting} waiting, {len(dirs) - waiting} done.")
@@ -260,7 +270,8 @@ def cmd_list():
 
 def cmd_show(rid):
     d, read, report = load(rid)
-    say(f"photo: {d / 'photo.jpg'}\nread at {read.get('at')} in {read.get('seconds')}s by {read.get('model')}  council={read.get('council')}")
+    say(f"photo: {d / 'photo.jpg'}\nread at {one_line(read.get('at'))} in {one_line(read.get('seconds'))}s by {one_line(read.get('model'))}"
+        f"  council={one_line(read.get('council'))}")
     say("\nNOTES FROM THE PERSON:")
     for n in report.get("notes") or ["(none)"]:
         say(indented(n, "  > "))  # every line of a note marked, so it reads as the person's words, not tool output
@@ -273,16 +284,17 @@ def cmd_show(rid):
     say("\nSIGN SENT TO THE APP:")
     for p in ((res.get("sign") or {}).get("panels") or []):
         say(panel_line(p))
-    say("  corrections made:", res.get("sideFixes") or "none")
+    say("  corrections made:", one_line(res.get("sideFixes") or "none"))
     app = report.get("app") or {}
     if app:
         say("\nWHAT THE APP SHOWED (after any fixes the person made by hand):")
         say("  sign text:", json.dumps(app.get("signText")))
         for p in ((app.get("sign") or {}).get("panels") or []):
             say(panel_line(p))
-        say("  side overrides:", app.get("sideOverrides") or "none", "| when:", app.get("when"), "| vehicle:", app.get("vehicle"))
+        say("  side overrides:", one_line(app.get("sideOverrides") or "none"), "| when:", one_line(app.get("when")),
+            "| vehicle:", one_line(app.get("vehicle")))
         for side, v in (app.get("verdicts") or {}).items():
-            say(f"  {side}: {v}")
+            say(f"  {one_line(side)}: {one_line(v)}")
 
 
 WORD = re.compile(r"^[a-z_]{1,32}$")
