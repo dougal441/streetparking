@@ -18,15 +18,14 @@ That is all. The same button appears when a read fails outright.
   - `read.json`: Apple Vision lines with positions, the model's raw reply, the sign sent to the app, corrections made, timings, any error.
 - A report copies that folder to `local-reader/reports/<readId>/` and adds `report.json`: notes, plus what the app
   showed (sign text, panels after hand fixes, side overrides, time, vehicle, verdicts).
-- The report is pushed to the **`reader-reports`** branch of this repository. That branch holds only reports: no
-  code, no CI. The repository is public, so reported photos are public.
-- If the push fails the report stays on the Mac and goes with the next one. To push by hand:
-  `cd local-reader && .venv/bin/python server.py --sync-reports`
+- The report stays on this Mac in `local-reader/reports/<readId>/`. Nothing is uploaded: reports are private.
+- Reads made through dougalhanson.com/caniparkhere by Cloudflare or on the phone are filed with the site and stored
+  privately. Only Dougal's admin token can list or open them.
 
 ## 3. Triage (Claude, when asked to "check reports")
 
 ```bash
-python3 scripts/reports.py list            # fetches reader-reports into .reports/, lists what is waiting
+python3 scripts/reports.py list            # gathers this Mac's reports and the site's private reports into .reports/, lists what is waiting
 python3 scripts/reports.py show <readId>   # printed lines, model reply, sign sent, what the app showed
 python3 scripts/reports.py case <readId>   # starts local-reader/cases/<readId>.json
 ```

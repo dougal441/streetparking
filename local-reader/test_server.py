@@ -282,6 +282,183 @@ class ReadLogAndReports(unittest.TestCase):
             srv.shutdown()
 
 
+class ReportsCommand(unittest.TestCase):
+    """scripts/reports.py list: one command gathers this Mac's reports and the site's private ones (fake API here)."""
+
+    BEARER = "test-bearer-7f3a9c1e5d"
+
+    def setUp(self):
+        import importlib.util, threading
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+        self.env = dict(os.environ)
+        for k in ("CANIPARKHERE_ADMIN_TOKEN", "CANIPARKHERE_REPORTS_BASE"):
+            os.environ.pop(k, None)
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        spec = importlib.util.spec_from_file_location("reports_cmd", Path(__file__).parent.parent / "scripts" / "reports.py")
+        self.rp = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.rp)
+        self.local = root / "local-reader"
+        self.local.mkdir()
+        self.rp.ROOT, self.rp.OUT, self.rp.LOCAL = root, root / ".reports", self.local
+        self.rp.CASES, self.rp.TOKEN_FILE = self.local / "cases", root / "no-admin-token"
+        self.log = server.ReadLog(self.local, sync=False)
+        self.reader = server.Reader("fake", 10, fake=True, log=self.log)
+        self.rows, self.details, self.photos, self.posts, self.agents = [], {}, {}, [], set()
+        t = self
+        PREFIX = "/api/caniparkhere/reports"
+
+        class Fake(BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def answer(self, code, body, ctype="application/json"):
+                data = body if isinstance(body, bytes) else json.dumps(body).encode()
+                self.send_response(code); self.send_header("content-type", ctype)
+                self.send_header("content-length", str(len(data))); self.end_headers(); self.wfile.write(data)
+
+            def route(self):
+                t.agents.add(self.headers.get("User-Agent"))
+                if self.headers.get("Authorization") != f"Bearer {t.BEARER}":
+                    return self.answer(401, {"error": "unauthorized"})
+                rest = self.path[len(PREFIX):] if self.path.startswith(PREFIX) else None
+                if rest is None:
+                    return self.answer(404, {"error": "not found"})
+                parts = [x for x in rest.split("/") if x]
+                if self.command == "POST" and len(parts) == 2 and parts[1] == "delivered":
+                    self.rfile.read(int(self.headers.get("content-length") or 0))
+                    t.posts.append((self.path, self.headers.get("Authorization")))
+                    return self.answer(200, {"ok": True})
+                if self.command != "GET":
+                    return self.answer(405, {"error": "method"})
+                if not parts:
+                    return self.answer(200, {"reports": t.rows})
+                if len(parts) == 1 and parts[0] in t.details:
+                    return self.answer(200, t.details[parts[0]])
+                if len(parts) == 2 and parts[1] == "photo" and parts[0] in t.photos:
+                    return self.answer(200, t.photos[parts[0]], "image/jpeg")
+                return self.answer(404, {"error": "not found"})
+
+            do_GET = do_POST = route
+
+        self.srv = ThreadingHTTPServer(("127.0.0.1", 0), Fake)
+        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+        self.api_base = f"http://127.0.0.1:{self.srv.server_address[1]}"
+
+    def tearDown(self):
+        self.srv.shutdown(); self.srv.server_close()
+        os.environ.clear(); os.environ.update(self.env)
+        self.tmp.cleanup()
+
+    def use_api(self, base=None):
+        os.environ["CANIPARKHERE_REPORTS_BASE"] = base or self.api_base
+        os.environ["CANIPARKHERE_ADMIN_TOKEN"] = self.BEARER
+
+    def run_list(self):
+        import contextlib, io
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            self.rp.cmd_list()
+        return out.getvalue(), err.getvalue()
+
+    def mac_read(self):
+        return self.reader.read(b"macphoto", "au-vic", None)["readId"]
+
+    def site_row(self, rid, reader, notes, at, forwarded=False, photo=False, app=None, read=None):
+        self.rows.append({"readId": rid, "reader": reader, "memberEmail": "d@example.com", "notes": notes, "createdAt": at,
+                          "updatedAt": at, "hasPhoto": photo, "forwarded": forwarded})
+        self.details[rid] = {"row": self.rows[-1], "read": read,
+                             "report": {"readId": rid, "reportedAt": at, "updatedAt": at, "notes": notes, "app": app}}
+
+    def closed_port(self):
+        import socket
+        s = socket.socket(); s.bind(("127.0.0.1", 0)); port = s.getsockname()[1]; s.close()
+        return f"http://127.0.0.1:{port}"
+
+    def test_gathers_the_mac_and_the_site_in_date_order(self):
+        mac = self.mac_read()
+        self.log.report(mac, {"note": "mac note"})
+        uid = "3f2b8c1a-9d4e-4f6a-8b2c-1e5d7a9c0b3f"
+        self.site_row(uid, "on-device", ["wrong side"], "2026-01-01T00:00:00.000Z", photo=True,
+                      app={"signText": "2P"}, read={"id": uid, "backend": "on-device", "ocrText": "2P"})
+        self.photos[uid] = b"\xff\xd8phone"
+        self.use_api()
+        out, err = self.run_list()
+        cache = self.rp.OUT / "reports"
+        self.assertEqual(sorted(p.name for p in cache.iterdir()), sorted([mac, uid]))
+        self.assertEqual((cache / uid / "photo.jpg").read_bytes(), b"\xff\xd8phone")
+        self.assertEqual(json.loads((cache / uid / "read.json").read_text())["ocrText"], "2P")
+        self.assertEqual(json.loads((cache / uid / "report.json").read_text())["notes"], ["wrong side"])
+        self.assertEqual((cache / mac / "photo.jpg").read_bytes(), b"macphoto")
+        self.assertLess(out.index(uid), out.index(mac))  # January before today
+        self.assertIn("2 waiting, 0 done.", out)
+        self.assertEqual(self.agents, {"caniparkhere-reports/1"})
+        self.assertNotIn("warning", err)
+
+    def test_waiting_mac_report_is_written_on_the_mac_and_delivered(self):
+        mac = self.mac_read()
+        self.site_row(mac, "mac", ["away note"], "2026-11-10T01:00:00.000Z", app={"signText": "NO STOPPING"})
+        self.use_api()
+        out, err = self.run_list()
+        local = json.loads((self.local / "reports" / mac / "report.json").read_text())
+        self.assertEqual(local["notes"], ["away note"])
+        self.assertEqual(local["app"], {"signText": "NO STOPPING"})
+        self.assertEqual(self.posts, [(f"/api/caniparkhere/reports/{mac}/delivered", f"Bearer {self.BEARER}")])
+        self.assertTrue((self.rp.OUT / "reports" / mac / "photo.jpg").exists())
+        self.assertIn(mac, out)
+
+    def test_same_read_in_both_places_is_one_folder_with_each_note_once(self):
+        mac = self.mac_read()
+        self.log.report(mac, {"note": "a"})
+        self.site_row(mac, "mac", ["a", "b"], "2026-11-10T01:00:00.000Z")
+        self.use_api()
+        out, _ = self.run_list()
+        self.assertEqual([p.name for p in (self.rp.OUT / "reports").iterdir()], [mac])
+        self.assertEqual(json.loads((self.rp.OUT / "reports" / mac / "report.json").read_text())["notes"], ["a", "b"])
+        self.assertEqual(json.loads((self.local / "reports" / mac / "report.json").read_text())["notes"], ["a", "b"])
+        self.assertEqual(out.count(mac), 1)
+        # already forwarded and also on the Mac: still one folder, notes merged without duplicates
+        self.rows[0]["forwarded"], self.rows[0]["notes"] = True, ["b", "c"]
+        self.run_list()
+        self.assertEqual(json.loads((self.rp.OUT / "reports" / mac / "report.json").read_text())["notes"], ["a", "b", "c"])
+
+    def test_no_token_or_no_site_still_lists_the_mac(self):
+        mac = self.mac_read()
+        self.log.report(mac, {"note": "n"})
+        for setup in (lambda: os.environ.__setitem__("CANIPARKHERE_REPORTS_BASE", self.closed_port()), lambda: self.use_api(self.closed_port())):
+            os.environ.pop("CANIPARKHERE_ADMIN_TOKEN", None)
+            setup()
+            out, err = self.run_list()
+            warnings = [l for l in err.splitlines() if l.startswith("warning")]
+            self.assertEqual(len(warnings), 1, err)
+            self.assertIn("listing the reports on this Mac only", warnings[0])
+            self.assertIn(mac, out)
+            self.assertTrue(out.rstrip().endswith("1 waiting, 0 done."))
+
+    def test_nothing_anywhere(self):
+        out, _ = self.run_list()
+        self.assertTrue(out.rstrip().endswith("0 waiting, 0 done."), out)
+        self.use_api()
+        out, err = self.run_list()
+        self.assertTrue(out.rstrip().endswith("0 waiting, 0 done."), out)
+        self.assertEqual(err, "")
+
+    def test_bearer_is_never_printed(self):
+        mac = self.mac_read()
+        self.site_row(mac, "mac", ["away"], "2026-11-10T01:00:00.000Z")
+        self.site_row("not-a-valid-id", "cloudflare", ["x"], "2026-11-10T01:00:00.000Z")
+        self.use_api()
+        out, err = self.run_list()
+        self.assertIn("skipping a site report", err)  # ids that are not a Mac id or a UUID v4 never become folders
+        self.assertFalse((self.rp.OUT / "reports" / "not-a-valid-id").exists())
+        self.BEARER = "a-different-bearer-the-site-rejects"
+        out2, err2 = self.run_list()
+        self.assertIn("HTTP Error 401", err2)
+        for text in (out, err, out2, err2):
+            self.assertNotIn("test-bearer-7f3a9c1e5d", text)
+            self.assertNotIn("a-different-bearer", text)
+
+
 class ReplayCases(unittest.TestCase):
     """cases/*.json: reads that were reported wrong. Each holds what the reader saw (Apple Vision lines + the
     model's raw reply) and the sign a person confirmed. status "fixed" = post-processing must now produce the
