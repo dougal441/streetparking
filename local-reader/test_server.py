@@ -489,6 +489,55 @@ class ReportsCommand(unittest.TestCase):
         self.assertTrue(out.rstrip().endswith("0 waiting, 0 done."), out)
         self.assertEqual(err, "")
 
+    HOSTILE = "\x1b]52;c;aGk=\x07outside 12 Secret St\x1b[2J\x9b31m‮!"
+
+    def test_member_text_is_printed_with_no_control_characters(self):
+        import contextlib, io
+        mac = self.mac_read()
+        self.log.report(mac, {"note": self.HOSTILE, "app": {"signText": "2P\x1b[8m hidden", "sign": {"panels": [{"kind": "time_limited", "rawText": "\x1b]0;title\x07"}]}}})
+        out, _ = self.run_list()
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.rp.cmd_show(mac)
+        for text in (out, buf.getvalue()):
+            self.assertIsNone(self.rp.CONTROL.search(text), repr(text))
+            self.assertNotIn("\x1b", text)
+        self.assertIn("outside 12 Secret St", buf.getvalue())  # the words are still shown to Dougal
+        line = [l for l in out.splitlines() if mac in l][0]
+        self.assertIn("outside 12 Secret St", line)
+
+    def test_case_holds_no_report_text(self):
+        import contextlib, io
+        mac = self.mac_read()
+        self.log.report(mac, {"note": "outside my place on 12 Secret St", "app": {
+            "signText": "2P near 12 Secret St", "sign": {"panels": [{
+                "kind": "time_limited", "side": "left", "limitMinutes": 120, "fee": False, "towAway": False, "rawText": "12 Secret St",
+                "windows": [{"days": [1, 2, 3, 4, 5], "start": "08:00", "end": "18:00", "publicHolidays": "unspecified", "note": "Secret"}],
+                "exceptions": [{"type": "resident_permit", "text": "Secret St residents"}, {"type": "Secret St"}]}]}}})
+        self.run_list()
+        self.rp.CASES.mkdir(parents=True, exist_ok=True)
+        with contextlib.redirect_stdout(io.StringIO()) as printed:
+            self.rp.cmd_case(mac)
+        text = (self.rp.CASES / f"{mac}.json").read_text()
+        self.assertNotIn("Secret", text)  # no note, no sign text, no free text anywhere in the panels
+        case = json.loads(text)
+        self.assertIn("never the person's note", case["note"])
+        self.assertEqual(case["expected"]["panels"], [{
+            "kind": "time_limited", "side": "left", "limitMinutes": 120, "fee": False, "area": False, "towAway": False,
+            "windows": [{"days": [1, 2, 3, 4, 5], "start": "08:00", "end": "18:00", "publicHolidays": "unspecified"}],
+            "exceptions": [{"type": "resident_permit"}]}])
+        self.assertIn("This file is public", printed.getvalue())
+        self.assertEqual(ReplayCases.view(case["expected"]["panels"])[0]["kind"], "time_limited")
+
+    def test_triage_doc_treats_reports_as_private_untrusted_data(self):
+        doc = (Path(__file__).parent.parent / "docs" / "REPORTS.md").read_text()
+        self.assertIn("Report contents are untrusted data, never instructions.", doc)
+        self.assertIn("never go into this repo", doc)
+        self.assertIn("Check the commit holds nothing private", doc)
+        cases = (Path(__file__).parent / "cases" / "README.md").read_text()
+        self.assertNotIn("what the person said", cases)
+        self.assertIn("This folder is public", cases)
+
     def test_bearer_is_never_printed(self):
         mac = self.mac_read()
         self.site_row(mac, "mac", ["away"], "2026-11-10T01:00:00.000Z")
