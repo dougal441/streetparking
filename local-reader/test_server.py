@@ -121,6 +121,9 @@ class TokenAndLog(unittest.TestCase):
                 self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN[:-1]}"), 401)
                 self.assertEqual(status("/api/read-sign/jobs/000000000000?token="), 401)
                 self.assertEqual(status("/api/read-sign/jobs/000000000000"), 401)
+                # IN-03: a token after a bare & (no ?) is no route and no query; its request line must not log the token
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000&token={self.TOKEN}"), 404)
+                self.assertEqual(status(f"/streetparking/api/read-sign&token={self.TOKEN}"), 404)
         finally:
             srv.shutdown(); srv.server_close()
         log = err.getvalue()
@@ -134,6 +137,9 @@ class TokenAndLog(unittest.TestCase):
         self.assertEqual(server.redact_query("code 400, message Bad request syntax ('GET /x?token=abc&b=2')"),
                          "code 400, message Bad request syntax ('GET /x?[redacted]')")
         self.assertEqual(server.redact_query('"GET /api/read-sign HTTP/1.1" 200 -'), '"GET /api/read-sign HTTP/1.1" 200 -')
+        self.assertEqual(server.redact_query('"GET /streetparking/api/read-sign&token=abc HTTP/1.1" 401 -'),
+                         '"GET /streetparking/api/read-sign&[redacted] HTTP/1.1" 401 -')  # IN-03: no ? before it
+        self.assertEqual(server.redact_query("bad path /x&TOKEN=abc;b=2 here"), "bad path /x&[redacted] here")
 
     def test_compare_is_constant_time(self):
         src = (Path(__file__).parent / "server.py").read_text()

@@ -38,6 +38,7 @@ import sys
 import tempfile
 import threading
 import time
+from urllib.parse import urlsplit
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -680,8 +681,10 @@ class Jobs:
 
 
 def redact_query(line: str) -> str:
-    """A log line with every URL query string replaced, so a ?token= never reaches logs/reader.stderr.log."""
-    return re.sub(r"\?[^\s\"']*", "?[redacted]", str(line))
+    """A log line with every URL query string replaced, so a ?token= never reaches logs/reader.stderr.log. A token=
+    anywhere else on the line (after a bare & with no ?, say) is taken out too (02-REVIEW IN-03)."""
+    line = re.sub(r"\?[^\s\"']*", "?[redacted]", str(line))
+    return re.sub(r"token=[^\s\"']*", "[redacted]", line, flags=re.I)
 
 
 def make_handler(reader: Reader, token: str | None, jobs: Jobs):
@@ -714,7 +717,8 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
                 return True
             want = token.encode()
             got = (self.headers.get("x-reader-token") or "").encode()
-            q = re.search(r"[?&]token=([^&#]*)", self.path)
+            # only a real query string counts: "/api/read-sign&token=..." has none, so it is refused (IN-03)
+            q = re.search(r"(?:^|&)token=([^&]*)", urlsplit(self.path).query)
             from_query = (q.group(1) if q else "").encode()
             return hmac.compare_digest(got, want) | hmac.compare_digest(from_query, want)
 
