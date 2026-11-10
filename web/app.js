@@ -14,7 +14,7 @@ try {
 let TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
 const data = { rulesPack: null, holidays: null, councils: null, penalties: null, jurisdiction: null, lgas: null, jurisdictions: null };
-let lastReader = null;    // what the vision reader returned (raw text, OCR lines, side fixes)
+let lastReader = null;    // what the reader returned (raw text, OCR lines, side fixes, its own sign before any hand fixes)
 let lastResult = null;    // last interpret() output, for reports
 let reportState = {};     // readId -> { status, note } for "Reader got it wrong"
 let currentSign = null;   // last parsed/read sign
@@ -269,7 +269,7 @@ async function report(readId, note) {
   if (!filed && reader !== 'mac') {
     // First report for a read nothing kept: send the photo and what the reader saw (D-13). Later notes don't.
     if (currentFile) extra.photo = await downscaleImage(currentFile).catch(() => currentFile);
-    extra.read = { backend: lastReader?.backend ?? null, model: lastReader?.model ?? null, seconds: lastReader?.seconds ?? null, raw: lastReader?.raw ?? null, ocrText: lastReader?.ocrText ?? null, sign: currentSign, error: lastReader?.error ?? null, visionError: lastReader?.visionError ?? null };
+    extra.read = { backend: lastReader?.backend ?? null, model: lastReader?.model ?? null, seconds: lastReader?.seconds ?? null, raw: lastReader?.raw ?? null, ocrText: lastReader?.ocrText ?? null, sign: lastReader?.sign ?? null, error: lastReader?.error ?? null, visionError: lastReader?.visionError ?? null };
   }
   try {
     await sendReport(cfg.readerUrl, { readId, note, app, reader, ...extra });
@@ -309,7 +309,7 @@ async function readPhoto() {
       const t0 = Date.now();
       const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null, jurisdiction: data.jurisdiction }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
       $('reader-mode').textContent = readerLabel(meta);
-      lastReader = meta; renderReaderSaid(sign, meta); renderReport();
+      lastReader = { ...meta, sign }; renderReaderSaid(sign, meta); renderReport(); // the reader's own sign goes with a report (WR-02)
       sideOverrides = {};
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
       runInterpret({ ...sign, rawText: $('sign-text').value });
@@ -326,7 +326,7 @@ async function readPhoto() {
       showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|stopped answering|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
       $('status-line').textContent = 'Reader unavailable.';
       lastReader = e.readId ? { readId: e.readId, backend: e.backend ?? null, error: e.message } : null; // the reader that made the read (WR-07)
-      lastResult = null; renderReport();
+      lastResult = null; currentSign = null; sideOverrides = {}; renderReport(); // nothing from the previous photo goes with its report (WR-02)
     }
   } finally { btn.classList.remove('busy'); prog.hidden = true; }
 }
@@ -344,6 +344,7 @@ async function readOnDevice(note) {
   lastReader = { readId: crypto.randomUUID(), backend: 'on-device', ocrText: text.trim(), visionError: note ?? null };
   renderReaderSaid(null, { backend: 'on-device' }); renderReport();
   runInterpret();
+  lastReader.sign = currentSign; // what the phone's own read parsed to, before any hand fixes (WR-02)
   const parsed = parseSignText(text);
   if (!parsed.panels.length || parsed.confidence < 0.5 || confidence < 0.5) {
     $('results').hidden = false;

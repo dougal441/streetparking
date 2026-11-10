@@ -232,6 +232,8 @@ test('WR-07: when every reader fails, the app keeps the error\'s backend, clears
   const steps = [
     'lastReader = e.readId ? { readId: e.readId, backend: e.backend ?? null, error: e.message } : null;',
     'lastResult = null;',
+    'currentSign = null;', // WR-02: the previous photo's sign and arrows go too
+    'sideOverrides = {};',
     'renderReport();',
   ];
   let at = 0;
