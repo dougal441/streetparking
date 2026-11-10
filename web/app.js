@@ -73,7 +73,7 @@ async function detectReader() {
   try {
     const url = new URL('../api/read-sign', location.href);
     const r = await fetch(url, { method: 'GET', cache: 'no-store' });
-    if (r.ok) { const j = await r.json(); if (j.service === 'caniparkhere-reader') { cfg.readerUrl = url.toString(); cfg.readerBackend = j.backend; } }
+    if (r.ok) { const j = await r.json(); if (j.service === 'caniparkhere-reader') { cfg.readerUrl = url.toString(); cfg.readerBackend = j.backend; cfg.readers = Array.isArray(j.readers) ? j.readers : null; } }
   } catch { /* no reader here (e.g. GitHub Pages) */ }
 }
 
@@ -215,6 +215,23 @@ function renderResult(res) {
   out.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+const MAC_BACKENDS = ['mac', 'local-mlx', 'local'];
+
+/** The mode line after a vision read, in plain words: who read the sign (D-11). */
+function readerLabel(meta) {
+  const secs = meta?.seconds ? ` · ${meta.seconds}s` : '';
+  if (MAC_BACKENDS.includes(meta?.backend)) return `Read by your Mac${secs}`;
+  if (meta?.backend === 'cloudflare') return `Read by Cloudflare${secs}${meta.rough ? ' · rough read, check the sign' : ''}`;
+  return `vision reader on (${meta?.backend ?? ''})${meta?.seconds ? ` · last read ${meta.seconds}s` : ''}`;
+}
+
+/** Which reader a report is about: the Mac keeps its own log; the others need the photo sent with the report. */
+function reportReader(backend) {
+  if (MAC_BACKENDS.includes(backend)) return 'mac';
+  if (backend === 'cloudflare') return 'cloudflare';
+  return 'on-device';
+}
+
 function renderReaderSaid(sign, meta) {
   const parts = [];
   if (meta?.backend) parts.push(`<div>Reader: <strong>${esc(meta.backend)}</strong>${meta.model ? ' · ' + esc(meta.model) : ''}${meta.seconds ? ' · ' + meta.seconds + 's' : ''}</div>`);
@@ -224,31 +241,40 @@ function renderReaderSaid(sign, meta) {
   $('reader-said').innerHTML = parts.join('') || 'Nothing yet.';
 }
 
-// "Reader got it wrong": one tap sends the photo's read id; the reader (the Mac) already holds the photo and its
-// full log, files them as a report and uploads them. A note can follow. Fixes made by hand first (side arrows,
-// edited sign text) travel with the report as the best guess at the right answer.
+// "Reader got it wrong" (private, only Dougal sees it): every read can be reported, on-device ones included.
+// For a Mac read one tap sends the read id; the Mac already holds the photo and its log. For a Cloudflare or
+// on-device read the first report brings the photo and what the reader saw, since nothing kept them. A note can
+// follow. Fixes made by hand first (side arrows, edited sign text) travel with the report as the best guess.
 function renderReport() {
   const box = $('report-box');
   const id = cfg.readerUrl ? lastReader?.readId : null;
   if (!id) { box.hidden = true; box.innerHTML = ''; return; }
   const st = reportState[id];
   box.hidden = false;
-  if (!st) box.innerHTML = `<button class="btn" id="btn-report">👎 Reader got it wrong</button><p class="muted small">Fix it first if you can (arrows or sign text in Show my working), then tap. Sends this photo and the reader's log to the project's public reports so the mistake gets fixed for good.</p>`;
+  if (!st) box.innerHTML = `<button class="btn" id="btn-report">👎 Reader got it wrong (private)</button><p class="muted small">Fix it first if you can (arrows or sign text in Show my working), then tap. Sends this photo and what the reader saw to Dougal, privately. Nobody else sees it.</p>`;
   else box.innerHTML = `<p class="small">${st.status === 'sending' ? 'Sending…' : esc(st.note)}</p>${st.status === 'sending' ? '' : `<div class="row"><input type="text" id="report-note" placeholder="What was wrong? (optional)"><button class="btn" id="btn-report">${st.status === 'failed' ? 'Try again' : 'Add note'}</button></div>`}`;
   $('btn-report')?.addEventListener('click', () => report(id, $('report-note')?.value ?? ''));
 }
 
 async function report(readId, note) {
-  reportState[readId] = { status: 'sending' }; renderReport();
+  const filed = reportState[readId]?.filed === true;
+  reportState[readId] = { status: 'sending', filed }; renderReport();
   const app = {
     signText: $('sign-text').value, sign: currentSign ? applyOverrides({ ...currentSign }) : null, sideOverrides,
     when: whenDate().toISOString(), vehicle: vehicle(), council: $('council').value || null, error: lastReader?.error ?? null,
     verdicts: lastResult ? Object.fromEntries(Object.entries(lastResult.sides).map(([k, s]) => [k, { verdict: s.verdict, headline: s.headline }])) : null,
   };
+  const reader = reportReader(lastReader?.backend);
+  const extra = {};
+  if (!filed && reader !== 'mac') {
+    // First report for a read nothing kept: send the photo and what the reader saw (D-13). Later notes don't.
+    if (currentFile) extra.photo = await downscaleImage(currentFile).catch(() => currentFile);
+    extra.read = { backend: lastReader?.backend ?? null, model: lastReader?.model ?? null, seconds: lastReader?.seconds ?? null, raw: lastReader?.raw ?? null, ocrText: lastReader?.ocrText ?? null, sign: currentSign, error: lastReader?.error ?? null, visionError: lastReader?.visionError ?? null };
+  }
   try {
-    const r = await sendReport(cfg.readerUrl, { readId, note, app });
-    reportState[readId] = { status: 'sent', note: r.uploaded ? '✓ Reported and uploaded. Thanks.' : `✓ Saved on the Mac. Not uploaded yet (${r.uploadNote ?? 'unknown reason'}); it will go with the next report.` };
-  } catch (e) { reportState[readId] = { status: 'failed', note: `Could not send the report: ${e.message}` }; }
+    await sendReport(cfg.readerUrl, { readId, note, app, reader, ...extra });
+    reportState[readId] = { status: 'sent', filed: true, note: '✓ Reported privately. Only Dougal sees it.' };
+  } catch (e) { reportState[readId] = { status: 'failed', filed, note: `Could not send the report: ${e.message}` }; }
   renderReport();
 }
 
@@ -282,7 +308,7 @@ async function readPhoto() {
       const small = await downscaleImage(currentFile);
       const t0 = Date.now();
       const { sign, meta } = await readWithClaude(small, { ...cfg, council: $('council').value || null, jurisdiction: data.jurisdiction }, (stage) => { $('status-line').textContent = `${stage}… ${Math.round((Date.now() - t0) / 1000)}s`; });
-      if (meta?.seconds) $('reader-mode').textContent = `vision reader on (${meta.backend ?? ''}) · last read ${meta.seconds}s`;
+      $('reader-mode').textContent = readerLabel(meta);
       lastReader = meta; renderReaderSaid(sign, meta); renderReport();
       sideOverrides = {};
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
@@ -332,7 +358,10 @@ async function readOnDevice(note) {
 function init() {
   $('when').value = nowLocalInput();
   $('now-note').textContent = `Times are Australia/Melbourne. Now: ${fmtT(new Date())}.`;
-  const modeLine = pickReader(cfg) === 'claude' ? `vision reader on${cfg.readerBackend ? ' (' + cfg.readerBackend + ')' : ''}${cfg.readerDown ? ' — not answering right now' : ''}` : 'on-device OCR only (words, not symbols) — a vision reader is much better';
+  const siteLine = cfg.readers?.includes('cloudflare') ? 'Reads with your Mac, then Cloudflare, then this phone' : 'Reads with your Mac, then this phone';
+  const modeLine = pickReader(cfg) !== 'claude' ? 'on-device OCR only (words, not symbols) — a vision reader is much better'
+    : cfg.readerBackend === 'site' ? siteLine
+    : `vision reader on${cfg.readerBackend ? ' (' + cfg.readerBackend + ')' : ''}${cfg.readerDown ? ' — not answering right now' : ''}`;
   $('reader-mode').textContent = modeLine;
   $('photo').addEventListener('change', (e) => {
     currentFile = e.target.files?.[0] ?? null;

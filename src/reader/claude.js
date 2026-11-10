@@ -19,11 +19,16 @@ export function reportUrl(readerUrl) {
 }
 
 /**
- * Tell the reader a read was wrong. It keeps the photo and its full log and uploads them for study.
- * @returns {Promise<{saved:boolean, uploaded:boolean, uploadNote?:string}>}
+ * Tell the reader a read was wrong. The report is private: only Dougal can list and open it.
+ * A Mac read is already in the Mac's own log, so it needs only the read id. A Cloudflare or on-device read was
+ * never kept, so its first report brings the photo (`photo`, a Blob, sent as base64) and what the reader saw (`read`).
+ * @returns {Promise<{saved:boolean, private?:boolean}>}
  */
-export async function sendReport(readerUrl, { readId, note = '', app = null }) {
-  const res = await fetch(reportUrl(readerUrl), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ readId, note, app }) });
+export async function sendReport(readerUrl, { readId, note = '', app = null, reader, read, photo }) {
+  const payload = { readId, reader, note, app };
+  if (read !== undefined) payload.read = read;
+  if (typeof Blob !== 'undefined' && photo instanceof Blob) payload.photo = (await blobToDataUrl(photo)).split(',')[1];
+  const res = await fetch(reportUrl(readerUrl), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? `report failed (${res.status})`);
   return body;
@@ -91,15 +96,16 @@ export async function readWithClaude(image, config, onProgress) {
   if (res.status === 202 && body.jobId) {
     const job = await pollJob(jobUrl(config.readerUrl, body.jobId), config, onProgress);
     if (job.result) body = job.result;
-    else {
+    else if (config.readerBackend === 'site') {
       // Only the site can read without the Mac: it is sent the photo once more, told to skip the Mac (D-04).
-      // A direct Mac link would only start a second Mac job, so it stops here.
-      if (config.readerBackend !== 'site') throw failed(job.fellThrough, job.readId);
       onProgress?.("Your Mac didn't finish, trying Cloudflare");
       res = await post({ skip: 'mac' });
       if (!res.ok) throw await failedAnswer(res);
       if (res.status === 202) throw failed('Reader answered the resend with a job');
       body = await res.json();
+    } else {
+      // A direct Mac link would only start a second Mac job, so it stops here.
+      throw failed(job.fellThrough, job.readId);
     }
   }
   if (!body.sign) throw failed(body.error ?? 'Reader returned no sign', body.readId);

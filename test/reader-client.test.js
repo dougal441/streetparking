@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { jobUrl, reportUrl, readWithClaude } from '../src/reader/claude.js';
+import { jobUrl, reportUrl, readWithClaude, sendReport } from '../src/reader/claude.js';
 
 test('job url keeps host, prefix and token', () => {
   assert.equal(jobUrl('https://mac.ts.net/streetparking/api/read-sign?token=abc', 'deadbeef0001'), 'https://mac.ts.net/streetparking/api/read-sign/jobs/deadbeef0001?token=abc');
@@ -159,4 +159,37 @@ test('a resend answered with a job is never polled', async () => {
   await assert.rejects(readWithClaude(photo(), fast()), /resend with a job/);
   assert.equal(posts(calls).length, 2);
   assert.equal(calls.filter(c => c.method === 'GET').length, 1);
+});
+
+// ---------------------------------------------------------------- private reports
+
+test('H: a non-Mac report carries the photo as base64 (no data: prefix) and what the reader saw', async () => {
+  const calls = stubFetch({ posts: [() => jsonRes({ saved: true, private: true })] });
+  const r = await sendReport(READER, { readId: 'r-dev', reader: 'on-device', note: 'n', app: {}, read: { raw: 'x' }, photo: photo() });
+  assert.deepEqual(r, { saved: true, private: true });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, READER + '/reports');
+  assert.equal(calls[0].method, 'POST');
+  const b = calls[0].body;
+  assert.equal(b.photo, Buffer.from([0xff, 0xd8, 0xff]).toString('base64'));
+  assert.ok(!b.photo.startsWith('data:'));
+  assert.equal(b.readId, 'r-dev');
+  assert.equal(b.reader, 'on-device');
+  assert.equal(b.note, 'n');
+  assert.deepEqual(b.app, {});
+  assert.deepEqual(b.read, { raw: 'x' });
+});
+
+test('I: a Mac report carries no photo and no read', async () => {
+  const calls = stubFetch({ posts: [() => jsonRes({ saved: true, private: true })] });
+  await sendReport(READER, { readId: 'r-mac', reader: 'mac', note: '', app: null });
+  const b = calls[0].body;
+  assert.equal(b.reader, 'mac');
+  assert.equal('photo' in b, false);
+  assert.equal('read' in b, false);
+});
+
+test('J: a report the site refuses throws its error text', async () => {
+  stubFetch({ posts: [() => jsonRes({ error: 'Photo too large.' }, 413)] });
+  await assert.rejects(sendReport(READER, { readId: 'r', reader: 'cloudflare', photo: photo() }), /Photo too large\./);
 });
