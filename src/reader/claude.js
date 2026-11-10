@@ -31,9 +31,45 @@ export async function sendReport(readerUrl, { readId, note = '', app = null }) {
 
 const failed = (message, readId) => Object.assign(new Error(message), { readId: readId ?? null });
 
+/** How long the phone waits on a Mac job once the Mac has taken it (D-02). `config.jobTimeoutMs` wins. */
+export const JOB_TIMEOUT_MS = 3 * 60 * 1000;
+/** How often the phone asks how the job is going. `config.pollMs` wins. */
+export const POLL_MS = 1500;
+
+/** A reader answer that is not OK becomes one error, with the read id when the body carries one. */
+async function failedAnswer(res) {
+  const text = await res.text().catch(() => '');
+  let readId = null; try { readId = JSON.parse(text).readId; } catch { /* not JSON */ }
+  return failed(`Reader failed: ${res.status} ${text}`, readId);
+}
+
+/**
+ * Poll a Mac job until it ends. Returns `{ result }` when the job is done (even with no sign: that is an answer),
+ * or `{ fellThrough }` (a message, plus the read id) when the job errored with `fallback`, was lost, or ran out of time.
+ * A job error without `fallback` throws.
+ */
+async function pollJob(url, config, onProgress) {
+  const deadline = Date.now() + (config.jobTimeoutMs ?? JOB_TIMEOUT_MS);
+  const pollMs = config.pollMs ?? POLL_MS;
+  let lastStage = '';
+  while (Date.now() < deadline) {
+    await sleep(pollMs);
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) return { fellThrough: `Reader lost the job (${r.status})`, readId: null };
+    const j = await r.json();
+    if (j.stage && j.stage !== lastStage) { lastStage = j.stage; onProgress?.(j.stage + (j.queued_ahead ? ` (${j.queued_ahead} ahead of you)` : '')); }
+    if (j.status === 'done') return { result: j.result ?? {} };
+    if (j.status === 'error') {
+      if (j.fallback === true) return { fellThrough: j.error ?? 'reader failed', readId: j.readId };
+      throw failed(j.error ?? 'reader failed', j.readId);
+    }
+  }
+  return { fellThrough: 'Reader took too long (3 min). Is the Mac busy?', readId: null };
+}
+
 /**
  * @param {Blob} image
- * @param {{readerUrl:string, council?:string|null, jurisdiction?:string}} config
+ * @param {{readerUrl:string, readerBackend?:string, council?:string|null, jurisdiction?:string, jobTimeoutMs?:number, pollMs?:number}} config
  * @param {(stage:string)=>void} [onProgress]
  * @returns {Promise<{sign:object, text:string, meta:object}>}
  */
@@ -41,37 +77,33 @@ export async function readWithClaude(image, config, onProgress) {
   const dataUrl = await blobToDataUrl(image);
   const [meta, data] = dataUrl.split(',');
   const mediaType = /data:([^;]+)/.exec(meta)?.[1] ?? 'image/jpeg';
-  onProgress?.('sending the photo');
-  const res = await fetch(config.readerUrl, {
+  const post = (extra = {}) => fetch(config.readerUrl, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ image: data, mediaType, jurisdiction: config.jurisdiction ?? 'au-vic', council: config.council ?? null, async: true }),
+    body: JSON.stringify({ image: data, mediaType, jurisdiction: config.jurisdiction ?? 'au-vic', council: config.council ?? null, async: true, ...extra }),
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    let readId = null; try { readId = JSON.parse(text).readId; } catch { /* not JSON */ }
-    throw failed(`Reader failed: ${res.status} ${text}`, readId);
-  }
+  onProgress?.('sending the photo');
+  let res = await post();
+  if (!res.ok) throw await failedAnswer(res);
   let body = await res.json();
   // Slow readers (a laptop loading a 5 GB model) answer 202 + a job id; poll until done. Phones give up on
   // a single request after ~60 s, so this is the only way a first photo gets through.
   if (res.status === 202 && body.jobId) {
-    const url = jobUrl(config.readerUrl, body.jobId);
-    const deadline = Date.now() + (config.jobTimeoutMs ?? 5 * 60 * 1000);
-    let lastStage = '';
-    while (Date.now() < deadline) {
-      await sleep(1500);
-      const r = await fetch(url, { cache: 'no-store' });
-      if (!r.ok) throw new Error(`Reader lost the job (${r.status})`);
-      const j = await r.json();
-      if (j.stage && j.stage !== lastStage) { lastStage = j.stage; onProgress?.(j.stage + (j.queued_ahead ? ` (${j.queued_ahead} ahead of you)` : '')); }
-      if (j.status === 'done') { body = j.result; break; }
-      if (j.status === 'error') throw failed(j.error ?? 'reader failed', j.readId);
+    const job = await pollJob(jobUrl(config.readerUrl, body.jobId), config, onProgress);
+    if (job.result) body = job.result;
+    else {
+      // Only the site can read without the Mac: it is sent the photo once more, told to skip the Mac (D-04).
+      // A direct Mac link would only start a second Mac job, so it stops here.
+      if (config.readerBackend !== 'site') throw failed(job.fellThrough, job.readId);
+      onProgress?.("Your Mac didn't finish, trying Cloudflare");
+      res = await post({ skip: 'mac' });
+      if (!res.ok) throw await failedAnswer(res);
+      if (res.status === 202) throw failed('Reader answered the resend with a job');
+      body = await res.json();
     }
-    if (!body.sign && !body.error) throw new Error('Reader took too long (5 min). Is the Mac busy?');
   }
   if (!body.sign) throw failed(body.error ?? 'Reader returned no sign', body.readId);
-  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { readId: body.readId ?? null, backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes } };
+  return { sign: body.sign, text: body.sign.rawText ?? '', meta: { readId: body.readId ?? null, backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes, rough: body.rough === true } };
 }
 
 function blobToDataUrl(blob) {

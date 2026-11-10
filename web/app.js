@@ -288,23 +288,45 @@ async function readPhoto() {
       $('sign-text').value = sign.rawText ?? sign.panels.map(p => p.rawText).join('\n');
       runInterpret({ ...sign, rawText: $('sign-text').value });
     } else {
-      $('status-line').textContent = 'Reading the sign (on-device OCR)…';
-      const { text, confidence } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
-      $('sign-text').value = text.trim();
-      currentSign = null; sideOverrides = {}; lastReader = null; renderReport();
-      runInterpret();
-      const parsed = parseSignText(text);
-      if (!parsed.panels.length || parsed.confidence < 0.5 || confidence < 0.5) {
-        $('results').hidden = false;
-        $('results').insertAdjacentHTML('afterbegin', `<div class="banner">🔍 On-device OCR only read <em>${esc(text.trim().slice(0, 60) || 'nothing')}</em>. It reads printed words, not the red Ⓢ / Ⓟ symbols or arrows. Open <strong>Show my working</strong>, fix the sign text (e.g. <code>NO STOPPING &lt;-</code>) and tap <strong>Can I park here?</strong> — or turn on the vision reader (docs/DEPLOY.md).</div>`);
-      }
+      await readOnDevice(null);
     }
     $('status-line').textContent = 'Photograph the sign. Get a straight answer.';
   } catch (e) {
-    showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
-    $('status-line').textContent = 'Reader unavailable.';
-    lastReader = e.readId ? { readId: e.readId, error: e.message } : null; lastResult = null; renderReport();
+    // Every failed vision read drops to on-device OCR (D-03). Only if that fails too is the person asked to type.
+    try {
+      await readOnDevice(cfg.readerBackend === 'site' ? "The vision readers couldn't answer." : e.message);
+      $('status-line').textContent = 'Photograph the sign. Get a straight answer.';
+    } catch {
+      showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
+      $('status-line').textContent = 'Reader unavailable.';
+      lastReader = e.readId ? { readId: e.readId, error: e.message } : null; lastResult = null; renderReport();
+    }
   } finally { btn.classList.remove('busy'); prog.hidden = true; }
+}
+
+/**
+ * Read the photo on this phone (Tesseract: printed words, not symbols). Used when no vision reader is set up,
+ * and when every vision reader failed (`note` says why). The read gets its own id so it can be reported (D-12).
+ */
+async function readOnDevice(note) {
+  const prog = $('ocr-progress');
+  $('status-line').textContent = 'Reading the sign (on-device OCR)…';
+  const { text, confidence } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
+  $('sign-text').value = text.trim();
+  currentSign = null; sideOverrides = {};
+  lastReader = { readId: crypto.randomUUID(), backend: 'on-device', ocrText: text.trim(), visionError: note ?? null };
+  renderReaderSaid(null, { backend: 'on-device' }); renderReport();
+  runInterpret();
+  const parsed = parseSignText(text);
+  if (!parsed.panels.length || parsed.confidence < 0.5 || confidence < 0.5) {
+    $('results').hidden = false;
+    $('results').insertAdjacentHTML('afterbegin', `<div class="banner">🔍 On-device OCR only read <em>${esc(text.trim().slice(0, 60) || 'nothing')}</em>. It reads printed words, not the red Ⓢ / Ⓟ symbols or arrows. Open <strong>Show my working</strong>, fix the sign text (e.g. <code>NO STOPPING &lt;-</code>) and tap <strong>Can I park here?</strong> — or turn on the vision reader (docs/DEPLOY.md).</div>`);
+  }
+  $('reader-mode').textContent = 'Read on this phone (words only, not symbols)';
+  if (note) {
+    $('results').hidden = false;
+    $('results').insertAdjacentHTML('afterbegin', `<div class="banner">${esc(note)} This phone read the words instead.</div>`);
+  }
 }
 
 function init() {

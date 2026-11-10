@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { jobUrl, reportUrl } from '../src/reader/claude.js';
+import { jobUrl, reportUrl, readWithClaude } from '../src/reader/claude.js';
 
 test('job url keeps host, prefix and token', () => {
   assert.equal(jobUrl('https://mac.ts.net/streetparking/api/read-sign?token=abc', 'deadbeef0001'), 'https://mac.ts.net/streetparking/api/read-sign/jobs/deadbeef0001?token=abc');
@@ -9,4 +9,154 @@ test('job url keeps host, prefix and token', () => {
 
 test('report url keeps host, prefix and token', () => {
   assert.equal(reportUrl('https://mac.ts.net/streetparking/api/read-sign?token=abc'), 'https://mac.ts.net/streetparking/api/read-sign/reports?token=abc');
+});
+
+// ---------------------------------------------------------------- stubbed fetch + FileReader
+
+const READER = 'https://dougalhanson.com/caniparkhere/api/read-sign';
+const SIGN = { rawText: '2P 8AM-6PM', panels: [{ rawText: '2P 8AM-6PM' }] };
+const jsonRes = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+
+let realFetch, realFileReader;
+
+/** Node has no FileReader; give the client the one call it makes (readAsDataURL), only when missing. */
+class TestFileReader {
+  readAsDataURL(blob) {
+    blob.arrayBuffer().then((buf) => {
+      this.result = `data:${blob.type || 'application/octet-stream'};base64,${Buffer.from(buf).toString('base64')}`;
+      this.onload?.();
+    }, (err) => { this.error = err; this.onerror?.(); });
+  }
+}
+
+/**
+ * Install a fetch stub. `posts` answers each POST in turn; `polls` answers each job poll in turn (the last one
+ * repeats). Returns the list of calls, so a test can count POSTs and read their bodies.
+ */
+function stubFetch({ posts, polls = [] }) {
+  const calls = [];
+  let p = 0; let q = 0;
+  globalThis.fetch = async (url, init = {}) => {
+    const method = init.method ?? 'GET';
+    const body = init.body ? JSON.parse(init.body) : null;
+    calls.push({ url: String(url), method, body });
+    if (method === 'POST') { const a = posts[Math.min(p++, posts.length - 1)]; return typeof a === 'function' ? a() : a; }
+    const a = polls[Math.min(q++, polls.length - 1)];
+    return typeof a === 'function' ? a() : a;
+  };
+  return calls;
+}
+
+test.beforeEach(() => {
+  realFetch = globalThis.fetch;
+  realFileReader = globalThis.FileReader;
+  if (typeof globalThis.FileReader !== 'function') globalThis.FileReader = TestFileReader;
+});
+test.afterEach(() => {
+  globalThis.fetch = realFetch;
+  if (realFileReader === undefined) delete globalThis.FileReader; else globalThis.FileReader = realFileReader;
+});
+
+const photo = () => new Blob([new Uint8Array([0xff, 0xd8, 0xff])], { type: 'image/jpeg' });
+const fast = (extra = {}) => ({ readerUrl: READER, readerBackend: 'site', pollMs: 1, jobTimeoutMs: 2000, ...extra });
+const queued = () => jsonRes({ jobId: 'deadbeef0001', status: 'queued' }, 202);
+const posts = (calls) => calls.filter(c => c.method === 'POST');
+
+test('A: a Mac job error marked fallback is sent again once through the site, skipping the Mac', async () => {
+  const calls = stubFetch({
+    posts: [queued, () => jsonRes({ sign: SIGN, backend: 'cloudflare', rough: true, readId: 'r-cf', seconds: 6 })],
+    polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })],
+  });
+  const stages = [];
+  const { sign, meta } = await readWithClaude(photo(), fast(), (s) => stages.push(s));
+  assert.equal(posts(calls).length, 2);
+  assert.equal(posts(calls)[0].body.skip, undefined);
+  assert.equal(posts(calls)[1].body.skip, 'mac');
+  assert.equal(posts(calls)[1].body.image, posts(calls)[0].body.image);
+  assert.equal(posts(calls)[1].body.async, true);
+  assert.equal(sign.rawText, SIGN.rawText);
+  assert.equal(meta.backend, 'cloudflare');
+  assert.equal(meta.rough, true);
+  assert.equal(meta.readId, 'r-cf');
+  assert.ok(stages.includes("Your Mac didn't finish, trying Cloudflare"));
+});
+
+test('B: a direct Mac link never sends a second POST', async () => {
+  const calls = stubFetch({ posts: [queued], polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })] });
+  await assert.rejects(readWithClaude(photo(), fast({ readerBackend: 'local-mlx' })), /x/);
+  assert.equal(posts(calls).length, 1);
+});
+
+test('C: a Mac job that finds no sign is an answer, not a fallback', async () => {
+  const calls = stubFetch({
+    posts: [queued],
+    polls: [() => jsonRes({ status: 'done', result: { sign: null, error: 'No parking sign found in the photo.', backend: 'mac', readId: 'r-mac' } })],
+  });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.message === 'No parking sign found in the photo.' && e.readId === 'r-mac');
+  assert.equal(posts(calls).length, 1);
+});
+
+test('D: the deadline passing sends exactly one resend, skipping the Mac', async () => {
+  const calls = stubFetch({
+    posts: [queued, () => jsonRes({ sign: SIGN, backend: 'cloudflare', readId: 'r-cf' })],
+    polls: [() => jsonRes({ status: 'running', stage: 'loading the model' })],
+  });
+  const { meta } = await readWithClaude(photo(), fast({ jobTimeoutMs: 60, pollMs: 5 }));
+  assert.equal(posts(calls).length, 2);
+  assert.equal(posts(calls)[1].body.skip, 'mac');
+  assert.equal(meta.backend, 'cloudflare');
+  assert.equal(meta.rough, false);
+});
+
+test('E: while the Mac job runs the app keeps polling and never asks for Cloudflare', async () => {
+  const calls = stubFetch({
+    posts: [queued],
+    polls: [
+      () => jsonRes({ status: 'queued', stage: 'waiting for the model', queued_ahead: 1 }),
+      () => jsonRes({ status: 'running', stage: 'reading the sign' }),
+      () => jsonRes({ status: 'done', result: { sign: SIGN, backend: 'mac', readId: 'r-mac', seconds: 4 } }),
+    ],
+  });
+  const stages = [];
+  const { meta } = await readWithClaude(photo(), fast(), (s) => stages.push(s));
+  assert.equal(posts(calls).length, 1);
+  assert.equal(calls.filter(c => c.method === 'GET').length, 3);
+  assert.ok(calls.filter(c => c.method === 'GET').every(c => c.url === READER + '/jobs/deadbeef0001'));
+  assert.ok(stages.includes('waiting for the model (1 ahead of you)'));
+  assert.ok(stages.includes('reading the sign'));
+  assert.equal(meta.backend, 'mac');
+  assert.equal(meta.seconds, 4);
+});
+
+test('F: a lost job (404 poll) through the site is sent again once', async () => {
+  const calls = stubFetch({
+    posts: [queued, () => jsonRes({ sign: SIGN, backend: 'cloudflare', readId: 'r-cf' })],
+    polls: [() => jsonRes({ error: 'no such job' }, 404)],
+  });
+  const { meta } = await readWithClaude(photo(), fast());
+  assert.equal(posts(calls).length, 2);
+  assert.equal(posts(calls)[1].body.skip, 'mac');
+  assert.equal(meta.backend, 'cloudflare');
+});
+
+test('G: a resend that no reader can take throws, so the app reads on the phone', async () => {
+  const calls = stubFetch({
+    posts: [queued, () => jsonRes({ error: 'No vision reader is free right now.', reader: 'none' }, 503)],
+    polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })],
+  });
+  await assert.rejects(readWithClaude(photo(), fast()), /Reader failed: 503/);
+  assert.equal(posts(calls).length, 2);
+});
+
+test('a job error without fallback throws as before, with no resend', async () => {
+  const calls = stubFetch({ posts: [queued], polls: [() => jsonRes({ status: 'error', error: 'bad photo', readId: 'r1' })] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.message === 'bad photo' && e.readId === 'r1');
+  assert.equal(posts(calls).length, 1);
+});
+
+test('a resend answered with a job is never polled', async () => {
+  const calls = stubFetch({ posts: [queued, queued], polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })] });
+  await assert.rejects(readWithClaude(photo(), fast()), /resend with a job/);
+  assert.equal(posts(calls).length, 2);
+  assert.equal(calls.filter(c => c.method === 'GET').length, 1);
 });
