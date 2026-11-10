@@ -199,6 +199,32 @@ test('a resend answered with a job is never polled', async () => {
   assert.equal(calls.filter(c => c.method === 'GET').length, 1);
 });
 
+// WR-07: a failed read names the reader that made it, so its report is filed under that reader, not 'on-device'.
+test('WR-07: a no-sign answer carries its backend (the Mac through a job, Cloudflare on the resend)', async () => {
+  stubFetch({ posts: [queued], polls: [() => jsonRes({ status: 'done', result: { sign: null, error: 'No parking sign found in the photo.', backend: 'mac', readId: '20261111-093015-a1b2c3' } })] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === 'mac' && e.readId === '20261111-093015-a1b2c3');
+  stubFetch({
+    posts: [queued, () => jsonRes({ sign: null, error: "Cloudflare couldn't read the sign.", backend: 'cloudflare', readId: '3f2b8c1a-9d4e-4f6a-8b2c-1e5d7a9c0b3f' })],
+    polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })],
+  });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === 'cloudflare' && e.readId === '3f2b8c1a-9d4e-4f6a-8b2c-1e5d7a9c0b3f');
+});
+
+test('WR-07: a Mac job error and a failed answer carry their backend; no read id means no backend', async () => {
+  stubFetch({ posts: [queued], polls: [() => jsonRes({ status: 'error', error: 'bad photo', readId: 'r1' })] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === 'mac' && e.readId === 'r1');
+  stubFetch({ posts: [() => jsonRes({ error: 'boom', readId: 'r2', backend: 'local-mlx' }, 502)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === 'local-mlx' && e.readId === 'r2');
+  stubFetch({ posts: [() => new Response('<html>bad gateway</html>', { status: 502 })] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === null && e.readId === null);
+});
+
+test('WR-07: when every reader fails, the app keeps the error\'s backend for the report', async () => {
+  const { readFileSync } = await import('node:fs');
+  const app = readFileSync(new URL('../web/app.js', import.meta.url), 'utf8');
+  assert.match(app, /lastReader = e\.readId \? \{ readId: e\.readId, backend: e\.backend \?\? null, error: e\.message \}/);
+});
+
 // ---------------------------------------------------------------- private reports
 
 test('H: a non-Mac report carries the photo as base64 (no data: prefix) and what the reader saw', async () => {

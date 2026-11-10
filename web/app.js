@@ -325,7 +325,7 @@ async function readPhoto() {
     } catch {
       showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|stopped answering|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
       $('status-line').textContent = 'Reader unavailable.';
-      lastReader = e.readId ? { readId: e.readId, error: e.message } : null; lastResult = null; renderReport();
+      lastReader = e.readId ? { readId: e.readId, backend: e.backend ?? null, error: e.message } : null; // the reader that made the read (WR-07) lastResult = null; renderReport();
     }
   } finally { btn.classList.remove('busy'); prog.hidden = true; }
 }

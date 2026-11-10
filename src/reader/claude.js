@@ -34,7 +34,8 @@ export async function sendReport(readerUrl, { readId, note = '', app = null, rea
   return body;
 }
 
-const failed = (message, readId) => Object.assign(new Error(message), { readId: readId ?? null });
+/** An error carrying the read id and the reader that made it, so a report is filed under the right reader (WR-07). */
+const failed = (message, readId, backend) => Object.assign(new Error(message), { readId: readId ?? null, backend: backend ?? null });
 
 /** How long the phone waits on a Mac job once the Mac has taken it (D-02). `config.jobTimeoutMs` wins. */
 export const JOB_TIMEOUT_MS = 3 * 60 * 1000;
@@ -50,8 +51,8 @@ export const MAX_UNREACHABLE = 4;
 /** A reader answer that is not OK becomes one error, with the read id when the body carries one. */
 async function failedAnswer(res) {
   const text = await res.text().catch(() => '');
-  let readId = null; try { readId = JSON.parse(text).readId; } catch { /* not JSON */ }
-  return failed(`Reader failed: ${res.status} ${text}`, readId);
+  let readId = null; let backend = null; try { ({ readId = null, backend = null } = JSON.parse(text) ?? {}); } catch { /* not JSON */ }
+  return failed(`Reader failed: ${res.status} ${text}`, readId, backend);
 }
 
 /**
@@ -82,7 +83,7 @@ async function pollJob(url, config, onProgress) {
     if (j.status === 'done') return { result: j.result ?? {} };
     if (j.status === 'error') {
       if (j.fallback === true) return { fellThrough: j.error ?? 'reader failed', readId: j.readId };
-      throw failed(j.error ?? 'reader failed', j.readId);
+      throw failed(j.error ?? 'reader failed', j.readId, j.readId ? 'mac' : null); // only the Mac runs jobs
     }
   }
   return { fellThrough: 'Reader took too long (3 min). Is the Mac busy?', readId: null };
@@ -121,10 +122,10 @@ export async function readWithClaude(image, config, onProgress) {
       body = await res.json();
     } else {
       // A direct Mac link would only start a second Mac job, so it stops here.
-      throw failed(job.fellThrough, job.readId);
+      throw failed(job.fellThrough, job.readId, job.readId ? 'mac' : null);
     }
   }
-  if (!body.sign) throw failed(body.error ?? 'Reader returned no sign', body.readId);
+  if (!body.sign) throw failed(body.error ?? 'Reader returned no sign', body.readId, body.backend);
   return { sign: body.sign, text: body.sign.rawText ?? '', meta: { readId: body.readId ?? null, backend: body.backend, model: body.model, seconds: body.seconds, ocrText: body.ocrText, raw: body.raw, sideFixes: body.sideFixes, rough: body.rough === true } };
 }
 
