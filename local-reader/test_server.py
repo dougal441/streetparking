@@ -177,7 +177,8 @@ class Unprinted(unittest.TestCase):
 
 
 class ReadLogAndReports(unittest.TestCase):
-    """Every read is logged; a report copies it to reports/ and pushes it to the reader-reports branch."""
+    """Every read is logged; a report copies it to reports/ and stays on this Mac. Only ReadLog(sync=True), set
+    in code, pushes to a reader-reports branch (tested here against a local bare remote only)."""
 
     def setUp(self):
         import subprocess
@@ -196,7 +197,7 @@ class ReadLogAndReports(unittest.TestCase):
         return r.stdout.split()
 
     def test_read_is_logged_reported_and_uploaded(self):
-        log = server.ReadLog(self.base, remote=str(self.remote))
+        log = server.ReadLog(self.base, remote=str(self.remote), sync=True)
         reader = server.Reader("fake", 10, fake=True, log=log)
         out = reader.read(b"jpegbytes", "au-vic", "melbourne")
         rid = out["readId"]
@@ -219,13 +220,40 @@ class ReadLogAndReports(unittest.TestCase):
         self.assertEqual(len([f for f in self.remote_files() if f.endswith("report.json")]), 2)
 
     def test_upload_failure_keeps_the_report_for_next_time(self):
-        log = server.ReadLog(self.base, remote=str(Path(self.tmp.name) / "missing.git"))
+        log = server.ReadLog(self.base, remote=str(Path(self.tmp.name) / "missing.git"), sync=True)
         rid = server.Reader("fake", 10, fake=True, log=log).read(b"x", "au-vic", None)["readId"]
         res = log.report(rid, {"note": "n"})
         self.assertTrue(res["saved"]); self.assertFalse(res["uploaded"])
         log.remote = str(self.remote)
         self.assertEqual(log.sync()[0], True)
         self.assertIn(f"reports/{rid}/report.json", self.remote_files())
+
+    def test_upload_is_off_by_default(self):
+        log = server.ReadLog(self.base)
+        rid = server.Reader("fake", 10, fake=True, log=log).read(b"x", "au-vic", None)["readId"]
+        res = log.report(rid, {"note": "wrong"})
+        self.assertTrue(res["saved"])
+        self.assertIs(res["uploaded"], False)
+        self.assertEqual(res["uploadNote"], "kept on this Mac (private)")
+        self.assertTrue((self.base / "reports" / rid / "report.json").exists())
+        self.assertFalse((self.base / "state" / "reports-git").exists())
+
+    def run_server_cli(self, *args):
+        import subprocess
+        return subprocess.run([sys.executable, "server.py", *args, "--data-dir", str(self.base)],
+                              cwd=str(Path(__file__).parent), capture_output=True, text=True, timeout=60)
+
+    def test_sync_reports_flag_refuses(self):
+        r = self.run_server_cli("--sync-reports")
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("Uploading reports is switched off", r.stdout)
+        self.assertFalse((self.base / "state" / "reports-git").exists())
+
+    def test_no_upload_flag_still_parses(self):
+        r = self.run_server_cli("--no-upload", "--sync-reports")
+        self.assertEqual(r.returncode, 1, r.stderr)
+        self.assertIn("Uploading reports is switched off", r.stdout)
+        self.assertFalse((self.base / "state" / "reports-git").exists())
 
     def test_failed_read_is_logged_with_its_id(self):
         log = server.ReadLog(self.base, sync=False)

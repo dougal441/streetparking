@@ -26,7 +26,7 @@ cat > "$PLIST" <<PL
   <key>ProgramArguments</key><array>
     <string>$HERE/.venv/bin/python</string><string>$HERE/server.py</string>
     <string>--host</string><string>127.0.0.1</string><string>--port</string><string>$PORT</string>
-    <string>--token</string><string>$TOKEN</string><string>--idle-minutes</string><string>10</string>
+    <string>--token</string><string>$TOKEN</string><string>--idle-minutes</string><string>10</string><string>--no-upload</string>
   </array>
   <key>WorkingDirectory</key><string>$HERE</string>
   <key>EnvironmentVariables</key><dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string><key>HF_HUB_OFFLINE</key><string>1</string></dict>

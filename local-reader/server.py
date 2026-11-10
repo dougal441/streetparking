@@ -14,8 +14,8 @@ Speaks the same contract as the Cloudflare Worker, so the app needs no changes:
   GET  /api/read-sign                      -> {"service":"caniparkhere-reader","backend":"local-mlx",...}
   POST /api/read-sign {image,mediaType,...} -> {"sign":{...},"raw":"...","ocrText":"..."}
   POST /api/read-sign {..., "async": true} -> 202 {"jobId":...}; then poll
-  POST /api/read-sign/reports {"readId","note","app"}  -> the person says a read was wrong: kept in reports/ and pushed
-                                                          to the reader-reports branch (docs/REPORTS.md)
+  POST /api/read-sign/reports {"readId","note","app"}  -> the person says a read was wrong: kept privately in reports/
+                                                          on this Mac (docs/REPORTS.md)
   GET  /api/read-sign/jobs/<jobId>         -> {"status":"queued|running|done|error","stage":"...","result":{...}}
 A first photo can take a minute on a MacBook Air (model load + reading); phones and proxies give up at
 ~60 s, so the app always uses the async form and shows the stage while it waits.
@@ -350,11 +350,12 @@ def _git(args: list[str], cwd: Path, timeout=60):
 
 class ReadLog:
     """Every read is kept on disk (photo + everything the reader saw and said), newest KEEP of them. A report
-    copies one read into reports/ and pushes it to the reader-reports branch so it can be studied off this Mac."""
+    copies one read into reports/, where it is kept privately on this Mac (docs/REPORTS.md). Uploading is off:
+    only code that constructs ReadLog(sync=True) can push to the reader-reports branch (no switch turns it on)."""
 
     KEEP = 200
 
-    def __init__(self, base: Path, remote: str | None = None, sync=True):
+    def __init__(self, base: Path, remote: str | None = None, sync=False):
         self.base, self.remote, self.sync_enabled = Path(base), remote, sync
         self.reads, self.reports, self.work = self.base / "reads", self.base / "reports", self.base / "state" / "reports-git"
         self.lock = threading.Lock()
@@ -374,7 +375,7 @@ class ReadLog:
             print("could not log the read:", repr(e), file=sys.stderr)
 
     def report(self, read_id: str, payload: dict) -> dict:
-        """Save (or update) the report for one read, then try to upload. Always answers; upload may fail."""
+        """Save (or update) the report for one read. Kept on this Mac; uploads only when sync=True was passed in code."""
         src = self.reads / read_id
         dst = self.reports / read_id
         if not READ_ID.fullmatch(read_id) or not (src.is_dir() or dst.is_dir()):
@@ -390,7 +391,7 @@ class ReadLog:
                                   "updatedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "notes": notes, "app": payload.get("app")}, indent=1))
         (dst / ".uploaded").unlink(missing_ok=True)
         print(f"report saved: {dst}", file=sys.stderr)
-        uploaded, note = self.sync() if self.sync_enabled else (False, "upload is off")
+        uploaded, note = self.sync() if self.sync_enabled else (False, "kept on this Mac (private)")
         return {"saved": True, "reportId": read_id, "uploaded": uploaded, "uploadNote": note}
 
     def sync(self) -> tuple[bool, str]:
@@ -794,14 +795,13 @@ def main():
     ap.add_argument("--fake", action="store_true", help="never load the model; answer with a canned sign")
     ap.add_argument("--preload", action="store_true", help="load the model at startup instead of on first request")
     ap.add_argument("--data-dir", default=str(Path(__file__).parent), help="where reads/ and reports/ are kept")
-    ap.add_argument("--no-upload", action="store_true", help="keep reports on this machine; do not push them to GitHub")
-    ap.add_argument("--sync-reports", action="store_true", help="upload any reports not yet on GitHub, then exit")
+    ap.add_argument("--no-upload", action="store_true", help="accepted for old service files; reports are never uploaded")
+    ap.add_argument("--sync-reports", action="store_true", help="switched off: reports stay private on this Mac")
     a = ap.parse_args()
-    log = ReadLog(Path(a.data_dir), sync=not a.no_upload)
-    if a.sync_reports:
-        ok, note = log.sync()
-        print(note)
-        sys.exit(0 if ok else 1)
+    if a.sync_reports:  # refuse before anything touches git; no switch turns uploading on
+        print("Uploading reports is switched off: reports stay private on this Mac.")
+        sys.exit(1)
+    log = ReadLog(Path(a.data_dir), sync=False)
     reader = Reader(a.model, a.idle_minutes, a.fake, log)
     if a.preload and not a.fake:
         reader._ensure_loaded()
