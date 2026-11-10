@@ -54,6 +54,12 @@ def say(*parts, sep=" "):
     print(clean(sep.join(str(p) for p in parts)))
 
 
+def indented(text, pad="    "):
+    """Member text as one block, every line starting with pad. A section header is printed at the start of a line, so
+    a newline inside a note (or a reply sent with a report) can't print something that looks like one (IN-06)."""
+    return "\n".join(pad + line for line in (str(text).splitlines() or [""]))
+
+
 # ---------------------------------------------------------------- gathering (read at call time, so tests can patch)
 
 def base_url():
@@ -255,13 +261,15 @@ def cmd_list():
 def cmd_show(rid):
     d, read, report = load(rid)
     say(f"photo: {d / 'photo.jpg'}\nread at {read.get('at')} in {read.get('seconds')}s by {read.get('model')}  council={read.get('council')}")
-    say("\nNOTES FROM THE PERSON:", *(report.get("notes") or ["(none)"]), sep="\n  ")
+    say("\nNOTES FROM THE PERSON:")
+    for n in report.get("notes") or ["(none)"]:
+        say(indented(n, "  > "))  # every line of a note marked, so it reads as the person's words, not tool output
     say("\nAPPLE VISION LINES (text, x centre, y from bottom):")
     for l in sorted(read.get("ocrLines") or [], key=lambda l: -l["y"]):
         say(f"    {l['text']!r:32} x={l['xc']:.2f} y={l['y']:.2f} conf={l['conf']:.2f}")
-    say("\nMODEL REPLY:\n" + (read.get("raw") or "(none)"))
+    say("\nMODEL REPLY:\n" + indented(read.get("raw") or "(none)", "  "))  # a site report brings its own reply
     res = read.get("result") or {}
-    say("\nERROR:", read["error"]) if read.get("error") else None
+    say("\nERROR:\n" + indented(read["error"], "  ")) if read.get("error") else None
     say("\nSIGN SENT TO THE APP:")
     for p in ((res.get("sign") or {}).get("panels") or []):
         say(panel_line(p))

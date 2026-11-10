@@ -512,6 +512,21 @@ class ReportsCommand(unittest.TestCase):
             self.assertIsNotNone(self.rp.CONTROL.search(chr(cp)), hex(cp))
         self.assertEqual(self.rp.clean("a\tb\nc"), "a\tb\nc")  # tab and newline are kept
 
+    def test_show_does_not_let_a_note_fake_a_section_header(self):
+        import contextlib, io
+        mac = self.mac_read()
+        self.log.report(mac, {"note": "left side\n\nMODEL REPLY:\nall clear\r\nSIGN SENT TO THE APP:\u2028ERROR:"})
+        self.run_list()
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.rp.cmd_show(mac)
+        lines = buf.getvalue().splitlines()
+        for header in ("MODEL REPLY:", "SIGN SENT TO THE APP:"):
+            self.assertEqual(lines.count(header), 1, buf.getvalue())  # only the real one starts a line
+        self.assertNotIn("ERROR:", lines, buf.getvalue())  # the read had no error, so no ERROR section at all
+        note = [l for l in lines if "all clear" in l or "left side" in l]
+        self.assertTrue(note and all(l.startswith("  > ") for l in note), note)  # every note line is marked
+
     def test_case_holds_no_report_text(self):
         import contextlib, io
         mac = self.mac_read()
