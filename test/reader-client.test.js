@@ -219,10 +219,27 @@ test('WR-07: a Mac job error and a failed answer carry their backend; no read id
   await assert.rejects(readWithClaude(photo(), fast()), (e) => e.backend === null && e.readId === null);
 });
 
-test('WR-07: when every reader fails, the app keeps the error\'s backend for the report', async () => {
+test('WR-07: when every reader fails, the app keeps the error\'s backend, clears the old result and shows the report box', async () => {
   const { readFileSync } = await import('node:fs');
   const app = readFileSync(new URL('../web/app.js', import.meta.url), 'utf8');
-  assert.match(app, /lastReader = e\.readId \? \{ readId: e\.readId, backend: e\.backend \?\? null, error: e\.message \}/);
+  // The catch that runs when the vision read and the on-device read both failed (inside readPhoto).
+  const start = app.indexOf("$('status-line').textContent = 'Reader unavailable.';");
+  assert.ok(start > 0, 'the both-readers-fail branch is where the test expects it');
+  const block = app.slice(start, app.indexOf('} finally', start));
+  // Drop line comments, so a statement that ended up inside a comment no longer counts (CR-01: a `//` placed
+  // mid-line once swallowed `lastResult = null; renderReport();` and the old prefix-only regex still passed).
+  const live = block.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  const steps = [
+    'lastReader = e.readId ? { readId: e.readId, backend: e.backend ?? null, error: e.message } : null;',
+    'lastResult = null;',
+    'renderReport();',
+  ];
+  let at = 0;
+  for (const s of steps) {
+    const i = live.indexOf(s, at);
+    assert.ok(i >= 0, `live code in the both-readers-fail branch runs: ${s}`);
+    at = i + s.length;
+  }
 });
 
 // ---------------------------------------------------------------- private reports
