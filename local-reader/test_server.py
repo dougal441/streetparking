@@ -506,6 +506,12 @@ class ReportsCommand(unittest.TestCase):
         line = [l for l in out.splitlines() if mac in l][0]
         self.assertIn("outside 12 Secret St", line)
 
+    def test_control_covers_bidi_zero_width_and_separators(self):
+        # The site's CONTROL in src/caniparkhere/reports.js is the same set (02-REVIEW IN-02).
+        for cp in (0x061C, 0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0x2028, 0x2029, 0x202A, 0x202E, 0x2066, 0x2069, 0xFEFF):
+            self.assertIsNotNone(self.rp.CONTROL.search(chr(cp)), hex(cp))
+        self.assertEqual(self.rp.clean("a\tb\nc"), "a\tb\nc")  # tab and newline are kept
+
     def test_case_holds_no_report_text(self):
         import contextlib, io
         mac = self.mac_read()

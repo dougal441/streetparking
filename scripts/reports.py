@@ -38,9 +38,11 @@ UUID_V4 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 
 # ---------------------------------------------------------------- printing member text safely
 
-# C0 and C1 control characters (tab and newline kept), DEL and the bidi controls: a report's text could otherwise carry
-# terminal escape sequences that retitle the terminal, set the clipboard (OSC 52) or fake output.
-CONTROL = re.compile("[\x00-\x08\x0b-\x1f\x7f-\x9f\u200e\u200f\u202a-\u202e\u2066-\u2069]")
+# C0 and C1 control characters (tab and newline kept), DEL, the bidi marks, embeddings, overrides and isolates, the
+# zero-width characters and the line/paragraph separators: a report's text could otherwise carry terminal escape
+# sequences that retitle the terminal, set the clipboard (OSC 52) or fake output. The same set as CONTROL in the
+# site's src/caniparkhere/reports.js (02-REVIEW IN-02).
+CONTROL = re.compile("[\x00-\x08\x0b-\x1f\x7f-\x9f\u061c\u200b-\u200f\u2028-\u202e\u2066-\u2069\ufeff]")
 
 
 def clean(text):
