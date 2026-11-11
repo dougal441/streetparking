@@ -1,7 +1,5 @@
 name: Deploy Worker to Cloudflare
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 jobs:
   deploy:
