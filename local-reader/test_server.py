@@ -80,28 +80,29 @@ class AsyncJobs(unittest.TestCase):
         port = srv.server_address[1]
         try:
             c = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
-            c.request("POST", "/streetparking/api/read-sign?token=tok", body=json.dumps({"image": base64.b64encode(b"x").decode(), "async": True, "council": "melbourne"}), headers={"content-type": "application/json"})
+            c.request("POST", "/streetparking/api/read-sign", body=json.dumps({"image": base64.b64encode(b"x").decode(), "async": True, "council": "melbourne"}), headers={"content-type": "application/json", "x-reader-token": "tok"})
             r = c.getresponse(); body = json.loads(r.read())
             self.assertEqual(r.status, 202); self.assertIn("jobId", body)
             c.request("GET", f"/api/read-sign/jobs/{body['jobId']}")  # no token → 401
             self.assertEqual(c.getresponse().status, 401)
             for _ in range(50):
-                c.request("GET", f"/api/read-sign/jobs/{body['jobId']}?token=tok"); r = c.getresponse(); j = json.loads(r.read())
+                c.request("GET", f"/api/read-sign/jobs/{body['jobId']}", headers={"x-reader-token": "tok"}); r = c.getresponse(); j = json.loads(r.read())
                 if j["status"] == "done": break
                 import time as _t; _t.sleep(0.1)
             self.assertEqual(j["status"], "done"); self.assertEqual(j["result"]["sign"]["council"], "melbourne"); self.assertEqual(j["stage"], "done")
-            c.request("GET", "/api/read-sign/jobs/000000000000?token=tok"); self.assertEqual(c.getresponse().status, 404)
+            c.request("GET", "/api/read-sign/jobs/000000000000", headers={"x-reader-token": "tok"}); self.assertEqual(c.getresponse().status, 404)
             c.request("GET", "/streetparking/api/read-sign"); j = json.loads(c.getresponse().read()); self.assertTrue(j["async"])
         finally:
             srv.shutdown()
 
 
 class TokenAndLog(unittest.TestCase):
-    """WR-05: the token is compared in constant time, and no query string (the old phone link's ?token=) is logged."""
+    """WR-05 / D-07a: the token is taken only in the header, compared in constant time, and no query string (the old
+    phone link's ?token=) is logged."""
 
     TOKEN = "Zq7-tok_9fXkL2mPa8Rc4"
 
-    def test_header_and_old_link_work_and_the_log_never_holds_the_query(self):
+    def test_header_works_the_old_link_is_refused_and_the_log_never_holds_the_query(self):
         import contextlib, http.client, io, threading
         from http.server import ThreadingHTTPServer
         reader = server.Reader("fake", 10, fake=True)
@@ -114,8 +115,8 @@ class TokenAndLog(unittest.TestCase):
                 def status(path, headers=None):
                     c.request("GET", path, headers=headers or {}); r = c.getresponse(); r.read(); return r.status
                 self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN}), 404)  # authorised, no job
-                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN}"), 404)  # the old phone link still works
-                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?a=1&token={self.TOKEN}"), 404)
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN}"), 401)  # the old phone link no longer works (D-07a)
+                self.assertEqual(status(f"/api/read-sign/jobs/000000000000?a=1&token={self.TOKEN}"), 401)
                 self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN[:-1]}), 401)
                 self.assertEqual(status("/api/read-sign/jobs/000000000000", {"x-reader-token": self.TOKEN + "x"}), 401)
                 self.assertEqual(status(f"/api/read-sign/jobs/000000000000?token={self.TOKEN[:-1]}"), 401)
@@ -146,6 +147,95 @@ class TokenAndLog(unittest.TestCase):
         body = src[src.index("def _authorised"):src.index("def _path")]
         self.assertIn("hmac.compare_digest", body)
         self.assertNotIn("== token", body)
+
+
+class TokenFile(unittest.TestCase):
+    """D-07a: the service names a token file, never the value; a missing or empty file stops the reader before it listens."""
+
+    TOKEN = "Fq3-file_tok7YpW2nB"
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def cli(self, *args, wait=8):
+        """Start server.py on a free port with these args; return (process, port). The caller stops it."""
+        import socket, subprocess
+        with socket.socket() as s_:
+            s_.bind(("127.0.0.1", 0)); port = s_.getsockname()[1]
+        env = {k: v for k, v in os.environ.items() if k != "READER_TOKEN"}
+        p = subprocess.Popen([sys.executable, "server.py", "--fake", "--port", str(port), "--data-dir", str(self.base), *args],
+                             cwd=str(Path(__file__).parent), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env)
+        return p, port
+
+    def wait_up(self, p, port):
+        import http.client, time as _t
+        for _ in range(80):
+            if p.poll() is not None:
+                return False
+            try:
+                c = http.client.HTTPConnection("127.0.0.1", port, timeout=1); c.request("GET", "/api/read-sign"); c.getresponse().read()
+                return True
+            except OSError:
+                _t.sleep(0.1)
+        return False
+
+    def job_status(self, port, tok):
+        import http.client
+        c = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+        c.request("GET", "/api/read-sign/jobs/000000000000", headers={"x-reader-token": tok} if tok else {})
+        r = c.getresponse(); r.read(); return r.status
+
+    def stop(self, p):
+        p.terminate()
+        try:
+            out, err = p.communicate(timeout=10)
+        except Exception:
+            p.kill(); out, err = p.communicate()
+        return out + err
+
+    def test_file_with_trailing_newline_authorises_the_header(self):
+        f = self.base / "token"; f.write_text(self.TOKEN + "\n")
+        p, port = self.cli("--token-file", str(f))
+        try:
+            self.assertTrue(self.wait_up(p, port), "the reader did not start")
+            self.assertEqual(self.job_status(port, self.TOKEN), 404)  # authorised, no such job
+            self.assertEqual(self.job_status(port, None), 401)
+            self.assertEqual(self.job_status(port, self.TOKEN + "x"), 401)
+        finally:
+            printed = self.stop(p)
+        self.assertNotIn(self.TOKEN, printed)
+
+    def test_missing_and_empty_files_refuse_to_start_without_printing_the_token(self):
+        empty = self.base / "empty"; empty.write_text("  \n")
+        for path in (self.base / "missing", empty):
+            p, port = self.cli("--token-file", str(path), "--token", self.TOKEN)
+            try:
+                rc = p.wait(timeout=20)
+            finally:
+                printed = self.stop(p) if p.poll() is None else "".join(p.communicate())
+            self.assertNotEqual(rc, 0, path.name)
+            self.assertIn("--token-file", printed)
+            self.assertNotIn(self.TOKEN, printed)
+
+    def test_token_file_wins_over_token(self):
+        f = self.base / "token"; f.write_text(self.TOKEN)
+        p, port = self.cli("--token-file", str(f), "--token", "the-other-one")
+        try:
+            self.assertTrue(self.wait_up(p, port), "the reader did not start")
+            self.assertEqual(self.job_status(port, self.TOKEN), 404)
+            self.assertEqual(self.job_status(port, "the-other-one"), 401)
+        finally:
+            self.stop(p)
+
+    def test_authorised_reads_only_the_header(self):
+        src = (Path(__file__).parent / "server.py").read_text()
+        body = src[src.index("def _authorised"):src.index("def _path")]
+        self.assertNotIn("query", body)  # no token from the URL
+        self.assertIn('"x-reader-token"', body)
 
 
 class ColumnFixes(unittest.TestCase):
@@ -324,12 +414,15 @@ class ReadLogAndReports(unittest.TestCase):
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         try:
             c = http.client.HTTPConnection("127.0.0.1", srv.server_address[1], timeout=5)
-            post = lambda path, body: (c.request("POST", path, body=json.dumps(body), headers={"content-type": "application/json"}), c.getresponse())[1]
-            r = post("/api/read-sign?token=tok", {"image": base64.b64encode(b"x").decode()}); rid = json.loads(r.read())["readId"]
-            r = post("/streetparking/api/read-sign/reports", {"readId": rid}); r.read(); self.assertEqual(r.status, 401)
-            r = post("/streetparking/api/read-sign/reports?token=tok", {"readId": rid, "note": "wrong"}); body = json.loads(r.read())
+            def post(path, body, tok="tok"):
+                hdr = {"content-type": "application/json", **({"x-reader-token": tok} if tok else {})}
+                c.request("POST", path, body=json.dumps(body), headers=hdr); return c.getresponse()
+            r = post("/api/read-sign", {"image": base64.b64encode(b"x").decode()}); rid = json.loads(r.read())["readId"]
+            r = post("/streetparking/api/read-sign/reports", {"readId": rid}, tok=None); r.read(); self.assertEqual(r.status, 401)
+            r = post("/streetparking/api/read-sign/reports?token=tok", {"readId": rid}, tok=None); r.read(); self.assertEqual(r.status, 401)
+            r = post("/streetparking/api/read-sign/reports", {"readId": rid, "note": "wrong"}); body = json.loads(r.read())
             self.assertEqual((r.status, body["saved"], body["uploaded"]), (200, True, False))
-            r = post("/api/read-sign/reports?token=tok", {"readId": "../../etc"}); r.read(); self.assertEqual(r.status, 404)
+            r = post("/api/read-sign/reports", {"readId": "../../etc"}); r.read(); self.assertEqual(r.status, 404)
         finally:
             srv.shutdown()
 

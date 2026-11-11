@@ -20,7 +20,10 @@ Speaks the same contract as the Cloudflare Worker, so the app needs no changes:
 A first photo can take a minute on a MacBook Air (model load + reading); phones and proxies give up at
 ~60 s, so the app always uses the async form and shows the stage while it waits.
 
-Usage:  python3 server.py [--port 8765] [--token SECRET] [--idle-minutes 10] [--fake]
+Usage:  python3 server.py [--port 8765] [--token-file PATH | --token SECRET] [--idle-minutes 10] [--fake]
+        --token-file reads the shared secret from a file (the service uses state/token), so the secret is
+        never in the service settings or the process list. The secret is only ever taken in the
+        x-reader-token header, never from the URL.
         --fake answers with a canned sign and never loads the model (to test the tunnel and the app).
 """
 from __future__ import annotations
@@ -38,7 +41,6 @@ import sys
 import tempfile
 import threading
 import time
-from urllib.parse import urlsplit
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -711,16 +713,12 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
                 print("client went away before the reply", file=sys.stderr)
 
         def _authorised(self) -> bool:
-            """The x-reader-token header (what the site sends), or ?token= for the old phone link (kept until RET-01
-            rotates the token and drops the link). Both compared in constant time."""
+            """The x-reader-token header only (what the site sends), compared in constant time. A token in the URL
+            (the old phone link's ?token=) no longer opens anything (caniparkhere Phase 3, D-07a)."""
             if not token:
                 return True
-            want = token.encode()
             got = (self.headers.get("x-reader-token") or "").encode()
-            # only a real query string counts: "/api/read-sign&token=..." has none, so it is refused (IN-03)
-            q = re.search(r"(?:^|&)token=([^&]*)", urlsplit(self.path).query)
-            from_query = (q.group(1) if q else "").encode()
-            return hmac.compare_digest(got, want) | hmac.compare_digest(from_query, want)
+            return hmac.compare_digest(got, token.encode())
 
         def _path(self) -> str:
             return re.sub(r"^/streetparking", "", self.path.split("?")[0])
@@ -807,6 +805,7 @@ def main():
     ap.add_argument("--host", default="127.0.0.1", help="bind address; keep loopback and expose via cloudflared")
     ap.add_argument("--model", default=os.environ.get("READER_MODEL", DEFAULT_MODEL))
     ap.add_argument("--token", default=os.environ.get("READER_TOKEN"), help="shared secret the caller must send as x-reader-token")
+    ap.add_argument("--token-file", help="read the shared secret from this file (stripped); preferred over --token")
     ap.add_argument("--idle-minutes", type=float, default=10, help="unload the model after this long unused")
     ap.add_argument("--fake", action="store_true", help="never load the model; answer with a canned sign")
     ap.add_argument("--preload", action="store_true", help="load the model at startup instead of on first request")
@@ -817,12 +816,21 @@ def main():
     if a.sync_reports:  # refuse before anything touches git; no switch turns uploading on
         print("Uploading reports is switched off: reports stay private on this Mac.")
         sys.exit(1)
+    token = a.token
+    if a.token_file:  # wins over --token and READER_TOKEN; the file's contents are never printed (D-07a)
+        try:
+            token = Path(a.token_file).read_text().strip()
+        except OSError:
+            token = ""
+        if not token:
+            print("--token-file: the file is missing or empty, so the reader will not start.", file=sys.stderr)
+            sys.exit(2)
     log = ReadLog(Path(a.data_dir), sync=False)
     reader = Reader(a.model, a.idle_minutes, a.fake, log)
     if a.preload and not a.fake:
         reader._ensure_loaded()
-    srv = ThreadingHTTPServer((a.host, a.port), make_handler(reader, a.token, Jobs(reader)))
-    print(f"CanIparkhere local reader on http://{a.host}:{a.port}/api/read-sign  model={a.model if not a.fake else 'FAKE'}  auth={'on' if a.token else 'off'}", file=sys.stderr)
+    srv = ThreadingHTTPServer((a.host, a.port), make_handler(reader, token, Jobs(reader)))
+    print(f"CanIparkhere local reader on http://{a.host}:{a.port}/api/read-sign  model={a.model if not a.fake else 'FAKE'}  auth={'on' if token else 'off'}", file=sys.stderr)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
