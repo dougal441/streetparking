@@ -464,6 +464,27 @@ def life_lock_path() -> Path | None:
     return Path(m.group(1)).expanduser() if m else None
 
 
+# After a Metal command-buffer error (a GPU timeout under memory pressure, say) Metal ignores every later submission
+# from this process (kIOGPUCommandBufferCallbackErrorSubmissionsIgnored): the reader still answers, but every read
+# fails until the process restarts. So the read that hit it ends with its normal error, then the process exits
+# non-zero and launchd (KeepAlive, install-service.sh) starts a fresh one with a new GPU context.
+GPU_FAILURE_MARK = "kIOGPUCommandBufferCallbackError"
+GPU_EXIT_CODE = 75  # EX_TEMPFAIL: launchd restarts on any exit; non-zero marks it as a failure in the log
+GPU_EXIT_GRACE = 5.0  # seconds: the phone polls every 1.5 s, so its next poll collects the error before the exit
+RESTARTING_ERROR = "the Mac reader is restarting after a GPU error; try again in a minute"
+
+
+def is_gpu_failure(e: BaseException | None) -> bool:
+    """True when *e*, or an error it was raised from, is a Metal command-buffer failure."""
+    seen = set()
+    while e is not None and id(e) not in seen:
+        seen.add(id(e))
+        if GPU_FAILURE_MARK in str(e):
+            return True
+        e = e.__cause__ or e.__context__
+    return False
+
+
 class Reader:
     """Loads the model on first use, holds the lock while loaded, unloads after idle."""
 
@@ -475,6 +496,10 @@ class Reader:
         self._lock_fh = None
         self.last_used = 0.0
         self.ocr_available = False
+        self.restarting = False  # set after a GPU failure: no more reads, the process is about to exit
+        self.exit_grace = GPU_EXIT_GRACE
+        self._exit = os._exit  # os._exit, not sys.exit: this runs off the main thread and must end the whole process
+        self._restart_lock = threading.Lock()
         if not fake:
             try:
                 import ocrmac  # noqa: F401
@@ -557,13 +582,36 @@ class Reader:
         except Exception as e:
             rec["error"] = f"{type(e).__name__}: {e}"
             e.read_id = read_id
+            if is_gpu_failure(e):
+                self._restart_after_gpu_failure()
             raise
         finally:
             rec["seconds"] = round(time.time() - t0, 1)
             if self.log:
                 self.log.save(read_id, photo[0], rec)
 
+    def _restart_after_gpu_failure(self):
+        """Stop taking reads and exit after exit_grace seconds, so launchd restarts the reader (see GPU_FAILURE_MARK)."""
+        with self._restart_lock:
+            if self.restarting:
+                return
+            self.restarting = True
+        print(f"GPU failure (Metal command buffer): the reader exits in {self.exit_grace:g}s so launchd restarts it", file=sys.stderr)
+        t = threading.Timer(self.exit_grace, self._exit_now)
+        t.daemon = True
+        t.start()
+
+    def _exit_now(self):
+        for f in (sys.stderr, sys.stdout):
+            try:
+                f.flush()
+            except Exception:
+                pass
+        self._exit(GPU_EXIT_CODE)
+
     def _read(self, image_bytes, jurisdiction, council, progress, rec, photo) -> dict:
+        if self.restarting:
+            raise RuntimeError(RESTARTING_ERROR)
         if self.fake:
             progress("reading (fake)")
             time.sleep(0.2)
@@ -743,7 +791,7 @@ def make_handler(reader: Reader, token: str | None, jobs: Jobs):
             if not self._route():
                 return self._json({"error": "not found"}, 404)
             self._json({"service": "caniparkhere-reader", "backend": "local-fake" if reader.fake else "local-mlx", "model": reader.model_id,
-                        "modelLoaded": reader._loaded is not None, "ocr": reader.ocr_available, "auth": bool(token), "async": True, "reports": reader.log is not None})
+                        "modelLoaded": reader._loaded is not None, "restarting": reader.restarting, "ocr": reader.ocr_available, "auth": bool(token), "async": True, "reports": reader.log is not None})
 
         def _report(self):
             """POST /api/read-sign/reports {readId, note?, app?}: the person says this read was wrong."""

@@ -53,6 +53,8 @@ Stop with Ctrl-C. The tunnel address changes each run.
 
 What it does, once:
 - installs a launchd service `com.dougal.caniparkhere-reader` (always running; the model loads on the first photo and is dropped after 10 idle minutes, so it does not sit in memory beside `life`'s jobs);
+  if the Mac's graphics chip times out mid-read (it can under heavy memory pressure), that photo falls back to
+  Cloudflare or the phone and the reader restarts itself a few seconds later, so no manual restart is needed;
 - publishes it through **Tailscale Funnel** on this Mac's fixed name under the path `/streetparking` — the same
   mechanism `life` uses for its `/mail-capture` endpoint, and the two coexist;
 - keeps the reader's password in one file, `state/token`. It is made once with private permissions (only your

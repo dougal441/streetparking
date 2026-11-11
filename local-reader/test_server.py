@@ -731,3 +731,66 @@ class ReplayCases(unittest.TestCase):
                 got = server.normalise_sign({"panels": out["sign"]["panels"]})["sign"]["panels"]
                 want = server.normalise_sign(case["expected"])["sign"]["panels"]
                 self.assertEqual(self.view(got), self.view(want))
+
+
+class GpuFailureRestart(unittest.TestCase):
+    """After a Metal command-buffer timeout the process can do no more GPU work, so the read that hit it ends with its
+    normal error and then the reader exits non-zero, for launchd (KeepAlive) to start a fresh one."""
+
+    METAL_TIMEOUT = "[METAL] Command buffer execution failed: Caused GPU Timeout Error (00000002:kIOGPUCommandBufferCallbackErrorTimeout)"
+
+    def make_reader(self, base, error):
+        import threading
+        reader = server.Reader("model", 10, fake=False, log=server.ReadLog(base, sync=False))
+        reader.ocr_available = False
+        reader._loaded = object()  # skip loading the real model
+        reader._normalise = lambda image, dst: Path(dst).write_bytes(image)
+        calls = []
+
+        def generate(*a, **k):
+            calls.append(1)
+            raise error
+        reader._generate = generate
+        reader.exit_grace = 0.2
+        exited = threading.Event()
+        reader.exit_codes = []
+        reader._exit = lambda code: (reader.exit_codes.append(code), exited.set())
+        return reader, calls, exited
+
+    def test_metal_failure_ends_the_read_then_exits_for_launchd(self):
+        with tempfile.TemporaryDirectory() as d:
+            reader, calls, exited = self.make_reader(Path(d), RuntimeError(self.METAL_TIMEOUT))
+            jobs = server.Jobs(reader)
+            job_id = jobs.submit(b"photo", "au-vic", None)
+            self.assertTrue(exited.wait(5), "the reader never took the exit path")
+            job = jobs.get(job_id)  # the job had already ended with its normal error when the process exited
+            self.assertEqual((job["status"], job["error"]), ("error", self.METAL_TIMEOUT))
+            self.assertEqual(reader.exit_codes, [server.GPU_EXIT_CODE])
+            self.assertNotEqual(server.GPU_EXIT_CODE, 0)
+            rec = json.loads((Path(d) / "reads" / job["readId"] / "read.json").read_text())
+            self.assertIn("kIOGPUCommandBufferCallbackErrorTimeout", rec["error"])
+            # until the process is gone it takes no more GPU work, and a second failure does not exit twice
+            with self.assertRaisesRegex(RuntimeError, "restarting after a GPU error"):
+                reader.read(b"photo", "au-vic", None)
+            self.assertEqual(len(calls), 1)
+            reader._restart_after_gpu_failure()
+            import time as _t; _t.sleep(0.4)
+            self.assertEqual(reader.exit_codes, [server.GPU_EXIT_CODE])
+
+    def test_error_raised_from_a_metal_failure_counts(self):
+        try:
+            try:
+                raise RuntimeError("(00000004:kIOGPUCommandBufferCallbackErrorSubmissionsIgnored)")
+            except RuntimeError as inner:
+                raise ValueError("generation failed") from inner
+        except ValueError as e:
+            self.assertTrue(server.is_gpu_failure(e))
+        self.assertFalse(server.is_gpu_failure(ValueError("no JSON object in model reply")))
+
+    def test_other_read_errors_keep_the_reader_running(self):
+        with tempfile.TemporaryDirectory() as d:
+            reader, calls, exited = self.make_reader(Path(d), ValueError("no JSON object in model reply"))
+            with self.assertRaises(ValueError):
+                reader.read(b"photo", "au-vic", None)
+            self.assertFalse(exited.wait(0.5))
+            self.assertFalse(reader.restarting)
