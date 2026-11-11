@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Start the local reader on this Mac and open a Cloudflare tunnel to it, then print the phone link.
+# Start the local reader on this Mac and open a Cloudflare tunnel to it, then print the reader address
+# (never the token: with READER_TOKEN set, the reader reads it from a private temporary file).
 #   ./run.sh            real model (first run installs the Python packages into ./.venv)
 #   ./run.sh --fake     canned answers, no model — proves the tunnel and the app end to end
 set -euo pipefail
@@ -18,10 +19,16 @@ fi
 # Reuse life's already-downloaded weights: same model id, same Hugging Face cache, nothing to download.
 
 ARGS=("--port" "$PORT")
-[ -n "$TOKEN" ] && ARGS+=("--token" "$TOKEN")
+TOKEN_FILE=""
+if [ -n "$TOKEN" ]; then
+  TOKEN_FILE="$( umask 077; mktemp )"
+  printf '%s\n' "$TOKEN" > "$TOKEN_FILE"
+  ARGS+=("--token-file" "$TOKEN_FILE")
+fi
+SERVER=""; TUNNEL=""
+trap 'kill $SERVER 2>/dev/null; kill $TUNNEL 2>/dev/null; [ -n "$TOKEN_FILE" ] && rm -f "$TOKEN_FILE"' EXIT
 .venv/bin/python server.py "${ARGS[@]}" "$@" &
 SERVER=$!
-trap 'kill $SERVER 2>/dev/null; kill $TUNNEL 2>/dev/null' EXIT
 
 LOG="$(mktemp)"
 cloudflared tunnel --url "http://127.0.0.1:$PORT" --no-autoupdate >"$LOG" 2>&1 &
@@ -34,16 +41,11 @@ for _ in $(seq 1 60); do
 done
 if [ -z "$URL" ]; then echo "tunnel did not start; see $LOG" >&2; exit 1; fi
 
-READER="$URL/api/read-sign"
-[ -n "$TOKEN" ] && READER="$READER?token=$TOKEN"
 echo
 echo "================================================================"
-echo "Reader is reachable at:  $READER"
+echo "Reader is reachable at:  $URL/api/read-sign"
+[ -n "$TOKEN" ] && echo "It answers only with the password in the x-reader-token header."
 echo
-echo "Open this on your phone ONCE (it remembers):"
-echo "  https://dougal441.github.io/streetparking/web/?reader=$READER"
-echo
-echo "Or point the Cloudflare Worker at it:  READER_BACKEND=local, LOCAL_READER_URL=$URL"
 echo "Ctrl-C stops both the reader and the tunnel. The URL changes each run (quick tunnel)."
 echo "================================================================"
 wait $SERVER
