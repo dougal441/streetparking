@@ -3,13 +3,10 @@ import { readWithTesseract, readWithClaude, pickReader } from '../src/reader/ind
 import { downscaleImage, sendReport } from '../src/reader/claude.js';
 
 const cfg = Object.assign({ readerUrl: null, council: 'melbourne', jurisdiction: 'au-vic', geolocate: true }, globalThis.CANIPARKHERE ?? {});
-// Reader URL can be set without redeploying: ?reader=https://... (persisted) or ?reader=off (clear).
-try {
-  const q = new URLSearchParams(location.search).get('reader');
-  if (q === 'off') localStorage.removeItem('caniparkhere.readerUrl');
-  else if (q) localStorage.setItem('caniparkhere.readerUrl', q);
-  cfg.readerUrl = localStorage.getItem('caniparkhere.readerUrl') || cfg.readerUrl;
-} catch { /* storage unavailable */ }
+// The reader comes only from the page (window.CANIPARKHERE, for local runs) or from the one next to the app: no link
+// can point a member's app, and their photos, at another server (D-07a). A phone that once opened an old reader link
+// still has it stored on this origin, so it is cleared.
+try { localStorage.removeItem('caniparkhere.readerUrl'); } catch { /* storage unavailable */ }
 
 let TZ = 'Australia/Melbourne';
 const $ = (id) => document.getElementById(id);
@@ -251,6 +248,7 @@ function renderReport() {
   if (!id) { box.hidden = true; box.innerHTML = ''; return; }
   const st = reportState[id];
   box.hidden = false;
+  if (st?.status === 'limited') { box.innerHTML = `<p class="small">${esc(st.note)}</p>`; return; } // over today's report cap: no retry until tomorrow (D-13a)
   if (!st) box.innerHTML = `<button class="btn" id="btn-report">👎 Reader got it wrong (private)</button><p class="muted small">Fix it first if you can (arrows or sign text in Show my working), then tap. Sends this photo and what the reader saw to Dougal, privately. Nobody else sees it.</p>`;
   else box.innerHTML = `<p class="small">${st.status === 'sending' ? 'Sending…' : esc(st.note)}</p>${st.status === 'sending' ? '' : `<div class="row"><input type="text" id="report-note" placeholder="What was wrong? (optional)"><button class="btn" id="btn-report">${st.status === 'failed' ? 'Try again' : 'Add note'}</button></div>`}`;
   $('btn-report')?.addEventListener('click', () => report(id, $('report-note')?.value ?? ''));
@@ -274,9 +272,20 @@ async function report(readId, note) {
   try {
     await sendReport(cfg.readerUrl, { readId, note, app, reader, ...extra });
     reportState[readId] = { status: 'sent', filed: true, note: '✓ Reported privately. Only Dougal sees it.' };
-  } catch (e) { reportState[readId] = { status: 'failed', filed, note: `Could not send the report: ${e.message}` }; }
+  } catch (e) {
+    // Over today's report cap: the line alone, nothing filed, no retry (D-13a). Too fast: the line, and Try again stays.
+    if (e.code === 'report-limit') reportState[readId] = { status: 'limited', filed, note: e.line || reportLimitLine(e.limit) };
+    else if (e.code === 'slow-down') reportState[readId] = { status: 'failed', filed, note: e.line || REPORT_SLOW_DOWN_LINE };
+    else reportState[readId] = { status: 'failed', filed, note: `Could not send the report: ${e.message}` };
+  }
   renderReport();
 }
+
+// The app's own words for the site's report limits, used when the answer carries no line (UI-SPEC Surface 4).
+const reportLimitLine = (n) => (typeof n === 'number'
+  ? `You've sent today's ${n} reports, so this one wasn't sent. You can send more after midnight.`
+  : "You've sent today's reports, so this one wasn't sent. You can send more after midnight.");
+const REPORT_SLOW_DOWN_LINE = "That's a lot of reports at once. Wait a minute, then try again.";
 
 function showError(msg) { $('results').hidden = false; $('results').innerHTML = `<div class="card err">${esc(msg)}</div>`; }
 

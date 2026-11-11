@@ -314,3 +314,21 @@ test('J: a report the site refuses throws its error text', async () => {
   stubFetch({ posts: [() => jsonRes({ error: 'Photo too large.' }, 413)] });
   await assert.rejects(sendReport(READER, { readId: 'r', reader: 'cloudflare', photo: photo() }), /Photo too large\./);
 });
+
+// The Worker's report 429 bodies, byte for byte (caniparkhere Phase 3, 03-02).
+const REPORT_LIMIT = '{"error":"You\'ve sent today\'s 10 reports, so this one wasn\'t sent. You can send more after midnight.","code":"report-limit","limit":10}';
+const REPORT_SLOW_DOWN = '{"error":"That\'s a lot of reports at once. Wait a minute, then try again.","code":"slow-down"}';
+
+test('L5: a report over today\'s cap throws the site\'s line with code report-limit and limit 10', async () => {
+  const calls = stubFetch({ posts: [limited(REPORT_LIMIT)] });
+  await assert.rejects(sendReport(READER, { readId: 'r', reader: 'cloudflare', photo: photo() }),
+    (e) => e.code === 'report-limit' && e.limit === 10 && e.line === JSON.parse(REPORT_LIMIT).error && e.message === JSON.parse(REPORT_LIMIT).error);
+  assert.equal(calls.length, 1);
+});
+
+test('L6: reports sent too fast throw the report throttle line with code slow-down', async () => {
+  stubFetch({ posts: [limited(REPORT_SLOW_DOWN)] });
+  await assert.rejects(sendReport(READER, { readId: 'r', reader: 'mac' }), (e) => e.code === 'slow-down' && e.limit === null && e.line === JSON.parse(REPORT_SLOW_DOWN).error);
+  stubFetch({ posts: [() => jsonRes({ error: 'Photo too large.' }, 413)] });
+  await assert.rejects(sendReport(READER, { readId: 'r', reader: 'mac' }), (e) => e.code === undefined && e.message === 'Photo too large.');
+});

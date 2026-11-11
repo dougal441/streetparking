@@ -48,8 +48,10 @@ globalThis.document = {
   createElement: () => new El(),
   body: new El(), head: new El(),
 };
-globalThis.location = { search: '', href: 'https://dougalhanson.com/caniparkhere/' };
-const store = new Map();
+// The app opens from an old reader link, with that reader already stored from before (D-07a): neither may be used.
+const EVIL = 'https://evil.example/api/read-sign';
+globalThis.location = { search: `?reader=${encodeURIComponent(EVIL)}`, href: `https://dougalhanson.com/caniparkhere/?reader=${encodeURIComponent(EVIL)}` };
+const store = new Map([['caniparkhere.readerUrl', EVIL]]);
 globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
 globalThis.CANIPARKHERE = { readerUrl: READER, geolocate: false };
 globalThis.FileReader ??= class {
@@ -71,15 +73,18 @@ globalThis.Tesseract = {
 
 // fetch: the rules packs from disk, the site's reader (`readAnswer` answers the next photo), and the reports API.
 let readAnswer = null;
+let reportAnswer = null; // the next report's answer; null files it
 const reports = [];
+const fetched = [];
 globalThis.fetch = async (url, init = {}) => {
   const u = String(url);
+  fetched.push(u);
   if (u.startsWith('file:')) {
     try { return new Response(await readFile(new URL(u)), { headers: { 'content-type': 'application/json' } }); } catch { return new Response('', { status: 404 }); }
   }
   if (u === READER && (init.method ?? 'GET') === 'GET') return jsonRes({ service: 'caniparkhere-reader', backend: 'site', readers: ['mac', 'cloudflare'] });
   if (u === READER && init.method === 'POST') return readAnswer();
-  if (u === READER + '/reports' && init.method === 'POST') { reports.push(JSON.parse(init.body)); return jsonRes({ saved: true, private: true }); }
+  if (u === READER + '/reports' && init.method === 'POST') { reports.push(JSON.parse(init.body)); const a = reportAnswer; reportAnswer = null; return a ? a() : jsonRes({ saved: true, private: true }); }
   return new Response('', { status: 404 });
 };
 
@@ -100,12 +105,19 @@ async function tapReport() {
   assert.ok($('btn-report'), 'the report button is shown');
   $('btn-report').fire('click');
   await until(() => reports.length > n, 'the report to be sent');
+  await until(() => !$('report-box').innerHTML.includes('Sending…'), 'the report box to show the answer');
   return reports.at(-1);
 }
 
 const quiet = console.warn; console.warn = () => {}; // preprocess() has no canvas here and says so
 await import('../web/app.js');
 await until(() => $('photo').listeners.change?.length, 'the app to start');
+
+test('D-07a: a reader link is ignored and a stored reader is cleared on load', () => {
+  assert.equal(fetched.filter(u => u.includes('evil.example')).length, 0, 'no request to the linked reader');
+  assert.equal(store.has('caniparkhere.readerUrl'), false, 'nothing stored under caniparkhere.readerUrl');
+  assert.ok(fetched.includes(READER), 'the page\'s own reader (window.CANIPARKHERE) is still used');
+});
 
 test('WR-02: a report on a vision read sends the reader\'s own sign', async () => {
   const sign = parseSignText('2P 8AM-6PM MON-FRI');
@@ -190,5 +202,47 @@ test('D-14: any other failed read keeps the two-sentence banner', async () => {
   ocr = '2P 8AM-6PM MON-FRI';
   await takePhoto([0xff, 0xd8, 0x15]);
   assert.deepEqual(banners(), ["The vision readers couldn't answer. This phone read the words instead."]);
+});
+
+// ---------------------------------------------------------------- the site's report limits (D-13a)
+
+const REPORT_LIMIT = '{"error":"You\'ve sent today\'s 10 reports, so this one wasn\'t sent. You can send more after midnight.","code":"report-limit","limit":10}';
+const REPORT_SLOW_DOWN = '{"error":"That\'s a lot of reports at once. Wait a minute, then try again.","code":"slow-down"}';
+const visionRead = async (id, bytes) => {
+  readAnswer = () => jsonRes({ sign: parseSignText('2P 8AM-6PM MON-FRI'), backend: 'cloudflare', readId: id, model: 'm', seconds: 3 });
+  await takePhoto(bytes);
+};
+
+test('D-13a: a report over today\'s cap shows the line alone, with no note field and no retry', async () => {
+  await visionRead('8a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d', [0xff, 0xd8, 0x21]);
+  const n = reports.length;
+  reportAnswer = limited(REPORT_LIMIT);
+  await tapReport();
+  const box = $('report-box').innerHTML;
+  assert.equal(box, `<p class="small">${JSON.parse(REPORT_LIMIT).error}</p>`);
+  assert.ok(!box.includes('id="btn-report"') && !box.includes('id="report-note"'), 'no button and no note field');
+  assert.equal($('btn-report'), null);
+  await new Promise(r => setTimeout(r, 30));
+  assert.equal(reports.length, n + 1, 'exactly one POST, nothing sent again');
+});
+
+test('D-13a: a report over today\'s cap with no line uses the app\'s line and that number', async () => {
+  await visionRead('9b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e', [0xff, 0xd8, 0x22]);
+  reportAnswer = limited('{"code":"report-limit","limit":10}');
+  await tapReport();
+  assert.equal($('report-box').innerHTML, '<p class="small">You\'ve sent today\'s 10 reports, so this one wasn\'t sent. You can send more after midnight.</p>');
+});
+
+test('D-13a: reports sent too fast show the throttle line and keep Try again', async () => {
+  await visionRead('0c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f', [0xff, 0xd8, 0x23]);
+  reportAnswer = limited(REPORT_SLOW_DOWN);
+  await tapReport();
+  const box = $('report-box').innerHTML;
+  assert.ok(box.startsWith(`<p class="small">${JSON.parse(REPORT_SLOW_DOWN).error}</p>`), box);
+  assert.ok(!box.includes('Could not send the report:'));
+  assert.match(box, /<button class="btn" id="btn-report">Try again<\/button>/);
+  const r = await tapReport(); // Try again files it
+  assert.equal(r.readId, '0c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f');
+  assert.match($('report-box').innerHTML, /Reported privately\. Only Dougal sees it\./);
   console.warn = quiet;
 });

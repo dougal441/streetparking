@@ -19,6 +19,18 @@ export function reportUrl(readerUrl) {
 }
 
 /**
+ * The site's limit answers (429 {error, code, limit?}): a photo over today's cap, photos or reports sent too fast,
+ * a report over today's cap. Never a reader or service marker, so the app can't mistake one for a missing reader.
+ */
+export const LIMIT_CODES = ['daily-limit', 'slow-down', 'report-limit'];
+const PHOTO_LIMIT_CODES = ['daily-limit', 'slow-down'];
+const REPORT_LIMIT_CODES = ['report-limit', 'slow-down'];
+/** The site's own line for a limit, cut to 200 characters; null when it sent none. */
+const limitLine = (s) => (typeof s === 'string' && s.trim() ? s.slice(0, 200) : null);
+/** The number in a limit answer: a positive whole number, else null (the app then uses its no-number line). */
+const limitNumber = (n) => (Number.isInteger(n) && n > 0 ? n : null);
+
+/**
  * Tell the reader a read was wrong. The report is private: only Dougal can list and open it.
  * A Mac read is already in the Mac's own log, so it needs only the read id. A Cloudflare or on-device read was
  * never kept, so its first report brings the photo (`photo`, a Blob, sent as base64) and what the reader saw (`read`).
@@ -29,8 +41,13 @@ export async function sendReport(readerUrl, { readId, note = '', app = null, rea
   if (read !== undefined) payload.read = read;
   if (typeof Blob !== 'undefined' && photo instanceof Blob) payload.photo = (await blobToDataUrl(photo)).split(',')[1];
   const res = await fetch(reportUrl(readerUrl), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error ?? `report failed (${res.status})`);
+  const body = (await res.json().catch(() => null)) ?? {};
+  if (!res.ok) {
+    const err = new Error(body.error ?? `report failed (${res.status})`);
+    // Over today's report cap, or reports sent too fast: the app shows the site's line, not a failure (D-13a).
+    if (REPORT_LIMIT_CODES.includes(body.code)) Object.assign(err, { code: body.code, line: limitLine(body.error), limit: limitNumber(body.limit) });
+    throw err;
+  }
   return body;
 }
 
@@ -47,17 +64,6 @@ export const POLL_MS = 1500;
  * `config.maxUnreachable` wins.
  */
 export const MAX_UNREACHABLE = 4;
-
-/**
- * The site's limit answers (429 {error, code, limit?}): a photo over today's cap, photos or reports sent too fast,
- * a report over today's cap. Never a reader or service marker, so the app can't mistake one for a missing reader.
- */
-export const LIMIT_CODES = ['daily-limit', 'slow-down', 'report-limit'];
-const PHOTO_LIMIT_CODES = ['daily-limit', 'slow-down'];
-/** The site's own line for a limit, cut to 200 characters; null when it sent none. */
-const limitLine = (s) => (typeof s === 'string' && s.trim() ? s.slice(0, 200) : null);
-/** The number in a limit answer: a positive whole number, else null (the app then uses its no-number line). */
-const limitNumber = (n) => (Number.isInteger(n) && n > 0 ? n : null);
 
 /**
  * A reader answer that is not OK becomes one error, with the read id when the body carries one. A photo limit
