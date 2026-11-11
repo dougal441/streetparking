@@ -683,7 +683,7 @@ class Jobs:
 
 
 def redact_query(line: str) -> str:
-    """A log line with every URL query string replaced, so a ?token= never reaches logs/reader.stderr.log. A token=
+    """A log line with every URL query string replaced, so a ?token= never reaches the service's stderr log. A token=
     anywhere else on the line (after a bare & with no ?, say) is taken out too (02-REVIEW IN-03)."""
     line = re.sub(r"\?[^\s\"']*", "?[redacted]", str(line))
     return re.sub(r"token=[^\s\"']*", "[redacted]", line, flags=re.I)

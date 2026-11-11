@@ -9,7 +9,10 @@ HERE="$(pwd)"
 PORT="${PORT:-8765}"
 LABEL="com.dougal.caniparkhere-reader"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
-STATE="$HERE/state"; mkdir -p "$STATE" logs
+STATE="$HERE/state"; mkdir -p "$STATE"
+# Logs live outside ~/Documents: launchd cannot open files in a privacy-protected folder (the job fails
+# before it starts with "78: EX_CONFIG"), so they go in ~/Library/Logs, private to this account.
+LOGS="$HOME/Library/Logs/caniparkhere-reader"; mkdir -p "$LOGS"; chmod 700 "$LOGS"
 
 command -v tailscale >/dev/null || { echo "tailscale command not found. Install the Tailscale app (it includes the command line tool), then run again." >&2; exit 1; }
 [ -x .venv/bin/python ] || { echo "creating .venv and installing packages (one-off)…" >&2; python3 -m venv .venv; .venv/bin/pip install -q -r requirements.txt; }
@@ -36,12 +39,12 @@ cat > "$PLIST" <<PL
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>ThrottleInterval</key><integer>10</integer>
-  <key>StandardOutPath</key><string>$HERE/logs/reader.stdout.log</string>
-  <key>StandardErrorPath</key><string>$HERE/logs/reader.stderr.log</string>
+  <key>StandardOutPath</key><string>$LOGS/reader.stdout.log</string>
+  <key>StandardErrorPath</key><string>$LOGS/reader.stderr.log</string>
 </dict></plist>
 PL
 # The logs are private to this account (mode 600), made before launchd opens them.
-for f in logs/reader.stdout.log logs/reader.stderr.log; do
+for f in "$LOGS/reader.stdout.log" "$LOGS/reader.stderr.log"; do
   [ -e "$f" ] || install -m 600 /dev/null "$f"
   chmod 600 "$f"
 done
@@ -53,7 +56,7 @@ if launchctl print "gui/$(id -u)/$LABEL" >/dev/null 2>&1; then
 fi
 launchctl bootstrap "gui/$(id -u)" "$PLIST" || { sleep 2; launchctl bootstrap "gui/$(id -u)" "$PLIST"; }
 sleep 2
-curl -sf "http://127.0.0.1:$PORT/api/read-sign" >/dev/null && echo "reader running on port $PORT" || { echo "reader did not start; see logs/reader.stderr.log" >&2; exit 1; }
+curl -sf "http://127.0.0.1:$PORT/api/read-sign" >/dev/null && echo "reader running on port $PORT" || { echo "reader did not start; see $LOGS/reader.stderr.log" >&2; exit 1; }
 
 # Publish through Tailscale on this Mac's fixed name, under /streetparking (life's /mail-capture stays as is).
 # funnel = reachable from the public internet (phone needs no Tailscale app); serve = your tailnet only.

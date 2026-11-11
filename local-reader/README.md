@@ -62,7 +62,7 @@ Tailnet-only instead of public (phone must have the Tailscale app signed in): `T
 Keep the Mac awake when you're out: System Settings → Battery → Options → *Prevent automatic sleeping on power
 adapter when the display is off* on, and leave it plugged in. A closed lid on battery = asleep = no reader.
 
-Remove it all: `./uninstall-service.sh`. Logs: `logs/reader.stderr.log`.
+Remove it all: `./uninstall-service.sh`. Logs: `~/Library/Logs/caniparkhere-reader/reader.stderr.log` (outside Documents, so the background service can open them).
 
 ### Why not the `life` capture Shortcut?
 
