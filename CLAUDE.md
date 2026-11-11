@@ -5,13 +5,14 @@ fix, test, merge to `main` yourself, then give him ONE command to run on the Mac
 
 ## Layout
 - `src/` engine + sign text parser (pure ES modules, runs in Node and the browser). `rules/` legislation data.
-- `web/` the app (GitHub Pages + Cloudflare Worker deploy from `main`).
+- `web/` the app, served privately by the dougalhanson.com Worker at `dougalhanson.com/caniparkhere` from a pinned
+  commit (no GitHub Pages, no deploy from `main`; see `docs/DEPLOY.md`).
 - `local-reader/server.py` the vision reader on Dougal's Mac (Qwen2.5-VL via mlx + Apple Vision OCR), a launchd
   service. Code there only takes effect after he pulls and re-runs `./install-service.sh`.
 - Mac checkout: `/Users/dougalhanson/Documents/Claude/Projects/streetparking`.
 
 ## "Check reports"
-Misreads reported from the app land on the `reader-reports` branch. Follow `docs/REPORTS.md`:
+Misreads reported from the app stay private: on the Mac (`reports/`) and on the site. Follow `docs/REPORTS.md`:
 `python3 scripts/reports.py list`, look at each photo, add a replay case in `local-reader/cases/`, fix the class
 of mistake structurally, prove it with tests, merge.
 

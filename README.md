@@ -4,7 +4,7 @@
 
 Street parking signs in Melbourne stack three or four restrictions on one post, split left/right with arrows, switch off on public holidays, and change meaning by the hour. People get fined for misreading them. This project turns a photo (or typed sign text) into a plain answer, backed by a rules library that cites the actual legislation.
 
-Live (soon): <https://dougalhanson.com/streetparking>
+Live (private, friends by invite): <https://dougalhanson.com/caniparkhere>
 
 ```
 CLEARWAY 7-9AM MON-FRI                     Wed 10:00 →  ✅ Yes — up to 2 hours, fee payable.
@@ -49,7 +49,7 @@ export ANTHROPIC_API_KEY=sk-ant-...     # or `ant auth login`
 npm run reader           # same URL, plus POST /api/read-sign
 ```
 
-**All-Cloudflare deploy (app + reader, billed on your Cloudflare account, no API keys):** `cd worker && npm install && npx wrangler login && npm run deploy` — see [docs/DEPLOY.md](docs/DEPLOY.md). The reader backend is switchable: Claude Opus 5.5 via AI Gateway Unified Billing (default), Workers AI Llama 4 Scout (free tier), or your own Anthropic key.
+**Hosting:** the app is served privately by the dougalhanson.com Worker at <https://dougalhanson.com/caniparkhere> from a pinned commit of this repo; there is no public copy. See [docs/DEPLOY.md](docs/DEPLOY.md). The separate all-Cloudflare Worker in `worker/` is not used in production and is kept for local experiments only.
 
 **Why the vision reader matters:** Melbourne's NO STOPPING / NO PARKING panels are red Ⓢ / Ⓟ *symbols*, and sides are *arrows*. Text OCR cannot read symbols or arrows; it only recovers the printed times and words. On-device OCR is the free fallback (with crop/threshold preprocessing), not the product.
 
