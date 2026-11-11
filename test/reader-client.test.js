@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { jobUrl, reportUrl, readWithClaude, sendReport, MAX_UNREACHABLE } from '../src/reader/claude.js';
+import { jobUrl, reportUrl, readWithClaude, sendReport, MAX_UNREACHABLE, LIMIT_CODES } from '../src/reader/claude.js';
 
 test('job url keeps host, prefix and token', () => {
   assert.equal(jobUrl('https://mac.ts.net/streetparking/api/read-sign?token=abc', 'deadbeef0001'), 'https://mac.ts.net/streetparking/api/read-sign/jobs/deadbeef0001?token=abc');
@@ -184,6 +184,44 @@ test('G: a resend that no reader can take throws, so the app reads on the phone'
   });
   await assert.rejects(readWithClaude(photo(), fast()), /Reader failed: 503/);
   assert.equal(posts(calls).length, 2);
+});
+
+// ---------------------------------------------------------------- the site's limit answers (D-14)
+
+// The Worker's 429 bodies, byte for byte (caniparkhere Phase 3, 03-02).
+const DAILY_LIMIT = '{"error":"You\'ve used today\'s 30 photo reads, so this one\'s read on your phone. It\'s back to normal after midnight.","code":"daily-limit","limit":30}';
+const SLOW_DOWN = '{"error":"That\'s a lot of photos at once. Reading this one on your phone.","code":"slow-down"}';
+const limited = (body) => () => new Response(body, { status: 429, headers: { 'content-type': 'application/json' } });
+
+test('L1: a photo over today\'s cap throws the site\'s line and number after one POST', async () => {
+  assert.deepEqual(LIMIT_CODES, ['daily-limit', 'slow-down', 'report-limit']);
+  const calls = stubFetch({ posts: [limited(DAILY_LIMIT)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === 'daily-limit' && e.line === JSON.parse(DAILY_LIMIT).error && e.limit === 30 && /^Reader failed: 429 /.test(e.message));
+  assert.equal(posts(calls).length, 1);
+});
+
+test('L2: photos sent too fast throw the slow-down line with no number', async () => {
+  const calls = stubFetch({ posts: [limited(SLOW_DOWN)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === 'slow-down' && e.line === JSON.parse(SLOW_DOWN).error && e.limit === null);
+  assert.equal(posts(calls).length, 1);
+});
+
+test('L3: a resend skipping the Mac answered over the cap throws that code after two POSTs', async () => {
+  const calls = stubFetch({ posts: [queued, limited(DAILY_LIMIT)], polls: [() => jsonRes({ status: 'error', error: 'x', fallback: true })] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === 'daily-limit' && e.limit === 30);
+  assert.equal(posts(calls).length, 2);
+  assert.equal(posts(calls)[1].body.skip, 'mac');
+});
+
+test('L4: no reader free (503 none) still throws with no limit code; a bad limit or line is dropped', async () => {
+  stubFetch({ posts: [() => jsonRes({ error: 'No vision reader is free right now.', reader: 'none' }, 503)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === undefined && e.line === undefined && /Reader failed: 503/.test(e.message));
+  stubFetch({ posts: [() => jsonRes({ code: 'daily-limit', limit: -3, error: '' }, 429)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === 'daily-limit' && e.line === null && e.limit === null);
+  stubFetch({ posts: [() => jsonRes({ code: 'daily-limit', limit: 30, error: 'x'.repeat(500) }, 429)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.line.length === 200);
+  stubFetch({ posts: [() => jsonRes({ code: 'report-limit', limit: 10, error: 'y' }, 429)] });
+  await assert.rejects(readWithClaude(photo(), fast()), (e) => e.code === undefined); // not a photo limit
 });
 
 test('a job error without fallback throws as before, with no resend', async () => {

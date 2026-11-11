@@ -319,8 +319,11 @@ async function readPhoto() {
     $('status-line').textContent = 'Photograph the sign. Get a straight answer.';
   } catch (e) {
     // Every failed vision read drops to on-device OCR (D-03). Only if that fails too is the person asked to type.
+    // A photo over the site's limits shows the site's one line alone, then the phone reads it (D-14).
+    const limit = photoLimitLine(e);
     try {
-      await readOnDevice(cfg.readerBackend === 'site' ? "The vision readers couldn't answer." : e.message);
+      if (limit) await readOnDevice(limit, { plain: true });
+      else await readOnDevice(cfg.readerBackend === 'site' ? "The vision readers couldn't answer." : e.message);
       $('status-line').textContent = 'Photograph the sign. Get a straight answer.';
     } catch {
       showError(`Could not read the photo: ${e.message}. ${cfg.readerUrl && (e instanceof TypeError || /lost the job|stopped answering|took too long|Reader failed: 5/i.test(e.message)) ? 'Is the reader (your Mac) awake? ' : ''}Open "Show my working" and type the sign instead.`);
@@ -331,11 +334,26 @@ async function readPhoto() {
   } finally { btn.classList.remove('busy'); prog.hidden = true; }
 }
 
+// The app's own words for the site's photo limits, used when the answer carries no line (UI-SPEC Surface 4).
+// The number always comes from the site's answer; with none, the line leaves it out. No emoji here.
+const PHOTO_LIMIT_LINES = {
+  'daily-limit': (n) => n
+    ? `You've used today's ${n} photo reads, so this one's read on your phone. It's back to normal after midnight.`
+    : "You've used today's photo reads, so this one's read on your phone. It's back to normal after midnight.",
+  'slow-down': () => "That's a lot of photos at once. Reading this one on your phone.",
+};
+/** The line for a photo the site refused for a limit, or null for any other failure. */
+function photoLimitLine(e) {
+  if (!e?.code || !Object.hasOwn(PHOTO_LIMIT_LINES, e.code)) return null;
+  return e.line || PHOTO_LIMIT_LINES[e.code](typeof e.limit === 'number' ? e.limit : null);
+}
+
 /**
  * Read the photo on this phone (Tesseract: printed words, not symbols). Used when no vision reader is set up,
  * and when every vision reader failed (`note` says why). The read gets its own id so it can be reported (D-12).
+ * With `plain` the banner holds the note alone (a limit line already says the phone reads it).
  */
-async function readOnDevice(note) {
+async function readOnDevice(note, { plain = false } = {}) {
   const prog = $('ocr-progress');
   $('status-line').textContent = 'Reading the sign (on-device OCR)…';
   const { text, confidence } = await readWithTesseract(currentFile, (status, p) => { prog.value = status === 'recognizing text' ? p : 0.05; });
@@ -353,7 +371,7 @@ async function readOnDevice(note) {
   $('reader-mode').textContent = 'Read on this phone (words only, not symbols)';
   if (note) {
     $('results').hidden = false;
-    $('results').insertAdjacentHTML('afterbegin', `<div class="banner">${esc(note)} This phone read the words instead.</div>`);
+    $('results').insertAdjacentHTML('afterbegin', `<div class="banner">${esc(note)}${plain ? '' : ' This phone read the words instead.'}</div>`);
   }
 }
 

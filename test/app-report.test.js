@@ -32,7 +32,7 @@ class El {
   }
   addEventListener(type, fn) { (this.listeners[type] ??= []).push(fn); }
   fire(type) { for (const fn of this.listeners[type] ?? []) fn({ target: this }); }
-  insertAdjacentHTML() {}
+  insertAdjacentHTML(where, html) { this._html = where === 'afterbegin' ? String(html) + this._html : this._html + String(html); }
   appendChild() {}
   querySelector() { return null; }
   querySelectorAll() { return []; }
@@ -143,5 +143,52 @@ test('WR-02: an on-device read after a failed vision read sends the sign the pho
   assert.equal(r.read.ocrText, '2P 8AM-6PM MON-FRI');
   assert.ok(r.read.sign?.panels?.length, 'the parsed sign goes with the report');
   assert.equal(r.read.sign.rawText, '2P 8AM-6PM MON-FRI');
+});
+
+// ---------------------------------------------------------------- the site's limit answers (D-14)
+
+// The Worker's 429 bodies, byte for byte (caniparkhere Phase 3, 03-02).
+const DAILY_LIMIT = '{"error":"You\'ve used today\'s 30 photo reads, so this one\'s read on your phone. It\'s back to normal after midnight.","code":"daily-limit","limit":30}';
+const SLOW_DOWN = '{"error":"That\'s a lot of photos at once. Reading this one on your phone.","code":"slow-down"}';
+const limited = (body) => () => new Response(body, { status: 429, headers: { 'content-type': 'application/json' } });
+const banners = () => [...$('results').innerHTML.matchAll(/<div class="banner">([\s\S]*?)<\/div>/g)].map(m => m[1]);
+
+async function limitedPhoto(answer, bytes) {
+  readAnswer = answer;
+  ocr = '2P 8AM-6PM MON-FRI';
+  $('when').value = '2026-11-11T10:00'; // a Wednesday that is not a public holiday, so no holiday banner
+  await takePhoto(bytes);
+  assert.equal($('status-line').textContent, 'Photograph the sign. Get a straight answer.');
+  assert.equal($('reader-mode').textContent, 'Read on this phone (words only, not symbols)');
+  assert.match($('results').innerHTML, /class="verdict /, 'a verdict from the phone\'s own read');
+  const b = banners();
+  assert.equal(b.length, 1, 'exactly one banner');
+  assert.ok(!b[0].includes('This phone read the words instead.'));
+  return b[0];
+}
+
+test('D-14: a photo over today\'s cap shows the site\'s line alone and the phone reads it', async () => {
+  assert.equal(await limitedPhoto(limited(DAILY_LIMIT), [0xff, 0xd8, 0x11]), JSON.parse(DAILY_LIMIT).error);
+});
+
+test('D-14: photos sent too fast show the slow-down line alone and the phone reads it', async () => {
+  assert.equal(await limitedPhoto(limited(SLOW_DOWN), [0xff, 0xd8, 0x12]), JSON.parse(SLOW_DOWN).error);
+});
+
+test('D-14: an over-cap answer with no line and no number shows the app\'s no-number line', async () => {
+  const line = await limitedPhoto(limited('{"code":"daily-limit"}'), [0xff, 0xd8, 0x13]);
+  assert.equal(line, "You've used today's photo reads, so this one's read on your phone. It's back to normal after midnight.");
+});
+
+test('D-14: an over-cap answer with a number and no line shows the app\'s line with that number', async () => {
+  const line = await limitedPhoto(limited('{"code":"daily-limit","limit":30}'), [0xff, 0xd8, 0x14]);
+  assert.equal(line, "You've used today's 30 photo reads, so this one's read on your phone. It's back to normal after midnight.");
+});
+
+test('D-14: any other failed read keeps the two-sentence banner', async () => {
+  readAnswer = () => jsonRes({ error: 'boom' }, 502);
+  ocr = '2P 8AM-6PM MON-FRI';
+  await takePhoto([0xff, 0xd8, 0x15]);
+  assert.deepEqual(banners(), ["The vision readers couldn't answer. This phone read the words instead."]);
   console.warn = quiet;
 });

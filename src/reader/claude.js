@@ -48,11 +48,29 @@ export const POLL_MS = 1500;
  */
 export const MAX_UNREACHABLE = 4;
 
-/** A reader answer that is not OK becomes one error, with the read id when the body carries one. */
+/**
+ * The site's limit answers (429 {error, code, limit?}): a photo over today's cap, photos or reports sent too fast,
+ * a report over today's cap. Never a reader or service marker, so the app can't mistake one for a missing reader.
+ */
+export const LIMIT_CODES = ['daily-limit', 'slow-down', 'report-limit'];
+const PHOTO_LIMIT_CODES = ['daily-limit', 'slow-down'];
+/** The site's own line for a limit, cut to 200 characters; null when it sent none. */
+const limitLine = (s) => (typeof s === 'string' && s.trim() ? s.slice(0, 200) : null);
+/** The number in a limit answer: a positive whole number, else null (the app then uses its no-number line). */
+const limitNumber = (n) => (Number.isInteger(n) && n > 0 ? n : null);
+
+/**
+ * A reader answer that is not OK becomes one error, with the read id when the body carries one. A photo limit
+ * answer also carries `code`, `line` and `limit`, so the app can show the site's line and read on the phone (D-14).
+ */
 async function failedAnswer(res) {
   const text = await res.text().catch(() => '');
-  let readId = null; let backend = null; try { ({ readId = null, backend = null } = JSON.parse(text) ?? {}); } catch { /* not JSON */ }
-  return failed(`Reader failed: ${res.status} ${text}`, readId, backend);
+  let body = null; try { body = JSON.parse(text); } catch { /* not JSON */ }
+  if (!body || typeof body !== 'object') body = {};
+  const { readId = null, backend = null, code, error, limit } = body;
+  const err = failed(`Reader failed: ${res.status} ${text}`, readId, backend);
+  if (PHOTO_LIMIT_CODES.includes(code)) Object.assign(err, { code, line: limitLine(error), limit: limitNumber(limit) });
+  return err;
 }
 
 /**
